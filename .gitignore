@@ -94,7 +94,7 @@ local_settings.py
 *.code-workspace
 
 *.env
-db.sqlite3
+./db.sqlite3
 
 # Local History for Visual Studio Code
 .history/
