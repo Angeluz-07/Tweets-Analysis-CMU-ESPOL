@@ -101,3 +101,10 @@ db.sqlite3
 
 **/migrations/*
 !**/migrations/__init__.py
+
+# virtual environments
+.venv
+
+# vs code
+.vscode
+.vs
