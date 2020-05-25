@@ -9,7 +9,7 @@ def index(request):
 
 def quotes_simple_example(request):
     if request.method == 'POST':
-        print(request.POST)    
+        print(request.POST)
     return render(request, 'analisis/Quotes_Simple_example.html')
 
 def replies_simple_example(request):
