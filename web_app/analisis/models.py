@@ -18,16 +18,25 @@ class Annotator(models.Model):
 
 class Stance(models.Model):
     name = models.CharField(max_length=30)
-    text = models.TextField(max_length=300)
+    description = models.TextField(max_length=300)
+
+    def __str__(self):
+        return f'Stance : {self.name}'
 
 class Confidence(models.Model):
     name = models.CharField(max_length=30)
-    text = models.TextField(max_length=300)
+    description = models.TextField(max_length=300)
+
+    def __str__(self):
+        return f'Confidence : {self.name}'
     
 class Expressivity(models.Model):
-    type_exp = models.CharField(max_length=30)
+    type = models.CharField(max_length=30)
     value = models.BooleanField(default=False)
     evidence = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Expressivity : Type={self.type},Value={self.value},Evidence={self.evidence}'
     
 class Annotation(models.Model):
     tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.SET_NULL,null=True, blank=True)
