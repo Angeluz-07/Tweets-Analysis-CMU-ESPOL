@@ -16,19 +16,22 @@ class TweetRelation(models.Model):
 class Annotator(models.Model):
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return f'Annotator : Name={self.name}, Id={self.id}'
+
 class Stance(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField(max_length=300)
 
     def __str__(self):
-        return f'Stance : {self.name}'
+        return f'Stance : Name={self.name}'
 
 class Confidence(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField(max_length=300)
 
     def __str__(self):
-        return f'Confidence : {self.name}'
+        return f'Confidence : Name={self.name}'
     
 class Expressivity(models.Model):
     type = models.CharField(max_length=30)
@@ -39,8 +42,12 @@ class Expressivity(models.Model):
         return f'Expressivity : Type={self.type},Value={self.value},Evidence={self.evidence}'
     
 class Annotation(models.Model):
-    tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.SET_NULL,null=True, blank=True)
-    annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True, blank=True)
-    stance=models.ForeignKey(Stance,on_delete=models.SET_NULL,null=True, blank=True)
-    confidence=models.ForeignKey(Confidence,on_delete=models.SET_NULL,null=True, blank=True)
+    tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.SET_NULL,null=True)
+    annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True)
+    stance=models.ForeignKey(Stance,on_delete=models.SET_NULL,null=True)
+    confidence=models.ForeignKey(Confidence,on_delete=models.SET_NULL,null=True)
     expressivity=models.ForeignKey(Expressivity,on_delete=models.SET_NULL,null=True, blank=True)
+
+    def __str__(self):
+        return f'Annotation : Annotator={self.type}'
+    

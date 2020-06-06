@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Stance, Confidence, Expressivity
+from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation
 
 
 from unittest.mock import Mock
@@ -36,17 +36,41 @@ def quotes_simple_example(request):
                 value = request.POST['expressivity_value'],
                 evidence = request.POST['evidence']
             )
-            print(e)
+
+        a = Annotator.objects.get(id=request.POST['annotator_token'])
+        # tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
+
+        print(a)
         print(s)
         print(c)
-        # TODO : create annotation and save it in DB
 
+        # Create Annotation
+        # TODO:
+        # - Validate tuple (AnnotatorId,TweetRelationId) to be unique in order
+        #   to avoid same annotator annotate a tweet only once. Either in DB or application
+        if there_is_expressivity:
+            an, created = Annotation.objects.get_or_create(
+                # tweet_relation=tr,
+                tweet_relation_id = tweet_relation.id,
+                annotator=a,
+                stance=s,
+                confidence=c,
+                expressivity=e
+            )
+        else: 
+            an, created = Annotation.objects.get_or_create(
+                # tweet_relation=tr,
+                tweet_relation_id = tweet_relation.id,
+                annotator=a,
+                stance=s,
+                confidence=c,
+            )
+        print(f'{ann}, created? = {created}')
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_source_id' : tweet_relation.tweet_source_id,
         'tweet_response_id' : tweet_relation.tweet_response_id,
     }
-    print(tweet_relation.tweet_source_id)
     return render(request, 'analisis/Quotes_Simple_example.html', context = context)
 
 def replies_simple_example(request):

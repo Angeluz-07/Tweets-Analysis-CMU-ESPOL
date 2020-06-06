@@ -214,6 +214,11 @@
 		</div>
 
 		<div class="column questions" id="StanceForm">
+		 	<div class="form-group">
+    			<label for="annotator_token">Anotador Token</label>
+    			<input type="text" class="form-control" name="annotator_token" id="annotator_token" placeholder="Ingrese su token de Anotador">
+  			</div>
+
 			<div class="form-group">
 				<!-- Question for the Worker -->
 				<label class="group-label">
@@ -421,15 +426,37 @@
 			$('.nAn').each(function(){
 				$(this).prop('checked', true);
 			})
-			
-			document.getElementById('ifCommentOrQuery').style.display = 'hidden';
+
 			document.getElementById('expressivity_type_input').value = '';
 		}
 	}		
 	
 	});
 
+	$('#annotator_token').change(function(){
 
+		function saveToken() {
+			var token = document.getElementById("annotator_token").value;
+			localStorage.setItem("annotator_token", token);
+		}
+		
+		console.log("Setting annotator_token value in cache.");
+		saveToken();
+
+	})
+	
+	function restoreToken() {
+		var token = localStorage.getItem("annotator_token");
+		if( token === null){
+			console.log("There is no annotator_token in cache.");
+		}else {			
+			console.log("annotator_token value found in cache, restoring.");
+			document.getElementById("annotator_token").value = token;
+		}
+	}
+	restoreToken();
+
+	
 	// This code draws a line to visually connect radio inputs. 
 	function drawline()
 	{
