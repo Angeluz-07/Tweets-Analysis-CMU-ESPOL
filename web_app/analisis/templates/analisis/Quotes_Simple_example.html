@@ -203,11 +203,13 @@
 		<form action="/quotes" method="post">
 		{% csrf_token %}
 
-		
+		<!-- Tweet Relation Id-->
+		<input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
+
 		<div class="column tweet" id="OriginalTw_1">
 			<label>Quote Tweet:</label>
 			<div class="well tweet-box">
-			<input id="tw_tar_1" type="hidden" name="tw_tar_1" value="1177640691314413568" />
+			<input id="tw_tar_1" type="hidden" name="tw_tar_1" value={{ tweet_source_id }} />
 			</div>
 		</div>
 
@@ -420,6 +422,7 @@
 				$(this).prop('checked', true);
 			})
 			
+			document.getElementById('ifCommentOrQuery').style.display = 'hidden';
 			document.getElementById('expressivity_type_input').value = '';
 		}
 	}		
