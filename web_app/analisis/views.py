@@ -1,10 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation
-
-
-from unittest.mock import Mock
-# Create your views here.
+from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
 
 
 def get_tweet_relation():
@@ -12,11 +8,7 @@ def get_tweet_relation():
     # - Get a random instance from DB 
     # - Validate tuple (AnnotatorId,TweetRelationId) to be unique in order
     #   to avoid same annotator annotate a tweet only once. Either in DB or application
-    tweet_relation = Mock()
-    tweet_relation.id = 1  # dummy id
-    tweet_relation.tweet_source_id = 1177640691314413568
-    tweet_relation.tweet_response_id = tweet_relation.tweet_source_id + 1 # dummy id
-    return tweet_relation
+    return TweetRelation.objects.get(id=1)
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
@@ -38,7 +30,7 @@ def quotes_simple_example(request):
             )
 
         a = Annotator.objects.get(id=request.POST['annotator_token'])
-        # tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
+        tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
 
         print(a)
         print(s)
@@ -50,8 +42,7 @@ def quotes_simple_example(request):
         #   to avoid same annotator annotate a tweet only once. Either in DB or application
         if there_is_expressivity:
             an, created = Annotation.objects.get_or_create(
-                # tweet_relation=tr,
-                tweet_relation_id = tweet_relation.id,
+                tweet_relation = tr,
                 annotator=a,
                 stance=s,
                 confidence=c,
@@ -59,13 +50,12 @@ def quotes_simple_example(request):
             )
         else: 
             an, created = Annotation.objects.get_or_create(
-                # tweet_relation=tr,
-                tweet_relation_id = tweet_relation.id,
+                tweet_relation = tr,
                 annotator=a,
                 stance=s,
                 confidence=c,
             )
-        print(f'{ann}, created? = {created}')
+        print(f'{an}, created? = {created}')
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_source_id' : tweet_relation.tweet_source_id,
