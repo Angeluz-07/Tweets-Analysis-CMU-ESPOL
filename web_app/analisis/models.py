@@ -13,9 +13,12 @@ class Tweet(models.Model):
 
 class TweetRelation(models.Model):
     TYPE=[("Quote","Quote"),("Reply","Reply")]
-    tweet_source=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweer_source')
-    tweet_response=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweer_response')
+    tweet_target=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweet_target')
+    tweet_response=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweet_response')
     relation_type=models.CharField(max_length=50, choices=TYPE)
+
+    def __str__(self):
+        return f'TweetRelation : TweetTarget={self.tweet_target}, TweetResponse={self.tweet_response}, RelationType={self.relation_type}'
 
 class Annotator(models.Model):
     name = models.CharField(max_length=30)

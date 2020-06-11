@@ -5,7 +5,33 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'analisistweets.settings')
 import django
 django.setup()
 
-from analisis.models import Stance, Confidence, Expressivity
+from analisis.models import Stance, Confidence, Expressivity, Tweet, TweetRelation
+import csv
+
+def add_tweet_and_tweet_relations():
+    
+    # Add tweets
+    with open('data/pair_database.csv') as csv_file:            
+        rows = list(csv.reader(csv_file, delimiter=','))
+        for row in rows[1:50]:
+            response_id = int(row[1])
+            target_id = int(row[2])
+            t, _ = Tweet.objects.get_or_create(id = response_id)
+            print(t)
+
+            t, _ = Tweet.objects.get_or_create(id = target_id)
+            print(t)
+
+        for row in rows[1:50]:
+            response_id = int(row[1])
+            target_id = int(row[2])
+            interaction_type = row[3]
+            tr, _ = TweetRelation.objects.get_or_create(
+                tweet_target_id = target_id,
+                tweet_response_id = response_id,
+                relation_type = interaction_type
+            )
+            print(tr)
 
 def add_stances():
     stances = [
@@ -76,11 +102,9 @@ def add_expressivities():
         )
         print(e)
 
-def populate():
-    add_stances()
-    add_confidences()
-    add_expressivities()
-
 if __name__ == '__main__':
     print("Starting population script...")
-    populate()
+    add_stances()
+    add_confidences()
+    add_expressivities()    
+    add_tweet_and_tweet_relations()
