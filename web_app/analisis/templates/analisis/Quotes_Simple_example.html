@@ -99,17 +99,6 @@
 	vertical-align: middle;
 	}
 
-	.column.tweet {
-	float: left;
-	width: 40%;
-	}
-
-	.column.questions {
-	float: right;
-	width: 60%;
-	left: 5%;  
-	position: relative;
-	}
 </style>
 <!-- Close internal style sheet -->
 
@@ -206,127 +195,138 @@
 		<!-- Tweet Relation Id-->
 		<input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
-		<div class="column tweet" id="OriginalTw_1">
-			<label>Quote Tweet:</label>
-			<div class="well tweet-box">
-			<input id="tw_tar_1" type="hidden" name="tw_tar_1" value={{ tweet_source_id }} />
-			</div>
-		</div>
-
-		<div class="column questions" id="StanceForm">
-		 	<div class="form-group">
-    			<label for="annotator_token">Anotador Token</label>
-    			<input type="text" class="form-control" name="annotator_token" id="annotator_token" placeholder="Ingrese su token de Anotador">
-  			</div>
-
-			<div class="form-group">
-				<!-- Question for the Worker -->
-				<label class="group-label">
-				Cual es la postura del Quote tweet al contenido del tweet original (mostrado en un recuadro abajo del tweet)?
-				</label> 
-				<!-- Input from the Worker --> 
-				<!-- <div class="btn-group" data-toggle="buttons" id="Inputs_1">
-				<label class="btn btn-default"><input id="Exp_Sup_1" name="reply_1" required="" type="radio" value="Explicit_Support" />Supports it  right</label> 
-				<label class="btn btn-default"> <input id="Exp_Den_1" name="reply_1" required="" type="radio" value="Explicit_Denial" />Denies it</label> 
-				<label class="btn btn-default"> <input id="Queries_1" name="reply_1" required="" type="radio" value="Queries" />Queries for additional information </label> 
-				<label class="btn btn-default"> <input id="Comment_1" name="reply_1" required="" type="radio" value="Comment" />Other type of comment </label>
-				</div> -->
-
-				<div class="outer_div" id="sentiment_scale">				
-					<!--This only draws a line to visually connect radio inputs.--> 
-					<div class="canvas_div"><canvas class="line" id="line_canvas"></canvas></div>
-					<div class="radio_div" id="Input_1">
-						<table>
-							<tbody>
-								<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>								
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-								</tr>
-								<tr>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>								
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-									<td>&nbsp;</td>
-								</tr>
-								<tr>
-									<td><input id="Exp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Explicit Support" /></td>
-									<td><input id="Imp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Implicit Support"/></td>
-									<td><input id="Comment_1" name="stance" class ="StanceQ"                    required="" type="radio" value="Comment"/></td>
-									<td><input id="Query_1"   name="stance" class ="StanceQ"                    required="" type="radio" value="Queries" /></td>
-									<td><input id="Imp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Implicit Denial"/></td>
-									<td><input id="Exp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Explicit Denial"/></td>
-									<!--td><input id="Missing_1" name="stance" class ="StanceQ" required="" type="radio" value="Missing" /></td-->
-								</tr>
-								<tr>
-									<td>Suporte Explícito</td>
-									<td>Suporte Implícito</td>								
-									<td>Comentario</td>								
-									<td>Pregunta por más información</td>
-									<td>Negación Implícita</td>
-									<td>Negación Explícita</td>
-									<!--td>Respuesta/Original No disponible</td-->
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>				
-			</div>
-
-			<div class="form-group confidence" id="Input_1a">
-				<label>Que tan seguro está de su respuesta? </label>
-				<table>
-					<tbody>
-						<tr>
-							<td><input id="not_con_1"  name="confidence" required="" type="radio" value="Not Sure" /></td>
-							<td><input id="some_con_1" name="confidence" required="" type="radio" value="Some Sure" /></td>
-							<td><input id="con_1"      name="confidence" required="" type="radio" value="Sure" /></td>
-						</tr>
-						<tr>
-							<td>Inseguro</td>
-							<td>Algo Seguro</td>
-							<td>Seguro</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-
-			<div class="form-group" id="workContent2">	
-				<div class="column" id="ifStance" style="display:none">					
-					<input type="hidden"  name="expressivity_type" value="" id="expressivity_type_input" />
-					<div id="ifNegative" style="display:none">
-						<label>La respuesta expresa que el original contiene información falsa o incorrecta?</label>						
-						<div>
-						<input type="radio"  name="expressivity_value" value="1" /> Si
-						<input type="radio"  name="expressivity_value" value="0" /> No
-						<!--input type="radio" name="fake_news" value="-1" class= "nAn" /> No aplica-->
-						</div>
-					</div>
-					<div id="ifPositive" style="display:none">
-						<label>La respuesta expresa que el original contiene información verdadera o correcta?</label>
-						<div>
-						<input type="radio" name="expressivity_value" value="1" /> Si
-						<input type="radio" name="expressivity_value" value="0" /> No
-						<!--input type="radio" name="true_news" value="-1"  class= "nAn"/> No aplica -->
-						</div>
-					</div>
-					<div>		
-						<label>De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?</label>
-						<div>
-						<input type="radio" name="evidence" value="1" /> Si
-						<input type="radio" name="evidence" value="0" /> No
-						<!--input type="radio" name="evidence" value="-1" class= "nAn" /> No aplica-->
-						</div>
-					</div>
+		<div class="row">
+			<div class="col-sm-6 tweet" id="ResponseTw_1">
+				<label>Quote Tweet:</label>
+				<div class="well tweet-box">
+				<input id="tw_tar_1" type="hidden" name="tw_tar_1" value={{ tweet_response_id }} />
 				</div>
 			</div>
 
-			<div class="form-group row">
-				<div class="col-sm-10 text-center">
-				<button type="submit" class="btn btn-primary">Enviar</button>
+			<div class="col-sm-6 tweet" id="TargetTw_1">
+				<label>Target Tweet:</label>
+				<div class="well tweet-box">
+				<input id="tw_tar_1" type="hidden" name="tw_tar_1" value={{ tweet_target_id }} />
+				</div>
+			</div>
+		</div>
+
+		<div class="row" id="StanceForm">
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label for="annotator_token">Anotador Token</label>
+					<input type="text" class="form-control" name="annotator_token" id="annotator_token" placeholder="Ingrese su token de Anotador">
+				</div>
+
+				<div class="form-group">
+					<!-- Question for the Worker -->
+					<label class="group-label">
+					Cual es la postura del Quote tweet al contenido del tweet original (mostrado en un recuadro abajo del tweet)?
+					</label> 
+					<!-- Input from the Worker --> 
+					<!-- <div class="btn-group" data-toggle="buttons" id="Inputs_1">
+					<label class="btn btn-default"><input id="Exp_Sup_1" name="reply_1" required="" type="radio" value="Explicit_Support" />Supports it  right</label> 
+					<label class="btn btn-default"> <input id="Exp_Den_1" name="reply_1" required="" type="radio" value="Explicit_Denial" />Denies it</label> 
+					<label class="btn btn-default"> <input id="Queries_1" name="reply_1" required="" type="radio" value="Queries" />Queries for additional information </label> 
+					<label class="btn btn-default"> <input id="Comment_1" name="reply_1" required="" type="radio" value="Comment" />Other type of comment </label>
+					</div> -->
+
+					<div class="outer_div" id="sentiment_scale">				
+						<!--This only draws a line to visually connect radio inputs.--> 
+						<div class="canvas_div"><canvas class="line" id="line_canvas"></canvas></div>
+						<div class="radio_div" id="Input_1">
+							<table>
+								<tbody>
+									<tr>
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>								
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>								
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>
+										<td>&nbsp;</td>
+									</tr>
+									<tr>
+										<td><input id="Exp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Explicit Support" /></td>
+										<td><input id="Imp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Implicit Support"/></td>
+										<td><input id="Comment_1" name="stance" class ="StanceQ"                    required="" type="radio" value="Comment"/></td>
+										<td><input id="Query_1"   name="stance" class ="StanceQ"                    required="" type="radio" value="Queries" /></td>
+										<td><input id="Imp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Implicit Denial"/></td>
+										<td><input id="Exp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Explicit Denial"/></td>
+										<!--td><input id="Missing_1" name="stance" class ="StanceQ" required="" type="radio" value="Missing" /></td-->
+									</tr>
+									<tr>
+										<td>Suporte Explícito</td>
+										<td>Suporte Implícito</td>								
+										<td>Comentario</td>								
+										<td>Pregunta por más información</td>
+										<td>Negación Implícita</td>
+										<td>Negación Explícita</td>
+										<!--td>Respuesta/Original No disponible</td-->
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>				
+				</div>
+
+				<div class="form-group confidence" id="Input_1a">
+					<label>Que tan seguro está de su respuesta? </label>
+					<table>
+						<tbody>
+							<tr>
+								<td><input id="not_con_1"  name="confidence" required="" type="radio" value="Not Sure" /></td>
+								<td><input id="some_con_1" name="confidence" required="" type="radio" value="Some Sure" /></td>
+								<td><input id="con_1"      name="confidence" required="" type="radio" value="Sure" /></td>
+							</tr>
+							<tr>
+								<td>Inseguro</td>
+								<td>Algo Seguro</td>
+								<td>Seguro</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="form-group" id="workContent2">	
+					<div class="column" id="ifStance" style="display:none">					
+						<input type="hidden"  name="expressivity_type" value="" id="expressivity_type_input" />
+						<div id="ifNegative" style="display:none">
+							<label>La respuesta expresa que el original contiene información falsa o incorrecta?</label>						
+							<div>
+							<input type="radio"  name="expressivity_value" value="1" /> Si
+							<input type="radio"  name="expressivity_value" value="0" /> No
+							<!--input type="radio" name="fake_news" value="-1" class= "nAn" /> No aplica-->
+							</div>
+						</div>
+						<div id="ifPositive" style="display:none">
+							<label>La respuesta expresa que el original contiene información verdadera o correcta?</label>
+							<div>
+							<input type="radio" name="expressivity_value" value="1" /> Si
+							<input type="radio" name="expressivity_value" value="0" /> No
+							<!--input type="radio" name="true_news" value="-1"  class= "nAn"/> No aplica -->
+							</div>
+						</div>
+						<div>		
+							<label>De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?</label>
+							<div>
+							<input type="radio" name="evidence" value="1" /> Si
+							<input type="radio" name="evidence" value="0" /> No
+							<!--input type="radio" name="evidence" value="-1" class= "nAn" /> No aplica-->
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<div class="col-sm-10 text-center">
+					<button type="submit" class="btn btn-primary">Enviar</button>
+					</div>
 				</div>
 			</div>
 		</div>

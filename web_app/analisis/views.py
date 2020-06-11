@@ -3,18 +3,26 @@ from django.http import HttpResponse
 from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
 
 
-def get_tweet_relation():
+def get_random_tweet_relation(relation_type):
     # TODO : 
-    # - Get a random instance from DB 
     # - Validate tuple (AnnotatorId,TweetRelationId) to be unique in order
     #   to avoid same annotator annotate a tweet only once. Either in DB or application
-    return TweetRelation.objects.get(id=1)
+    # source: https://books.agiliq.com/projects/django-orm-cookbook/en/latest/random.html
+    
+    from django.db.models import Max
+    max_id = TweetRelation.objects.filter(relation_type=relation_type).aggregate(max_id=Max("id"))['max_id']
+    while True:
+        from random import randint
+        id = randint(1, max_id)
+        tweet_relation = TweetRelation.objects.get(id=id)
+        if tweet_relation:
+            return tweet_relation
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 def quotes_simple_example(request):
-    tweet_relation = get_tweet_relation()
+    tweet_relation = get_random_tweet_relation("Quote")
    
     if request.method == 'POST':
         there_is_expressivity = request.POST['expressivity_type'] != ''
@@ -58,7 +66,7 @@ def quotes_simple_example(request):
         print(f'{an}, created? = {created}')
     context = {
         'tweet_relation_id' : tweet_relation.id,
-        'tweet_source_id' : tweet_relation.tweet_source_id,
+        'tweet_target_id' : tweet_relation.tweet_target_id,
         'tweet_response_id' : tweet_relation.tweet_response_id,
     }
     return render(request, 'analisis/Quotes_Simple_example.html', context = context)
