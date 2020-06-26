@@ -2,22 +2,38 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.request import QueryDict
 from django.http import Http404
+from django.db.models import Count
 
 from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
 
 
 def get_random_tweet_relation(relation_type: str) -> TweetRelation:
+    # Ids of TweetRelation annotated more than 3 times
+    # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
+    tr_ids_black_list = [
+        item.id for item in
+        TweetRelation.objects \
+        .annotate(annotation_count=Count('annotation')) \
+        .filter(annotation_count__gte=3)
+    ]
+
     # TODO : 
     # - Validate tuple (AnnotatorId,TweetRelationId) to be unique in order
     #   to avoid same annotator annotate a tweet only once. Either in DB or application
-    # source: https://books.agiliq.com/projects/django-orm-cookbook/en/latest/random.html
+    # https://books.agiliq.com/projects/django-orm-cookbook/en/latest/random.html
     
     from django.db.models import Max
     max_id = TweetRelation.objects.filter(relation_type=relation_type).aggregate(max_id=Max("id"))['max_id']
     while True:
         from random import randint
         id = randint(1, max_id)
-        tweet_relation = TweetRelation.objects.filter(relation_type=relation_type, id=id).first()
+
+        tweet_relation = TweetRelation.objects \
+        .exclude(id__in=tr_ids_black_list) \
+        .filter(relation_type=relation_type) \
+        .filter(id=id) \
+        .first()
+
         if tweet_relation:
             return tweet_relation
 
