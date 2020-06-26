@@ -2,34 +2,36 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.request import QueryDict
 from django.http import Http404
-from django.db.models import Count
+from django.db.models import Count, Max
+
+from random import randint
 
 from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
 
 
-def get_random_tweet_relation(relation_type: str) -> TweetRelation:
-    # Ids of TweetRelation annotated more than 3 times
+def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
-    tr_ids_black_list = [
+    tr_ids_annotated_thrice = [
         item.id for item in
         TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__gte=3)
     ]
 
-    # TODO : 
-    # - Validate tuple (AnnotatorId,TweetRelationId) to be unique in order
-    #   to avoid same annotator annotate a tweet only once. Either in DB or application
+    tr_ids_already_annotated_by_user = [
+        item.id for item in
+        TweetRelation.objects \
+        .filter(annotation__annotator_id=annotator_id)
+    ]
+
     # https://books.agiliq.com/projects/django-orm-cookbook/en/latest/random.html
-    
-    from django.db.models import Max
     max_id = TweetRelation.objects.filter(relation_type=relation_type).aggregate(max_id=Max("id"))['max_id']
     while True:
-        from random import randint
         id = randint(1, max_id)
 
         tweet_relation = TweetRelation.objects \
-        .exclude(id__in=tr_ids_black_list) \
+        .exclude(id__in=tr_ids_annotated_thrice) \
+        .exclude(id__in=tr_ids_already_annotated_by_user) \
         .filter(relation_type=relation_type) \
         .filter(id=id) \
         .first()
@@ -54,9 +56,6 @@ def create_annotation(form_data: QueryDict) -> None:
         e = None
 
     # Create Annotation
-    # TODO:
-    # - Validate tuple (AnnotatorId,TweetRelationId) to be unique in order
-    #   to avoid same annotator annotate a tweet only once. Either in DB or application
     an, created = Annotation.objects.get_or_create(
         tweet_relation = tr,
         annotator=a,
@@ -74,7 +73,8 @@ def annotate(request, relation_type: str):
     if relation_type not in ['Quote','Reply']:
         raise Http404()
 
-    tweet_relation = get_random_tweet_relation(relation_type)
+    user_id = request.user.id # User logged in
+    tweet_relation = get_random_tweet_relation(relation_type, user_id)
 
     if request.method == 'POST':
         create_annotation(request.POST)
