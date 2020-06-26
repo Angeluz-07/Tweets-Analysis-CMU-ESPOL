@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.request import QueryDict
+from django.http import Http404
 
 from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
 
@@ -53,8 +54,11 @@ def create_annotation(form_data: QueryDict) -> None:
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
-def quotes_simple_example(request):
-    tweet_relation = get_random_tweet_relation("Quote")
+def annotate(request, relation_type: str):
+    if relation_type not in ['Quote','Reply']:
+        raise Http404()
+
+    tweet_relation = get_random_tweet_relation(relation_type)
 
     if request.method == 'POST':
         create_annotation(request.POST)
@@ -63,20 +67,7 @@ def quotes_simple_example(request):
         'tweet_relation_id' : tweet_relation.id,
         'tweet_target_id' : tweet_relation.tweet_target_id,
         'tweet_response_id' : tweet_relation.tweet_response_id,
+        'relation_type' : relation_type
     }
 
-    return render(request, 'analisis/home.html', context = context)
-
-def replies_simple_example(request):
-    tweet_relation = get_random_tweet_relation("Reply")
-
-    if request.method == 'POST':
-        create_annotation(request.POST)
-        
-    context = {
-        'tweet_relation_id' : tweet_relation.id,
-        'tweet_target_id' : tweet_relation.tweet_target_id,
-        'tweet_response_id' : tweet_relation.tweet_response_id,
-    }
-
-    return render(request, 'analisis/home.html', context = context)
+    return render(request, 'annotate.html', context = context)

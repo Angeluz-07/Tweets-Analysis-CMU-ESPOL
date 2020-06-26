@@ -203,7 +203,7 @@
 	<!-- Categorization Layout -->
 	<div class="row" id="workContent1">
 
-		<form action="/quotes" method="post">
+		<form action="{% url 'annotate' relation_type %}"method="post">
 		{% csrf_token %}
 
 		<!-- Tweet Relation Id-->
