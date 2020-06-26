@@ -37,7 +37,7 @@ def quotes_simple_example(request):
                 evidence = request.POST['evidence']
             )
 
-        a = Annotator.objects.get(id=request.POST['annotator_token'])
+        a = Annotator.objects.get(id=request.POST['annotator_id'])
         tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
 
         print(a)
@@ -87,7 +87,7 @@ def replies_simple_example(request):
                 evidence = request.POST['evidence']
             )
 
-        a = Annotator.objects.get(id=request.POST['annotator_token'])
+        a = Annotator.objects.get(id=request.POST['annotator_id'])
         tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
 
         print(a)

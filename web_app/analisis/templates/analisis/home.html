@@ -189,12 +189,17 @@
 	</div>
 	<!-- End instructions -->
 
+	<!--User info-->
+	<div class="row">
     {%if user.is_authenticated %} 
         <h5>Usuario :  {{ user.username }}<h5>
-		Id : {{ user.id }} 
+		<h5> Id : {{ user.id }} </h5>
+       	<p><a href="{% url 'logout' %}">logout</a></p>
     {% else %}
         <p>You are not logged in</p>
     {% endif %}
+	</div>
+
 	<!-- Categorization Layout -->
 	<div class="row" id="workContent1">
 
@@ -224,10 +229,11 @@
 			<div class="col-sm-12">
 
 				<!--Replace by id of logged annotator-->
-				<div class="form-group">
+				<!--div class="form-group">
 					<label for="annotator_token">Anotador Token</label>
 					<input type="text" class="form-control" name="annotator_token" id="annotator_token" placeholder="Ingrese su token de Anotador">
-				</div>
+				</div-->
+				<input type="hidden"  name="annotator_id" value={{ user.id }} />
 
 				<!-- Stance -->
 				<div>
