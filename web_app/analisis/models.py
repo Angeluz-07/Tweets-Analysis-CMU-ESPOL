@@ -21,7 +21,8 @@ class TweetRelation(models.Model):
         return f'TweetRelation : TweetTarget={self.tweet_target}, TweetResponse={self.tweet_response}, RelationType={self.relation_type}'
 
 class Annotator(models.Model):
-    name = models.CharField(max_length=30)
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
 
     def __str__(self):
         return f'Annotator : Name={self.name}, Id={self.id}'

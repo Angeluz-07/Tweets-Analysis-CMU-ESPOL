@@ -69,7 +69,7 @@ def quotes_simple_example(request):
         'tweet_target_id' : tweet_relation.tweet_target_id,
         'tweet_response_id' : tweet_relation.tweet_response_id,
     }
-    return render(request, 'analisis/Quotes_Simple_example.html', context = context)
+    return render(request, 'analisis/home.html', context = context)
 
 def replies_simple_example(request):
     tweet_relation = get_random_tweet_relation("Reply")
@@ -119,4 +119,4 @@ def replies_simple_example(request):
         'tweet_target_id' : tweet_relation.tweet_target_id,
         'tweet_response_id' : tweet_relation.tweet_response_id,
     }
-    return render(request, 'analisis/Quotes_Simple_example.html', context = context)
+    return render(request, 'analisis/home.html', context = context)
