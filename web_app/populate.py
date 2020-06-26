@@ -5,15 +5,32 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'analisistweets.settings')
 import django
 django.setup()
 
-from analisis.models import Stance, Confidence, Expressivity, Tweet, TweetRelation
+from analisis.models import Stance, Confidence, Expressivity, Tweet, TweetRelation, Annotator
+from django.contrib.auth.models import User
 import csv
+
+def add_annotators():
+    with open('data/Lista_anotadores.csv') as csv_file:            
+        rows = list(csv.reader(csv_file, delimiter=','))
+        for row in rows:
+            username = row[1] #same as email
+            password = f'{row[1]}123'# can be improved
+            u, _ = User.objects.get_or_create(username=username)
+            u.set_password(password)
+            u.save()
+            print(u)
+
+            #Mirror an annotator
+            a, _ = Annotator.objects.get_or_create(id=u.id, name=row[0])
+            print(a)
+
 
 def add_tweet_and_tweet_relations():
     
     # Add tweets
     with open('data/pair_database.csv') as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
-        for row in rows[1:50]:
+        for row in rows[1:500]:
             response_id = int(row[1])
             target_id = int(row[2])
             t, _ = Tweet.objects.get_or_create(id = response_id)
@@ -22,7 +39,7 @@ def add_tweet_and_tweet_relations():
             t, _ = Tweet.objects.get_or_create(id = target_id)
             print(t)
 
-        for row in rows[1:50]:
+        for row in rows[1:500]:
             response_id = int(row[1])
             target_id = int(row[2])
             interaction_type = row[3]
@@ -85,14 +102,14 @@ def add_confidences():
 
 def add_expressivities():
     expressivities = [
-        { "type" : "fake_news", "value" : True, "evidence" : True },        
-        { "type" : "fake_news", "value" : True, "evidence" : False },        
-        { "type" : "fake_news", "value" : False, "evidence" : True },        
-        { "type" : "fake_news", "value" : False, "evidence" : False },        
-        { "type" : "true_news", "value" : True, "evidence" : True },        
-        { "type" : "true_news", "value" : True, "evidence" : False },        
-        { "type" : "true_news", "value" : False, "evidence" : True },        
-        { "type" : "true_news", "value" : False, "evidence" : False },
+        { "type" : "Fake News", "value" : True, "evidence" : True },
+        { "type" : "Fake News", "value" : True, "evidence" : False },
+        { "type" : "Fake News", "value" : False, "evidence" : True },
+        { "type" : "Fake News", "value" : False, "evidence" : False },
+        { "type" : "True News", "value" : True, "evidence" : True },
+        { "type" : "True News", "value" : True, "evidence" : False },
+        { "type" : "True News", "value" : False, "evidence" : True },
+        { "type" : "True News", "value" : False, "evidence" : False },
     ]
     for expressivity in expressivities:
         e, _=Expressivity.objects.get_or_create(
@@ -108,3 +125,4 @@ if __name__ == '__main__':
     add_confidences()
     add_expressivities()    
     add_tweet_and_tweet_relations()
+    add_annotators()
