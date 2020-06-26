@@ -3,7 +3,10 @@
 <head>
 <!-- The following snippet enables the 'responsive' behavior on smaller screens -->
 <meta content="width=device-width,initial-scale=1" name="viewport" />
-<!-- Please note that Bootstrap CSS/JS and JQuery are 3rd party libraries that may update their url/code at any time. Amazon Mechanical Turk (MTurk) is including these libraries as a default option for you, but is not responsible for any changes to the external libraries --><!-- External CSS references -->
+<!-- Please note that Bootstrap CSS/JS and JQuery are 3rd party libraries that may update their url/code at any time. Amazon Mechanical Turk (MTurk) is including these libraries as a default option for you, but is not responsible for any changes to the external libraries -->
+
+<!-- External CSS references -->
+<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"-->
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet" />
 <!-- Open internal style sheet -->
 <style type="text/css">
@@ -196,86 +199,110 @@
 		<input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
 		<div class="row">		
-			<div class="col-sm-6 tweet" id="TargetTw_1">
+			<div class="col-sm-6 tweet">
 				<label>Target Tweet:</label>
 				<div class="well tweet-box">
-				<input id="tw_tar_1" type="hidden" name="tw_tar_1" value={{ tweet_target_id }} />
+				<input type="hidden" name="tw_tar_1" value={{ tweet_target_id }} />
 				</div>
 			</div>
 
 			<div class="col-sm-6 tweet" id="ResponseTw_1">
 				<label>Quote Tweet:</label>
 				<div class="well tweet-box">
-				<input id="tw_tar_1" type="hidden" name="tw_tar_1" value={{ tweet_response_id }} />
+				<input type="hidden" name="tw_tar_1" value={{ tweet_response_id }} />
 				</div>
 			</div>
 		</div>
 
 		<div class="row" id="StanceForm">
 			<div class="col-sm-12">
+
+				<!--Replace by id of logged annotator-->
 				<div class="form-group">
 					<label for="annotator_token">Anotador Token</label>
 					<input type="text" class="form-control" name="annotator_token" id="annotator_token" placeholder="Ingrese su token de Anotador">
 				</div>
 
-				<div class="form-group">
-					<!-- Question for the Worker -->
-					<label class="group-label">
-					Cual es la postura del Quote tweet al contenido del tweet original (mostrado en un recuadro abajo del tweet)?
-					</label> 
-					<!-- Input from the Worker --> 
-					<!-- <div class="btn-group" data-toggle="buttons" id="Inputs_1">
-					<label class="btn btn-default"><input id="Exp_Sup_1" name="reply_1" required="" type="radio" value="Explicit_Support" />Supports it  right</label> 
-					<label class="btn btn-default"> <input id="Exp_Den_1" name="reply_1" required="" type="radio" value="Explicit_Denial" />Denies it</label> 
-					<label class="btn btn-default"> <input id="Queries_1" name="reply_1" required="" type="radio" value="Queries" />Queries for additional information </label> 
-					<label class="btn btn-default"> <input id="Comment_1" name="reply_1" required="" type="radio" value="Comment" />Other type of comment </label>
-					</div> -->
-
-					<div class="outer_div" id="sentiment_scale">				
-						<!--This only draws a line to visually connect radio inputs.--> 
-						<div class="canvas_div"><canvas class="line" id="line_canvas"></canvas></div>
-						<div class="radio_div" id="Input_1">
-							<table>
-								<tbody>
-									<tr>
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>								
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>
-									</tr>
-									<tr>
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>								
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>
-										<td>&nbsp;</td>
-									</tr>
-									<tr>
-										<td><input id="Exp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Explicit Support" /></td>
-										<td><input id="Imp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Implicit Support"/></td>
-										<td><input id="Comment_1" name="stance" class ="StanceQ"                    required="" type="radio" value="Comment"/></td>
-										<td><input id="Query_1"   name="stance" class ="StanceQ"                    required="" type="radio" value="Queries" /></td>
-										<td><input id="Imp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Implicit Denial"/></td>
-										<td><input id="Exp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Explicit Denial"/></td>
-										<!--td><input id="Missing_1" name="stance" class ="StanceQ" required="" type="radio" value="Missing" /></td-->
-									</tr>
-									<tr>
-										<td>Suporte Explícito</td>
-										<td>Suporte Implícito</td>								
-										<td>Comentario</td>								
-										<td>Pregunta por más información</td>
-										<td>Negación Implícita</td>
-										<td>Negación Explícita</td>
-										<!--td>Respuesta/Original No disponible</td-->
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>				
+				<!-- Stance -->
+				<div>
+				<label>
+				¿Cual es la postura del Quote tweet al contenido del tweet original?
+				</label> 
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="stance" value="Explicit Support">
+					<label class="form-check-label">Soporte Explícito</label>
 				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="stance" value="Implicit Support">
+					<label class="form-check-label">Soporte Implícito</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="stance" value="Comment">
+					<label class="form-check-label">Comentario</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="stance" value="Queries">
+					<label class="form-check-label">Pregunta por más información</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="stance" value="Implicit Denial">
+					<label class="form-check-label">Negación Implícita</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="stance" value="Explicit Denial">
+					<label class="form-check-label">Negación Explícita</label>
+				</div>
+				</div>
+				
+				<!-- Input from the Worker --> 
+				<!-- <div class="btn-group" data-toggle="buttons" id="Inputs_1">
+				<label class="btn btn-default"><input id="Exp_Sup_1" name="reply_1" required="" type="radio" value="Explicit_Support" />Supports it  right</label> 
+				<label class="btn btn-default"> <input id="Exp_Den_1" name="reply_1" required="" type="radio" value="Explicit_Denial" />Denies it</label> 
+				<label class="btn btn-default"> <input id="Queries_1" name="reply_1" required="" type="radio" value="Queries" />Queries for additional information </label> 
+				<label class="btn btn-default"> <input id="Comment_1" name="reply_1" required="" type="radio" value="Comment" />Other type of comment </label>
+				</div> -->
 
-				<div class="form-group confidence" id="Input_1a">
+				<!--div class="outer_div" id="sentiment_scale">
+					<div class="canvas_div"><canvas class="line" id="line_canvas"></canvas></div>
+					<div class="radio_div" id="Input_1">
+						<table>
+							<tbody>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>								
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>								
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td><input id="Exp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Explicit Support" /></td>
+									<td><input id="Imp_Sup_1" name="stance" class ="StanceQ HasStance Positive" required="" type="radio" value="Implicit Support"/></td>
+									<td><input id="Comment_1" name="stance" class ="StanceQ"                    required="" type="radio" value="Comment"/></td>
+									<td><input id="Query_1"   name="stance" class ="StanceQ"                    required="" type="radio" value="Queries" /></td>
+									<td><input id="Imp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Implicit Denial"/></td>
+									<td><input id="Exp_Den_1" name="stance" class ="StanceQ HasStance Negative" required="" type="radio" value="Explicit Denial"/></td>
+								</tr>
+								<tr>
+									<td>Suporte Explícito</td>
+									<td>Suporte Implícito</td>								
+									<td>Comentario</td>								
+									<td>Pregunta por más información</td>
+									<td>Negación Implícita</td>
+									<td>Negación Explícita</td>
+								</tr>
+							</tbody>
+						</table>
+					</div-->
+
+
+				<!--div class="form-group confidence" id="Input_1a">
 					<label>Que tan seguro está de su respuesta? </label>
 					<table>
 						<tbody>
@@ -291,9 +318,24 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
+				</div-->
 
-				<div class="form-group" id="workContent2">	
+				<!-- Confidence -->
+				<label>¿ Que tan seguro está de su respuesta? </label>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="confidence" value="Not Sure">
+					<label class="form-check-label">Inseguro</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="confidence" value="Some Sure">
+					<label class="form-check-label">Algo Seguro</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="confidence" value="Sure">
+					<label class="form-check-label">Seguro</label>
+				</div>			
+
+				<!--div class="form-group" id="workContent2">	
 					<div class="column" id="ifStance" style="display:none">					
 						<input type="hidden"  name="expressivity_type" value="" id="expressivity_type_input" />
 						<div id="ifNegative" style="display:none">
@@ -301,7 +343,6 @@
 							<div>
 							<input type="radio"  name="expressivity_value" value="1" required> Si
 							<input type="radio"  name="expressivity_value" value="0" /> No
-							<!--input type="radio" name="fake_news" value="-1" class= "nAn" /> No aplica-->
 							</div>
 						</div>
 						<div id="ifPositive" style="display:none">
@@ -309,18 +350,48 @@
 							<div>
 							<input type="radio" name="expressivity_value" value="1" required> Si
 							<input type="radio" name="expressivity_value" value="0" /> No
-							<!--input type="radio" name="true_news" value="-1"  class= "nAn"/> No aplica -->
 							</div>
 						</div>
 						<div>		
-							<label>De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?</label>
 							<div>
 							<input type="radio" name="evidence" value="1" required> Si
 							<input type="radio" name="evidence" value="0" /> No
-							<!--input type="radio" name="evidence" value="-1" class= "nAn" /> No aplica-->
 							</div>
 						</div>
 					</div>
+				</div-->
+
+				<!-- Expressivity -->
+				<div id="expressivity_form" style="display:none">
+					
+					<!-- Expressivity Type -->
+					<input type="hidden"  name="expressivity_type" value=""/>
+					
+					<!-- Expressivity Value -->
+					<label>
+					La respuesta expresa que el original contiene información <p id="expressivity_label" style="display:inline"></p>?
+					</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="expressivity_value" value="1">
+						<label class="form-check-label">Sí</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="expressivity_value" value="0">
+						<label class="form-check-label">No</label>
+					</div>
+										
+					<!-- Expressivity Evidence -->
+					<label>
+					De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?
+					</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="evidence" value="1">
+						<label class="form-check-label">Sí</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="evidence" value="0">
+						<label class="form-check-label">No</label>
+					</div>			
 				</div>
 
 				<div class="form-group row">
@@ -328,6 +399,7 @@
 					<button type="submit" class="btn btn-primary">Enviar</button>
 					</div>
 				</div>
+
 			</div>
 		</div>
 	
@@ -363,6 +435,7 @@
     // end expand/collapse
 
     // highlight selected category
+	/*
     var inputs = $(".radio_div input:radio");
     inputs.change(function(){
       $(this).parent().siblings().removeClass("btn-success");
@@ -374,7 +447,7 @@
         $(this).parent().removeClass("btn-success");
         $(this).parent().addClass("btn-default");
       }
-    });
+    });*/
     // end highlight
 
 	function renderTweet()
@@ -396,6 +469,35 @@
 	 $(".tweet-box").each(renderTweet);
 	});
 	
+	//Logic to handle dynamic changes of the form based on the stance selected
+	$("input[name='stance']").click(function(event){
+		positiveStance = event.target.value === "Explicit Support" || event.target.value === "Implicit Support";
+		negativeStance = event.target.value === "Explicit Denial"  || event.target.value === "Implicit Denial";
+		if( positiveStance ){			
+			showExpressivityForm();
+
+			document.querySelector("p#expressivity_label").textContent = 'verdadera o correcta';
+			document.querySelector("input[name='expressivity_type']").value = 'True News';
+		} else if ( negativeStance ){			
+			showExpressivityForm();
+
+			document.querySelector("p#expressivity_label").textContent = 'falsa o incorrecta';
+			document.querySelector("input[name='expressivity_type']").value = 'Fake News';
+		} else {			
+			hideExpressivityForm();
+			document.querySelector("input[name='expressivity_type']").value = '';
+		}
+
+		function showExpressivityForm(){			
+			document.querySelector("div#expressivity_form").style.display = 'block';
+		}
+
+		function hideExpressivityForm(){			
+			document.querySelector("div#expressivity_form").style.display = 'none';
+		}
+	});
+
+	/*
 	$(".StanceQ").click(stanceCheck)
 	// NEED TO CHECK THE DEFAULT ANSWER
 	function stanceCheck() {
@@ -431,20 +533,18 @@
 
 			document.getElementById('expressivity_type_input').value = '';
 		}
-	}		
+	}*/
 	
 	});
 
+	/*
 	$('#annotator_token').change(function(){
-
 		function saveToken() {
 			var token = document.getElementById("annotator_token").value;
 			localStorage.setItem("annotator_token", token);
-		}
-		
+		}		
 		console.log("Setting annotator_token value in cache.");
 		saveToken();
-
 	})
 	
 	function restoreToken() {
@@ -456,10 +556,11 @@
 			document.getElementById("annotator_token").value = token;
 		}
 	}
-	restoreToken();
+	restoreToken();*/
 
 	
 	// This code draws a line to visually connect radio inputs. 
+	/*
 	function drawline()
 	{
 	// console.log(this)
@@ -473,7 +574,7 @@
 	ctx.lineTo(240, 28);
 	ctx.stroke();
 	}
-	$('.line').each(drawline);
+	$('.line').each(drawline);*/
 </script>
 <!-- Close internal javascript-->
 
