@@ -280,9 +280,9 @@
 					<table>
 						<tbody>
 							<tr>
-								<td><input id="not_con_1"  name="confidence" required="" type="radio" value="Not Sure" /></td>
-								<td><input id="some_con_1" name="confidence" required="" type="radio" value="Some Sure" /></td>
-								<td><input id="con_1"      name="confidence" required="" type="radio" value="Sure" /></td>
+								<td><input id="not_con_1"  name="confidence" type="radio" value="Not Sure" required></td>
+								<td><input id="some_con_1" name="confidence" type="radio" value="Some Sure" /></td>
+								<td><input id="con_1"      name="confidence" type="radio" value="Sure" /></td>
 							</tr>
 							<tr>
 								<td>Inseguro</td>
@@ -299,7 +299,7 @@
 						<div id="ifNegative" style="display:none">
 							<label>La respuesta expresa que el original contiene información falsa o incorrecta?</label>						
 							<div>
-							<input type="radio"  name="expressivity_value" value="1" /> Si
+							<input type="radio"  name="expressivity_value" value="1" required> Si
 							<input type="radio"  name="expressivity_value" value="0" /> No
 							<!--input type="radio" name="fake_news" value="-1" class= "nAn" /> No aplica-->
 							</div>
@@ -307,7 +307,7 @@
 						<div id="ifPositive" style="display:none">
 							<label>La respuesta expresa que el original contiene información verdadera o correcta?</label>
 							<div>
-							<input type="radio" name="expressivity_value" value="1" /> Si
+							<input type="radio" name="expressivity_value" value="1" required> Si
 							<input type="radio" name="expressivity_value" value="0" /> No
 							<!--input type="radio" name="true_news" value="-1"  class= "nAn"/> No aplica -->
 							</div>
@@ -315,7 +315,7 @@
 						<div>		
 							<label>De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?</label>
 							<div>
-							<input type="radio" name="evidence" value="1" /> Si
+							<input type="radio" name="evidence" value="1" required> Si
 							<input type="radio" name="evidence" value="0" /> No
 							<!--input type="radio" name="evidence" value="-1" class= "nAn" /> No aplica-->
 							</div>
@@ -382,17 +382,19 @@
 		var tw_id=$(this).find('input').val();
 		var isReply=$(this).attr('class').split(" ")[2];
 		if (isReply=="reply") {
-		tOpt={align: "center", width: "325", dnt: true, conversation: "none"};}
+			tOpt={align: "center", width: "325", dnt: true, conversation: "none"};
+		}
 		else {
-		tOpt={align: "center", width: "325", dnt: true};}
-		twttr.widgets.createTweet(
-		  tw_id,
-		  this, tOpt);
+			tOpt={align: "center", width: "325", dnt: true, conversation: "none"};
+		}
+		twttr.widgets.createTweet(tw_id, this, tOpt).then(function(el){
+			$(el.shadowRoot).find(".Tweet-card").hide();
+		});
 	}	
 		
 	twttr.ready(function (twttr) {
 	 $(".tweet-box").each(renderTweet);
-	});		 
+	});
 	
 	$(".StanceQ").click(stanceCheck)
 	// NEED TO CHECK THE DEFAULT ANSWER
