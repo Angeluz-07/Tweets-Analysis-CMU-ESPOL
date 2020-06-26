@@ -189,6 +189,12 @@
 	</div>
 	<!-- End instructions -->
 
+    {%if user.is_authenticated %} 
+        <h5>Usuario :  {{ user.username }}<h5>
+		Id : {{ user.id }} 
+    {% else %}
+        <p>You are not logged in</p>
+    {% endif %}
 	<!-- Categorization Layout -->
 	<div class="row" id="workContent1">
 
