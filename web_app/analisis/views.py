@@ -2,15 +2,15 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.request import QueryDict
 from django.http import Http404
-from django.db.models import Count, Max
-
-from random import randint
-
 from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
 
 
 def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
+    from random import randint
+    from django.db.models import Count, Max
+    from .models import TweetRelation
+
     tr_ids_annotated_thrice = [
         item.id for item in
         TweetRelation.objects \
