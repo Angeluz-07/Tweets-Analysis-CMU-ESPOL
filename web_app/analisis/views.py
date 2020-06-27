@@ -78,11 +78,13 @@ def annotate(request, relation_type: str):
 
     if request.method == 'POST':
         create_annotation(request.POST)
-        
+
     context = {
         'tweet_relation_id' : tweet_relation.id,
-        'tweet_target_id' : tweet_relation.tweet_target_id,
-        'tweet_response_id' : tweet_relation.tweet_response_id,
+        'tweet_target_id' : tweet_relation.tweet_target.id,
+        'tweet_target_text' : tweet_relation.tweet_target.text,
+        'tweet_response_id' : tweet_relation.tweet_response.id,
+        'tweet_response_text' : tweet_relation.tweet_response.text,
         'relation_type' : relation_type
     }
 

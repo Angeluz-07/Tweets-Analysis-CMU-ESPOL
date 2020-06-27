@@ -191,7 +191,7 @@
 
 	<!--User info-->
 	<div class="row">
-    {%if user.is_authenticated %} 
+    {%if user.is_authenticated %}
         <h5>Usuario :  {{ user.username }}<h5>
 		<h5> Id : {{ user.id }} </h5>
        	<p><a href="{% url 'logout' %}">logout</a></p>
@@ -203,24 +203,24 @@
 	<!-- Categorization Layout -->
 	<div class="row" id="workContent1">
 
-		<form action="{% url 'annotate' relation_type %}"method="post">
+		<form action="{% url 'annotate' relation_type %}" method="post">
 		{% csrf_token %}
 
 		<!-- Tweet Relation Id-->
 		<input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
-		<div class="row">		
-			<div class="col-sm-6 tweet">
+		<div class="row">
+			<div class="col-sm-6">
 				<label>Target Tweet:</label>
-				<div class="well tweet-box">
-				<input type="hidden" name="tw_tar_1" value={{ tweet_target_id }} />
+				<div class="well tweet-box" id="tweetTarget" data-tweet-id="{{ tweet_target_id }}" data-tweet-text="{{ tweet_target_text }}">
+				<!--input type="hidden" name="tw_tar_1"  /-->
 				</div>
 			</div>
 
-			<div class="col-sm-6 tweet" id="ResponseTw_1">
-				<label>Quote Tweet:</label>
-				<div class="well tweet-box">
-				<input type="hidden" name="tw_tar_1" value={{ tweet_response_id }} />
+			<div class="col-sm-6">
+				<label>Response Tweet:</label>
+				<div class="well tweet-box" id="tweetResponse" data-tweet-id="{{ tweet_response_id }}"  data-tweet-text="{{ tweet_response_text }}">
+				<!--input type="hidden" name="tw_tar_1"/-->
 				</div>
 			</div>
 		</div>
@@ -228,19 +228,14 @@
 		<div class="row" id="StanceForm">
 			<div class="col-sm-12">
 
-				<!--Replace by id of logged annotator-->
-				<!--div class="form-group">
-					<label for="annotator_token">Anotador Token</label>
-					<input type="text" class="form-control" name="annotator_token" id="annotator_token" placeholder="Ingrese su token de Anotador">
-				</div-->
 				<!-- Annotator -->
 				<input type="hidden"  name="annotator_id" value={{ user.id }} />
 
 				<!-- Stance -->
 				<div>
 				<label>
-				¿Cual es la postura del Quote tweet al contenido del tweet original?
-				</label> 
+				¿Cual es la postura del tweet respuesta al contenido del tweet original?
+				</label>
 				<div class="form-check form-check-inline">
 					<input class="form-check-input" type="radio" name="stance" value="Explicit Support">
 					<label class="form-check-label">Soporte Explícito</label>
@@ -267,7 +262,7 @@
 				</div>
 				</div>
 				
-				<!-- Input from the Worker --> 
+				<!-- Input from the Worker -->
 				<!-- <div class="btn-group" data-toggle="buttons" id="Inputs_1">
 				<label class="btn btn-default"><input id="Exp_Sup_1" name="reply_1" required="" type="radio" value="Explicit_Support" />Supports it  right</label> 
 				<label class="btn btn-default"> <input id="Exp_Den_1" name="reply_1" required="" type="radio" value="Explicit_Denial" />Denies it</label> 
@@ -346,7 +341,7 @@
 				<div class="form-check form-check-inline">
 					<input class="form-check-input" type="radio" name="confidence" value="Sure">
 					<label class="form-check-label">Seguro</label>
-				</div>			
+				</div>
 
 				<!--div class="form-group" id="workContent2">	
 					<div class="column" id="ifStance" style="display:none">					
@@ -376,10 +371,10 @@
 
 				<!-- Expressivity -->
 				<div id="expressivity_form" style="display:none">
-					
+
 					<!-- Expressivity Type -->
 					<input type="hidden"  name="expressivity_type" value=""/>
-					
+
 					<!-- Expressivity Value -->
 					<label>
 					La respuesta expresa que el original contiene información <p id="expressivity_label" style="display:inline"></p>?
@@ -392,7 +387,7 @@
 						<input class="form-check-input" type="radio" name="expressivity_value" value="0">
 						<label class="form-check-label">No</label>
 					</div>
-										
+
 					<!-- Expressivity Evidence -->
 					<label>
 					De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?
@@ -463,6 +458,7 @@
     });*/
     // end highlight
 
+	/*
 	function renderTweet()
 	{
 		var tw_id=$(this).find('input').val();
@@ -473,39 +469,78 @@
 		else {
 			tOpt={align: "center", width: "325", dnt: true, conversation: "none"};
 		}
-		twttr.widgets.createTweet(tw_id, this, tOpt).then(function(el){
+
+		twttr.widgets.createTweet(tw_id, this, tOpt)
+		.then(function(el){
+			// Hides tweet card inside target tweet in Quote
 			$(el.shadowRoot).find(".Tweet-card").hide();
+		})
+		.catch(function(err){
+			//Enter here when can't render the tweet because it has been erased.
+			console.log(err);
+			console.log(tw_id);
 		});
-	}	
-		
-	twttr.ready(function (twttr) {
-	 $(".tweet-box").each(renderTweet);
+	}*/
+
+	function renderTweet(divId, tweetOptions){
+		// https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/scripting-factory-functions
+
+		twttr.widgets.createTweet(
+			document.getElementById(divId).dataset.tweetId,
+			document.getElementById(divId),
+			tweetOptions
+		)
+		.then(function(el){
+			// Hides tweet card inside target tweet in Quote
+			$(el.shadowRoot).find(".Tweet-card").hide();
+		})
+		.catch(function(err){
+			//Enter here when can't render the tweet because it has been deleted
+			document.getElementById(divId).textContent = document.getElementById(divId).dataset.tweetText;
+		});
+
+	}
+
+	//Render tweets
+	twttr.ready(function() {
+		let tweetOptions = {
+			align: "center",
+			width: "325",
+			dnt: true,
+			conversation: "none"
+		}
+		renderTweet('tweetTarget', tweetOptions);
+		renderTweet('tweetResponse', tweetOptions);
 	});
+
+	/*twttr.ready(function (twttr) {		
+	 $(".tweet-box").each(renderTweet);
+	});*/
 	
 	//Logic to handle dynamic changes of the form based on the stance selected
 	$("input[name='stance']").click(function(event){
 		positiveStance = event.target.value === "Explicit Support" || event.target.value === "Implicit Support";
 		negativeStance = event.target.value === "Explicit Denial"  || event.target.value === "Implicit Denial";
-		if( positiveStance ){			
+		if( positiveStance ){
 			showExpressivityForm();
 
 			document.querySelector("p#expressivity_label").textContent = 'verdadera o correcta';
 			document.querySelector("input[name='expressivity_type']").value = 'True News';
-		} else if ( negativeStance ){			
+		} else if ( negativeStance ){
 			showExpressivityForm();
 
 			document.querySelector("p#expressivity_label").textContent = 'falsa o incorrecta';
 			document.querySelector("input[name='expressivity_type']").value = 'Fake News';
-		} else {			
+		} else {
 			hideExpressivityForm();
 			document.querySelector("input[name='expressivity_type']").value = '';
 		}
 
-		function showExpressivityForm(){			
+		function showExpressivityForm(){
 			document.querySelector("div#expressivity_form").style.display = 'block';
 		}
 
-		function hideExpressivityForm(){			
+		function hideExpressivityForm(){
 			document.querySelector("div#expressivity_form").style.display = 'none';
 		}
 	});

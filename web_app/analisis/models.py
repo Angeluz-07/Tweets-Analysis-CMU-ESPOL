@@ -4,7 +4,6 @@ from django.db import models
 
 class Tweet(models.Model):
     id = models.IntegerField(primary_key=True)
-    url = models.CharField(max_length=100) # TODO: Remove this field as only ID of tweet is needed to render it
     text = models.TextField(max_length=300)
     deleted = models.BooleanField(default=False)
     
