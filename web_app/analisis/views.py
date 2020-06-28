@@ -7,8 +7,8 @@ from .models import Stance, Confidence, Expressivity, Annotator, Annotation, Twe
 
 def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
-    from random import randint
-    from django.db.models import Count, Max
+    from random import choice
+    from django.db.models import Count
     from .models import TweetRelation
 
     tr_ids_annotated_thrice = [
@@ -24,20 +24,14 @@ def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRel
         .filter(annotation__annotator_id=annotator_id)
     ]
 
-    # https://books.agiliq.com/projects/django-orm-cookbook/en/latest/random.html
-    max_id = TweetRelation.objects.filter(relation_type=relation_type).aggregate(max_id=Max("id"))['max_id']
-    while True:
-        id = randint(1, max_id)
+    trs = TweetRelation.objects \
+    .filter(relation_type=relation_type) \
+    .exclude(id__in=tr_ids_annotated_thrice) \
+    .exclude(id__in=tr_ids_already_annotated_by_user) \
+    .all()
 
-        tweet_relation = TweetRelation.objects \
-        .exclude(id__in=tr_ids_annotated_thrice) \
-        .exclude(id__in=tr_ids_already_annotated_by_user) \
-        .filter(relation_type=relation_type) \
-        .filter(id=id) \
-        .first()
-
-        if tweet_relation:
-            return tweet_relation
+    assert len(trs) > 0 #If not, all tweets have been annotated or DB is empty
+    return choice(trs)
 
 def create_annotation(form_data: QueryDict) -> None:
     s = Stance.objects.get(name=form_data['stance'])

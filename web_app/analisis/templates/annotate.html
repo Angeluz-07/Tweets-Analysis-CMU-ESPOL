@@ -223,7 +223,7 @@
 				¿Cual es la postura del tweet respuesta al contenido del tweet original?
 				</label>
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Explicit Support">
+					<input class="form-check-input" type="radio" name="stance" value="Explicit Support" required>
 					<label class="form-check-label">Soporte Explícito</label>
 				</div>
 				<div class="form-check form-check-inline">
@@ -317,7 +317,7 @@
 				<!-- Confidence -->
 				<label>¿ Que tan seguro está de su respuesta? </label>
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="confidence" value="Not Sure">
+					<input class="form-check-input" type="radio" name="confidence" value="Not Sure" required>
 					<label class="form-check-label">Inseguro</label>
 				</div>
 				<div class="form-check form-check-inline">
@@ -509,16 +509,20 @@
 		negativeStance = event.target.value === "Explicit Denial"  || event.target.value === "Implicit Denial";
 		if( positiveStance ){
 			showExpressivityForm();
+			makeExpressivityFormRequired();
 
 			document.querySelector("p#expressivity_label").textContent = 'verdadera o correcta';
 			document.querySelector("input[name='expressivity_type']").value = 'True News';
 		} else if ( negativeStance ){
-			showExpressivityForm();
+			showExpressivityForm();			
+			makeExpressivityFormRequired();
 
 			document.querySelector("p#expressivity_label").textContent = 'falsa o incorrecta';
 			document.querySelector("input[name='expressivity_type']").value = 'Fake News';
 		} else {
 			hideExpressivityForm();
+			makeExpressivityFormNonRequired();
+
 			document.querySelector("input[name='expressivity_type']").value = '';
 		}
 
@@ -529,6 +533,17 @@
 		function hideExpressivityForm(){
 			document.querySelector("div#expressivity_form").style.display = 'none';
 		}
+
+		function makeExpressivityFormRequired(){
+			document.querySelector("input[name='expressivity_value']").required = true;			
+			document.querySelector("input[name='evidence']").required = true;
+		}
+
+		function makeExpressivityFormNonRequired(){
+			document.querySelector("input[name='expressivity_value']").required = false;			
+			document.querySelector("input[name='evidence']").required = false;
+		}
+
 	});
 
 	/*
