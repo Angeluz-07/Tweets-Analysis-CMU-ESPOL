@@ -6,7 +6,6 @@
 <!-- Please note that Bootstrap CSS/JS and JQuery are 3rd party libraries that may update their url/code at any time. Amazon Mechanical Turk (MTurk) is including these libraries as a default option for you, but is not responsible for any changes to the external libraries -->
 
 <!-- External CSS references -->
-<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"-->
 <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet" />
 <!-- Open internal style sheet -->
 <style type="text/css">
@@ -27,23 +26,15 @@
 	padding: 0 0 5px 0;
 	}
 
-	.content{
-	margin-bottom: 2px;
-	}
-
-	.tweet-box.error{
-	border: 1px solid red;
-	}
-
-	.bold{
-	font-weight:bold;
+	.form-check-label{
+		font-weight: normal
 	}
 
 	.container {
 	margin-top: 2px;
 	}
 
-
+	/*
 	.outer_div {
 	position: relative;
 	min-height: 150px;
@@ -100,7 +91,7 @@
 	width: 20%;
 	height: 25px;
 	vertical-align: middle;
-	}
+	}*/
 
 </style>
 <!-- Close internal style sheet -->
@@ -130,7 +121,13 @@
 
 <body>
 <section class="container" id="LabelReplies">
+	<ul class="nav nav-pills">
+		<li role="presentation"><a href="{% url 'annotate' 'Quote' %}">Quotes</a></li>
+		<li role="presentation"><a href="{% url 'annotate' 'Reply' %}">Reply</a></li>
 
+		<p class="navbar-text navbar-right"><a href="{% url 'logout' %}">Log Out</a></p>
+		<p class="navbar-text navbar-right">Logged in as {{ user.username }}</p>
+	</ul>
 	<!-- Instructions (collapsible) -->
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
@@ -188,17 +185,6 @@
 		</div>
 	</div>
 	<!-- End instructions -->
-
-	<!--User info-->
-	<div class="row">
-    {%if user.is_authenticated %}
-        <h5>Usuario :  {{ user.username }}<h5>
-		<h5> Id : {{ user.id }} </h5>
-       	<p><a href="{% url 'logout' %}">logout</a></p>
-    {% else %}
-        <p>You are not logged in</p>
-    {% endif %}
-	</div>
 
 	<!-- Categorization Layout -->
 	<div class="row" id="workContent1">

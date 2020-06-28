@@ -72,6 +72,8 @@ def index(request):
 def annotate(request, relation_type: str):
     if relation_type not in ['Quote','Reply']:
         raise Http404()
+    if not request.user.is_authenticated:
+        return HttpResponse("User is not authenticated. Log in <a href='/login'>here</a>")
 
     user_id = request.user.id # User logged in
     tweet_relation = get_random_tweet_relation(relation_type, user_id)
