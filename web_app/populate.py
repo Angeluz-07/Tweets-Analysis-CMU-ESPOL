@@ -10,19 +10,29 @@ from django.contrib.auth.models import User
 import csv
 import json
 
+def random_password(length=10):
+    from string import digits, ascii_letters
+    from random import choices, shuffle
+    chars = list(f"{digits}{ascii_letters}!#$%&'*+-<=>?@^_|~")
+    shuffle(chars)
+    result = choices(chars, k=length)
+    return ''.join(result)
+
 def add_annotators():
     with open('data/Lista_anotadores.csv') as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
         for row in rows:
             username = row[1] #same as email
-            password = f'{row[1]}123'# can be improved
+            password = row[2]
             u, _ = User.objects.get_or_create(username=username)
             u.set_password(password)
             u.save()
             print(u)
 
-            #Mirror an annotator
-            a, _ = Annotator.objects.get_or_create(id=u.id, name=row[0])
+            #Mirror an annotator with same id as user
+            name = row[0]
+            name = name.strip('"').replace(',',' ')
+            a, _ = Annotator.objects.get_or_create(id=u.id, name=name)
             print(a)
 
 
@@ -39,7 +49,7 @@ def add_tweet_and_tweet_relations():
     with open('data/pair_database.csv') as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
 
-        #for row in rows[1:500]: #<-- a little limit for test adn debugging
+        #for row in rows[1:500]: #<-- a little limit for test and debugging
         for row in rows[1:]:
             response_id : str = row[1]
             target_id : str = row[2]
@@ -139,6 +149,6 @@ if __name__ == '__main__':
     print("Starting population script...")
     add_stances()
     add_confidences()
-    add_expressivities()    
+    add_expressivities()
     add_tweet_and_tweet_relations()
     add_annotators()
