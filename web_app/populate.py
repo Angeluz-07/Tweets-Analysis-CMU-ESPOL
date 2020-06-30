@@ -8,6 +8,7 @@ django.setup()
 from analisis.models import Stance, Confidence, Expressivity, Tweet, TweetRelation, Annotator
 from django.contrib.auth.models import User
 import csv
+import json
 
 def add_annotators():
     with open('data/Lista_anotadores.csv') as csv_file:            
@@ -26,29 +27,44 @@ def add_annotators():
 
 
 def add_tweet_and_tweet_relations():
-    
+    # TODO: Update this code with the final format of data to feed DB.
+    # Load tweet_texts in memory
+    data = []
+    with open('data/tweet_database.json') as f:
+        for line in f:
+            data.append(json.loads(line))
+
+    tweet_text_by_tweet_id = { item['tweet_id'] : item['tweet_text'] for item in data }
     # Add tweets
     with open('data/pair_database.csv') as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
-        for row in rows[1:500]:
-            response_id = int(row[1])
-            target_id = int(row[2])
-            t, _ = Tweet.objects.get_or_create(id = response_id)
-            print(t)
 
-            t, _ = Tweet.objects.get_or_create(id = target_id)
-            print(t)
+        #for row in rows[1:500]: #<-- a little limit for test adn debugging
+        for row in rows[1:]:
+            response_id : str = row[1]
+            target_id : str = row[2]
 
-        for row in rows[1:500]:
-            response_id = int(row[1])
-            target_id = int(row[2])
-            interaction_type = row[3]
-            tr, _ = TweetRelation.objects.get_or_create(
-                tweet_target_id = target_id,
-                tweet_response_id = response_id,
-                relation_type = interaction_type
-            )
-            print(tr)
+            if response_id in tweet_text_by_tweet_id \
+               and target_id in tweet_text_by_tweet_id:
+                t, _ = Tweet.objects.get_or_create(
+                    id = int(response_id),
+                    text = tweet_text_by_tweet_id[response_id]
+                )
+                print(t)
+
+                t, _ = Tweet.objects.get_or_create(
+                    id = int(target_id),
+                    text = tweet_text_by_tweet_id[target_id]
+                )
+                print(t)
+
+                interaction_type = row[3]
+                tr, _ = TweetRelation.objects.get_or_create(
+                    tweet_target_id = int(target_id),
+                    tweet_response_id = int(response_id),
+                    relation_type = interaction_type
+                )
+                print(tr)
 
 def add_stances():
     stances = [
