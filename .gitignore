@@ -84,6 +84,7 @@ target/
 *.pot
 *.pyc
 __pycache__/
+static/
 local_settings.py
 
 .vscode/*
