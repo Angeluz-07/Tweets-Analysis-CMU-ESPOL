@@ -19,7 +19,7 @@ def random_password(length=10):
     return ''.join(result)
 
 def add_annotators():
-    with open('data/Lista_anotadores.csv') as csv_file:            
+    with open('data/Lista_anotadores.csv', encoding="ISO-8859-1") as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
         for row in rows:
             username = row[1] #same as email
@@ -58,13 +58,13 @@ def add_tweet_and_tweet_relations():
                and target_id in tweet_text_by_tweet_id:
                 t, _ = Tweet.objects.get_or_create(
                     id = int(response_id),
-                    text = tweet_text_by_tweet_id[response_id]
+                    text = tweet_text_by_tweet_id[response_id].encode('unicode_escape')
                 )
                 print(t)
 
                 t, _ = Tweet.objects.get_or_create(
                     id = int(target_id),
-                    text = tweet_text_by_tweet_id[target_id]
+                    text = tweet_text_by_tweet_id[target_id].encode('unicode_escape')
                 )
                 print(t)
 

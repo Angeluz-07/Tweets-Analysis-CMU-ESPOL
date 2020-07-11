@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Tweet(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.BigIntegerField(primary_key=True)
     text = models.TextField(max_length=300)
     deleted = models.BooleanField(default=False)
     
