@@ -1,5 +1,8 @@
+# common
 Django==2.2.4
 django-environ==0.4.5
+
+# production
 mysqlclient==2.0.0
 pkg-resources==0.0.0
 pytz==2020.1
