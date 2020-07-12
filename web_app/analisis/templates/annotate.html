@@ -34,6 +34,13 @@
 	margin-top: 2px;
 	}
 
+	table {
+		text-align: center;		
+	}
+
+	td {
+		padding: 5px 7px;
+	}
 	/*
 	.outer_div {
 	position: relative;
@@ -222,30 +229,38 @@
 				<label>
 				¿Cual es la postura del tweet respuesta al contenido del tweet original?
 				</label>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Explicit Support" required>
-					<label class="form-check-label">Soporte Explícito</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Implicit Support">
-					<label class="form-check-label">Soporte Implícito</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Comment">
-					<label class="form-check-label">Comentario</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Queries">
-					<label class="form-check-label">Pregunta por más información</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Implicit Denial">
-					<label class="form-check-label">Negación Implícita</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="stance" value="Explicit Denial">
-					<label class="form-check-label">Negación Explícita</label>
-				</div>
+				<table>
+					<tbody>
+						<tr>
+							<td>
+							<input class="form-check-input" type="radio" name="stance" value="Explicit Support" required>
+							</td>
+							<td>							
+							<input class="form-check-input" type="radio" name="stance" value="Implicit Support">
+							</td>
+							<td>
+							<input class="form-check-input" type="radio" name="stance" value="Comment">
+							</td>
+							<td>
+							<input class="form-check-input" type="radio" name="stance" value="Queries">
+							</td>
+							<td>
+							<input class="form-check-input" type="radio" name="stance" value="Implicit Denial">
+							</td>
+							<td>							
+							<input class="form-check-input" type="radio" name="stance" value="Explicit Denial">
+							</td>
+						</tr>
+						<tr>
+							<td><label class="form-check-label">Soporte Explícito</label></td>
+							<td><label class="form-check-label">Soporte Implícito</label></td>
+							<td><label class="form-check-label">Comentario</label></td>
+							<td><label class="form-check-label">Pregunta por más información</label></td>
+							<td><label class="form-check-label">Negación Implícita</label></td>
+							<td><label class="form-check-label">Negación Explícita</label></td>
+						</tr>
+					</tbody>
+				</table>
 				</div>
 				
 				<!-- Input from the Worker -->
@@ -313,21 +328,30 @@
 						</tbody>
 					</table>
 				</div-->
+				
 
 				<!-- Confidence -->
 				<label>¿ Que tan seguro está de su respuesta? </label>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="confidence" value="Not Sure" required>
-					<label class="form-check-label">Inseguro</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="confidence" value="Some Sure">
-					<label class="form-check-label">Algo Seguro</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" name="confidence" value="Sure">
-					<label class="form-check-label">Seguro</label>
-				</div>
+				<table>
+					<tbody>
+						<tr>
+							<td>							
+							<input class="form-check-input" type="radio" name="confidence" value="Not Sure" required>					
+							</td>
+							<td>
+							<input class="form-check-input" type="radio" name="confidence" value="Some Sure">
+							</td>
+							<td>
+							<input class="form-check-input" type="radio" name="confidence" value="Sure">
+							</td>
+						</tr>
+						<tr>
+							<td><label class="form-check-label">Inseguro</label></td>
+							<td><label class="form-check-label">Algo Seguro</label></td>
+							<td><label class="form-check-label">Seguro</label></td>
+						</tr>
+					</tbody>
+				</table>				
 
 				<!--div class="form-group" id="workContent2">	
 					<div class="column" id="ifStance" style="display:none">					
@@ -365,27 +389,43 @@
 					<label>
 					La respuesta expresa que el original contiene información <p id="expressivity_label" style="display:inline"></p>?
 					</label>
-					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="expressivity_value" value="1">
-						<label class="form-check-label">Sí</label>
-					</div>
-					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="expressivity_value" value="0">
-						<label class="form-check-label">No</label>
-					</div>
+					<table>
+						<tbody>
+							<tr>
+								<td>
+								<input class="form-check-input" type="radio" name="expressivity_value" value="1">
+								</td>
+								<td>
+								<input class="form-check-input" type="radio" name="expressivity_value" value="0">
+								</td>
+							</tr>
+							<tr>
+								<td><label class="form-check-label">Sí</label></td>
+								<td><label class="form-check-label">No</label></td>
+							</tr>
+						</tbody>
+					</table>
 
 					<!-- Expressivity Evidence -->
 					<label>
 					De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?
-					</label>
-					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="evidence" value="1">
-						<label class="form-check-label">Sí</label>
-					</div>
-					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="radio" name="evidence" value="0">
-						<label class="form-check-label">No</label>
-					</div>			
+					</label>					
+					<table>
+						<tbody>
+							<tr>
+								<td>
+								<input class="form-check-input" type="radio" name="evidence" value="1">
+								</td>
+								<td>
+								<input class="form-check-input" type="radio" name="evidence" value="0">
+								</td>
+							</tr>
+							<tr>
+								<td><label class="form-check-label">Sí</label></td>
+								<td><label class="form-check-label">No</label></td>
+							</tr>
+						</tbody>
+					</table>		
 				</div>
 
 				<div class="form-group row">
