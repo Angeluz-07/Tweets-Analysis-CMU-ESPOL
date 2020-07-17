@@ -107,6 +107,9 @@ db.sqlite3
 # virtual environments
 .venv
 
+# environments variables
+.env.bat
+
 # vs code
 .vscode
 .vs
