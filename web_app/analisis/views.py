@@ -33,6 +33,10 @@ def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRel
     assert len(trs) > 0 #If not, all tweets have been annotated or DB is empty
     return choice(trs)
 
+def get_annotation_count(annotator_id: int) -> int:
+    from .models import TweetRelation
+    return len(TweetRelation.objects.filter(annotation__annotator_id=annotator_id))
+
 def create_annotation(form_data: QueryDict) -> None:  
     import json
 
@@ -77,6 +81,12 @@ def annotate(request, relation_type: str):
     section1 = Question.objects.filter(section="Identificación del Evento")
     section2 = Question.objects.filter(section="Postura con respecto a las protestas 1")
     section3 = Question.objects.filter(section="Postura con respecto a las protestas 2")
+    print(type(tweet_relation.tweet_target.text))
+    print(type(tweet_relation.tweet_response.text))
+    print(tweet_relation.tweet_target.text)
+    print(tweet_relation.tweet_response.text)
+    print(tweet_relation.tweet_target.text.encode().decode('unicode_escape'))
+    print(tweet_relation.tweet_response.text.encode().decode('unicode_escape'))
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_target_id' : tweet_relation.tweet_target.id,
@@ -84,6 +94,7 @@ def annotate(request, relation_type: str):
         'tweet_response_id' : tweet_relation.tweet_response.id,
         'tweet_response_text' : tweet_relation.tweet_response.text,
         'relation_type' : relation_type,
+        'annotation_count' : get_annotation_count(user_id),
         'section1' : section1,
         'section2' : section2,
         'section3' : section3

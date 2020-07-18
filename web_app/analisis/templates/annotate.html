@@ -131,7 +131,8 @@
 	<ul class="nav nav-pills">
 		<li role="presentation"><a href="{% url 'annotate' 'Quote' %}">Quotes</a></li>
 		<li role="presentation"><a href="{% url 'annotate' 'Reply' %}">Reply</a></li>
-
+		
+		<p class="navbar-text navbar-left">Anotaciones realizadas {{ annotation_count }}</p>
 		<p class="navbar-text navbar-right"><a href="{% url 'logout' %}">Log Out</a></p>
 		<p class="navbar-text navbar-right">Logged in as {{ user.username }}</p>
 	</ul>
