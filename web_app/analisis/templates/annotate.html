@@ -224,8 +224,84 @@
 				<!-- Annotator -->
 				<input type="hidden"  name="annotator_id" value={{ user.id }} />
 
+				
+				{% for q in section1 %}
+				<label> {{ q.value }} </label>
+				<table>
+				<tbody>
+					</tr>
+					{% for o in q.options_list %}						
+						<!-- TODO: Set unique name identifier for the question -->
+						<td>
+						<input 
+						class="form-check-input"
+						type={% if q.type == 'Choice' %} "radio" {% else %} "checkbox" {% endif %}						
+						name="{{ q.id }}" value="{{ o }}">
+						</td>
+					{% endfor %}
+					</tr>
+					<!-- Iterate twice only to meet the UI style-->
+					<tr>
+					{% for o in q.options_list %}					
+						<td><label class="form-check-label">{{ o }}</label></td>					
+					{% endfor %}
+					</tr>
+				</tbody>
+				</table>
+				{% endfor %}
+
+				{% for q in section2 %}
+				<label> {{ q.value }} </label>
+				<table>
+				<tbody>
+					</tr>
+					{% for o in q.options_list %}						
+						<!-- TODO: Set unique name identifier for the question -->
+						<td>
+						<input 
+						class="form-check-input"
+						type={% if q.type == 'Choice' %} "radio" {% else %} "checkbox" {% endif %}						
+						name="{{ q.id }}" value="{{ o }}">
+						</td>
+					{% endfor %}
+					</tr>
+					<!-- Iterate twice only to meet the UI style-->
+					<tr>
+					{% for o in q.options_list %}					
+						<td><label class="form-check-label">{{ o }}</label></td>					
+					{% endfor %}
+					</tr>
+				</tbody>
+				</table>
+				{% endfor %}
+
+				{% for q in section3 %}
+				<label> {{ q.value }} </label>
+				<table>
+				<tbody>
+					</tr>
+					{% for o in q.options_list %}						
+						<!-- TODO: Set unique name identifier for the question -->
+						<td>
+						<input 
+						class="form-check-input"
+						type={% if q.type == 'Choice' %} "radio" {% else %} "checkbox" {% endif %}						
+						name="{{ q.id }}" value="{{ o }}" >
+						</td>
+					{% endfor %}
+					</tr>
+					<!-- Iterate twice only to meet the UI style-->
+					<tr>
+					{% for o in q.options_list %}					
+						<td><label class="form-check-label">{{ o }}</label></td>					
+					{% endfor %}
+					</tr>
+				</tbody>
+				</table>
+				{% endfor %}
+
 				<!-- Stance -->
-				<div>
+				<!--div>
 				<label>
 				¿Cual es la postura del tweet respuesta al contenido del tweet original?
 				</label>
@@ -261,7 +337,7 @@
 						</tr>
 					</tbody>
 				</table>
-				</div>
+				</div-->
 				
 				<!-- Input from the Worker -->
 				<!-- <div class="btn-group" data-toggle="buttons" id="Inputs_1">
@@ -331,7 +407,7 @@
 				
 
 				<!-- Confidence -->
-				<label>¿ Que tan seguro está de su respuesta? </label>
+				<!--label>¿ Que tan seguro está de su respuesta? </label>
 				<table>
 					<tbody>
 						<tr>
@@ -351,7 +427,7 @@
 							<td><label class="form-check-label">Seguro</label></td>
 						</tr>
 					</tbody>
-				</table>				
+				</table-->				
 
 				<!--div class="form-group" id="workContent2">	
 					<div class="column" id="ifStance" style="display:none">					
@@ -380,13 +456,13 @@
 				</div-->
 
 				<!-- Expressivity -->
-				<div id="expressivity_form" style="display:none">
+				<!--div id="expressivity_form" style="display:none"-->
 
 					<!-- Expressivity Type -->
-					<input type="hidden"  name="expressivity_type" value=""/>
+					<!--input type="hidden"  name="expressivity_type" value=""/-->
 
 					<!-- Expressivity Value -->
-					<label>
+					<!--label>
 					La respuesta expresa que el original contiene información <p id="expressivity_label" style="display:inline"></p>?
 					</label>
 					<table>
@@ -404,10 +480,10 @@
 								<td><label class="form-check-label">No</label></td>
 							</tr>
 						</tbody>
-					</table>
+					</table-->
 
 					<!-- Expressivity Evidence -->
-					<label>
+					<!--label>
 					De escoger afirmativo en la previa pregunta, la respuesta presenta evidencia para soportar esto?
 					</label>					
 					<table>
@@ -426,7 +502,7 @@
 							</tr>
 						</tbody>
 					</table>		
-				</div>
+				</div-->
 
 				<div class="form-group row">
 					<div class="col-sm-10 text-center">

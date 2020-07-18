@@ -2,8 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.request import QueryDict
 from django.http import Http404
-#from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
-from .models import Annotator, Annotation, TweetRelation, Tweet
+from .models import *
 
 
 def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRelation:
@@ -34,34 +33,29 @@ def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRel
     assert len(trs) > 0 #If not, all tweets have been annotated or DB is empty
     return choice(trs)
 
-def create_annotation(form_data: QueryDict) -> None:
-    """
-    s = Stance.objects.get(name=form_data['stance'])
-    c = Confidence.objects.get(name=form_data['confidence'])
+def create_annotation(form_data: QueryDict) -> None:  
+    import json
+
     a = Annotator.objects.get(id=form_data['annotator_id'])
     tr = TweetRelation.objects.get(id=form_data['tweet_relation_id'])
 
-    there_is_expressivity = form_data['expressivity_type'] != ''
-    if there_is_expressivity:
-        e = Expressivity.objects.get(
-            type=form_data['expressivity_type'],
-            value=form_data['expressivity_value'],
-            evidence=form_data['evidence']
-        )
-    else:
-        e = None
-
-    # Create Annotation
-    an, created = Annotation.objects.get_or_create(
-        tweet_relation = tr,
-        annotator=a,
-        stance=s,
-        confidence=c,
-        expressivity=e
+    ann = Annotation.objects.create(
+        tweet_relation=tr, 
+        annotator=a
     )
-    """
-    return None
-    #print(f'{an}, created? = {created}')
+
+    questions = {k: v for k, v in form_data.items() if k.isnumeric()}   
+    for k, v in questions.items():
+        q = Question.objects.get(id=k)
+        if q.type == "Checkbox":
+            value = json.dumps(form_data.getlist(k), ensure_ascii=False)
+        else:
+            value = json.dumps(v, ensure_ascii=False)
+        answer = Answer.objects.create(
+            value=value,
+            annotation_id=ann.id,
+            question_id=q.id,            
+        )
 
 
 def index(request):
@@ -79,13 +73,20 @@ def annotate(request, relation_type: str):
     if request.method == 'POST':
         create_annotation(request.POST)
 
+    # TODO : parameterize
+    section1 = Question.objects.filter(section="Identificación del Evento")
+    section2 = Question.objects.filter(section="Postura con respecto a las protestas 1")
+    section3 = Question.objects.filter(section="Postura con respecto a las protestas 2")
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_target_id' : tweet_relation.tweet_target.id,
         'tweet_target_text' : tweet_relation.tweet_target.text,
         'tweet_response_id' : tweet_relation.tweet_response.id,
         'tweet_response_text' : tweet_relation.tweet_response.text,
-        'relation_type' : relation_type
+        'relation_type' : relation_type,
+        'section1' : section1,
+        'section2' : section2,
+        'section3' : section3
     }
 
     return render(request, 'annotate.html', context = context)
