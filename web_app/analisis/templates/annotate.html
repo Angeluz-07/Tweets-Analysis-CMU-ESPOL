@@ -129,8 +129,6 @@
 <body>
 <section class="container" id="LabelReplies">
 	<ul class="nav nav-pills">
-		<li role="presentation"><a href="{% url 'annotate' 'Quote' %}">Quotes</a></li>
-		<li role="presentation"><a href="{% url 'annotate' 'Reply' %}">Reply</a></li>
 		
 		<p class="navbar-text navbar-left">Anotaciones realizadas {{ annotation_count }}</p>
 		<p class="navbar-text navbar-right"><a href="{% url 'logout' %}">Log Out</a></p>
@@ -197,7 +195,7 @@
 	<!-- Categorization Layout -->
 	<div class="row" id="workContent1">
 
-		<form action="{% url 'annotate' relation_type %}" method="post">
+		<form action="{% url 'annotate' %}" method="post">
 		{% csrf_token %}
 
 		<!-- Tweet Relation Id-->

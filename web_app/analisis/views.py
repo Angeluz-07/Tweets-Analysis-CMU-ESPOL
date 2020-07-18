@@ -5,11 +5,13 @@ from django.http import Http404
 from .models import *
 
 
-def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRelation:
+def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
     from random import choice
     from django.db.models import Count
     from .models import TweetRelation
+
+    relation_type = choice(['Quote','Reply'])
 
     tr_ids_annotated_thrice = [
         item.id for item in
@@ -65,14 +67,12 @@ def create_annotation(form_data: QueryDict) -> None:
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
-def annotate(request, relation_type: str):
-    if relation_type not in ['Quote','Reply']:
-        raise Http404()
+def annotate(request):
     if not request.user.is_authenticated:
         return HttpResponse("User is not authenticated. Log in <a href='/login'>here</a>")
 
     user_id = request.user.id # User logged in
-    tweet_relation = get_random_tweet_relation(relation_type, user_id)
+    tweet_relation = get_random_tweet_relation(user_id)
 
     if request.method == 'POST':
         create_annotation(request.POST)
@@ -81,19 +81,13 @@ def annotate(request, relation_type: str):
     section1 = Question.objects.filter(section="Identificación del Evento")
     section2 = Question.objects.filter(section="Postura con respecto a las protestas 1")
     section3 = Question.objects.filter(section="Postura con respecto a las protestas 2")
-    print(type(tweet_relation.tweet_target.text))
-    print(type(tweet_relation.tweet_response.text))
-    print(tweet_relation.tweet_target.text)
-    print(tweet_relation.tweet_response.text)
-    print(tweet_relation.tweet_target.text.encode().decode('unicode_escape'))
-    print(tweet_relation.tweet_response.text.encode().decode('unicode_escape'))
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_target_id' : tweet_relation.tweet_target.id,
         'tweet_target_text' : tweet_relation.tweet_target.text,
         'tweet_response_id' : tweet_relation.tweet_response.id,
         'tweet_response_text' : tweet_relation.tweet_response.text,
-        'relation_type' : relation_type,
+        'relation_type' : tweet_relation.relation_type,
         'annotation_count' : get_annotation_count(user_id),
         'section1' : section1,
         'section2' : section2,
