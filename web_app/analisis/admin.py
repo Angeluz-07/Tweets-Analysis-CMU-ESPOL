@@ -5,9 +5,11 @@ models = [
     Tweet,
     TweetRelation,
     Annotator,
-    Stance,
-    Confidence,
-    Expressivity,
+    #Stance,
+    #Confidence,
+    #Expressivity,
+    Question,
+    Answer,
     Annotation,
 ]
 for model in models:

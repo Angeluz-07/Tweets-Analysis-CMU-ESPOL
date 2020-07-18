@@ -25,7 +25,7 @@ class Annotator(models.Model):
 
     def __str__(self):
         return f'Annotator : Name={self.name}, Id={self.id}'
-
+"""
 class Stance(models.Model):
     name = models.CharField(max_length=30)
     description = models.TextField(max_length=300)
@@ -47,14 +47,29 @@ class Expressivity(models.Model):
 
     def __str__(self):
         return f'Expressivity : Type={self.type},Value={self.value},Evidence={self.evidence}'
-    
+"""
+
 class Annotation(models.Model):
     tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.SET_NULL,null=True)
-    annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True)
-    stance=models.ForeignKey(Stance,on_delete=models.SET_NULL,null=True)
-    confidence=models.ForeignKey(Confidence,on_delete=models.SET_NULL,null=True)
-    expressivity=models.ForeignKey(Expressivity,on_delete=models.SET_NULL,null=True, blank=True)
+    annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True)    
+    #stance=models.ForeignKey(Stance,on_delete=models.SET_NULL,null=True)
+    #confidence=models.ForeignKey(Confidence,on_delete=models.SET_NULL,null=True)
+    #expressivity=models.ForeignKey(Expressivity,on_delete=models.SET_NULL,null=True, blank=True)
 
     def __str__(self):
         return f'Annotation : Annotator={self.annotator}'
     
+class Question(models.Model):
+    TYPE = [("Checkbox","Checkbox"),("Choice","Choice")]
+    section = models.TextField(default=None)
+    value = models.TextField()
+    type = models.CharField(max_length=50, choices=TYPE)
+    options =  models.TextField(null=True) # json string
+
+    def __str__(self):
+        return f'Question : value={self.value}'
+
+class Answer(models.Model):   
+    question = models.ForeignKey(Question,on_delete=models.SET_NULL,null=True)
+    annotation = models.ForeignKey(Annotation,on_delete=models.SET_NULL,null=True)
+    value = models.TextField() # json string

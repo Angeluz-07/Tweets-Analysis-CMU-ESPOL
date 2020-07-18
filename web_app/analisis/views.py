@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http.request import QueryDict
 from django.http import Http404
-from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
+#from .models import Stance, Confidence, Expressivity, Annotator, Annotation, TweetRelation, Tweet
+from .models import Annotator, Annotation, TweetRelation, Tweet
 
 
 def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRelation:
@@ -34,6 +35,7 @@ def get_random_tweet_relation(relation_type: str, annotator_id: int) -> TweetRel
     return choice(trs)
 
 def create_annotation(form_data: QueryDict) -> None:
+    """
     s = Stance.objects.get(name=form_data['stance'])
     c = Confidence.objects.get(name=form_data['confidence'])
     a = Annotator.objects.get(id=form_data['annotator_id'])
@@ -57,7 +59,9 @@ def create_annotation(form_data: QueryDict) -> None:
         confidence=c,
         expressivity=e
     )
-    print(f'{an}, created? = {created}')
+    """
+    return None
+    #print(f'{an}, created? = {created}')
 
 
 def index(request):
