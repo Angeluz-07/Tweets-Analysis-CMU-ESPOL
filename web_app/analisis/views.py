@@ -4,6 +4,14 @@ from django.http.request import QueryDict
 from django.http import Http404
 from .models import *
 
+from rest_framework import viewsets
+from .serializers import *
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    http_method_names = ['get']
 
 def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
