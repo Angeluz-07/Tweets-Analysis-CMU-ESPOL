@@ -1,139 +1,16 @@
-<!-- HIT template: SentimentTweet-v3.0 -->
-<html>
-<head>
-<!-- The following snippet enables the 'responsive' behavior on smaller screens -->
-<meta content="width=device-width,initial-scale=1" name="viewport" />
-<!-- Please note that Bootstrap CSS/JS and JQuery are 3rd party libraries that may update their url/code at any time. Amazon Mechanical Turk (MTurk) is including these libraries as a default option for you, but is not responsible for any changes to the external libraries -->
 
-<!-- External CSS references -->
-<link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet" />
-<!-- Open internal style sheet -->
-<style type="text/css">
-	#collapseTrigger{
-	color:#fff;
-	display: block;
-	text-decoration: none;
-	}
-	#submitButton{
-	white-space: normal;
-	}
-	#instructionBody table{
-	font-size: 14px;
-	margin-top: 10px;
-	}
-	#instructionBody table caption{
-	text-align: left;
-	padding: 0 0 5px 0;
-	}
+{% extends 'analisis/base.html' %}
+{% load  static %}
 
-	.form-check-label{
-		font-weight: normal
-	}
-
-	.container {
-	margin-top: 2px;
-	}
-
-	table {
-		text-align: center;		
-	}
-
-	td {
-		padding: 5px 7px;
-	}
-	/*
-	.outer_div {
-	position: relative;
-	min-height: 150px;
-	}
-	.canvas_div {
-	width: 500px;
-	height: 75px;
-	}
-	.canvas_div canvas {
-	width: 420px;
-	height: 75px;
-	position: absolute;
-	top: 25%;
-	left: 0;
-	}
-	.radio_div {
-	width: 500px;
-	height: 75px;
-	position: absolute;
-	top: 0;
-	left: 0;
-	}
-	.confidence table{
-	width: 250px;
-	border: none;
-	border-collapse: collapse;
-	}
-
-	.confidence table tr td {
-	font-size: 14px;
-	background-color: transparent;
-	vertical-align: top;
-	text-align: center;
-	border: none;
-	padding: 0px;
-	}
-	}  
-	.radio_div table {
-	width: 500px;
-	border: none;
-	border-collapse: collapse;
-	
-	}
-	.radio_div table tr td {
-	font-size: 14px;
-	background-color: transparent;
-	vertical-align: top;
-	text-align: center;
-	border: none;
-	padding: 0px;
-	}
-
-	.radio_div table tr:nth-child(1) td {
-	width: 20%;
-	height: 25px;
-	vertical-align: middle;
-	}*/
-
-</style>
-<!-- Close internal style sheet -->
-
-<!-- External JS references -->
-<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.min.js"></script>
-<script>
-	window.twttr = (function(d, s, id) {
-	var js, fjs = d.getElementsByTagName(s)[0],
-		t = window.twttr || {};
-	if (d.getElementById(id)) return t;
-	js = d.createElement(s);
-	js.id = id;
-	js.src = "https://platform.twitter.com/widgets.js";
-	fjs.parentNode.insertBefore(js, fjs);
-
-	t._e = [];
-	t.ready = function(f) {
-		t._e.push(f);
-	};
-
-	return t;
-	}(document, "script", "twitter-wjs"));
-</script>
-</head>
-
-<body>
-<section class="container" id="LabelReplies">
-	<ul class="nav nav-pills">
-		
+{% block content %}
+	<section>
+	<ul class="nav nav-pills">		
 		<p class="navbar-text navbar-left">Anotaciones realizadas {{ annotation_count }}</p>
 		<p class="navbar-text navbar-right"><a href="{% url 'logout' %}">Log Out</a></p>
 		<p class="navbar-text navbar-right">Logged in as {{ user.username }}</p>
 	</ul>
+	</section>
+
 	<!-- Instructions (collapsible) -->
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
@@ -312,115 +189,10 @@
 	</div>
 
 	<!-- End Categorization Layout -->
+{% endblock %}
 
-</section>
-
-</body>
-
+{% block bottom %}
 <!-- Open internal javascript -->
-<script>
-  $(document).ready(function() {
-    // Instructions expand/collapse
-    var content = $('#instructionBody');
-    var trigger = $('#collapseTrigger');
-	var instructionHeight = 0;
-    content.hide();
-    $('.collapse-text').text('(Click to expand)');
-    trigger.click(function(){
-      content.toggle();
-      var isVisible = content.is(':visible');
-      if(isVisible){
-        $('.collapse-text').text('(Click to collapse)');
-		instructionHeight = $('#instructionBody').outerHeight();
-      }else{
-        $('.collapse-text').text('(Click to expand)');
-		instructionHeight = 0 ; 
-      }
-    });
-    // end expand/collapse   
+<script src="{% static "analisis/main.js" %}"></script>
 
-	function renderTweet(divId, tweetOptions){
-		// https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/scripting-factory-functions
-
-		twttr.widgets.createTweet(
-			document.getElementById(divId).dataset.tweetId,
-			document.getElementById(divId),
-			tweetOptions
-		)
-		.then(function(el){
-			// Hides tweet card inside target tweet in Quote
-			$(el.shadowRoot).find(".Tweet-card").hide();
-		})
-		.catch(function(err){
-			//Enter here when can't render the tweet because it has been deleted
-			document.getElementById(divId).textContent = document.getElementById(divId).dataset.tweetText;
-		});
-
-	}
-
-	//Render tweets
-	twttr.ready(function() {
-		let tweetOptions = {
-			align: "center",
-			width: "325",
-			dnt: true,
-			conversation: "none"
-		}
-		renderTweet('tweetTarget', tweetOptions);
-		renderTweet('tweetResponse', tweetOptions);
-	});
-
-	/*twttr.ready(function (twttr) {		
-	 $(".tweet-box").each(renderTweet);
-	});*/
-	
-	//Logic to handle dynamic changes of the form based on the stance selected
-	$("input[name='stance']").click(function(event){
-		positiveStance = event.target.value === "Explicit Support" || event.target.value === "Implicit Support";
-		negativeStance = event.target.value === "Explicit Denial"  || event.target.value === "Implicit Denial";
-		if( positiveStance ){
-			showExpressivityForm();
-			makeExpressivityFormRequired();
-
-			document.querySelector("p#expressivity_label").textContent = 'verdadera o correcta';
-			document.querySelector("input[name='expressivity_type']").value = 'True News';
-		} else if ( negativeStance ){
-			showExpressivityForm();			
-			makeExpressivityFormRequired();
-
-			document.querySelector("p#expressivity_label").textContent = 'falsa o incorrecta';
-			document.querySelector("input[name='expressivity_type']").value = 'Fake News';
-		} else {
-			hideExpressivityForm();
-			makeExpressivityFormNonRequired();
-
-			document.querySelector("input[name='expressivity_type']").value = '';
-		}
-
-		function showExpressivityForm(){
-			document.querySelector("div#expressivity_form").style.display = 'block';
-		}
-
-		function hideExpressivityForm(){
-			document.querySelector("div#expressivity_form").style.display = 'none';
-		}
-
-		function makeExpressivityFormRequired(){
-			document.querySelector("input[name='expressivity_value']").required = true;			
-			document.querySelector("input[name='evidence']").required = true;
-		}
-
-		function makeExpressivityFormNonRequired(){
-			document.querySelector("input[name='expressivity_value']").required = false;			
-			document.querySelector("input[name='evidence']").required = false;
-		}
-
-	});
-
-	
-	});
-
-</script>
-<!-- Close internal javascript-->
-
-</html>
+{% endblock %}

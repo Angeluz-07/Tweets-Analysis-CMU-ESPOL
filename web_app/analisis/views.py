@@ -94,4 +94,4 @@ def annotate(request):
         'section3' : section3
     }
 
-    return render(request, 'annotate.html', context = context)
+    return render(request, 'analisis/annotate.html', context = context)
