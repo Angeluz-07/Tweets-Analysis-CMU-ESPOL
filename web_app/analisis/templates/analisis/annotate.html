@@ -60,7 +60,7 @@
 	<!-- End instructions -->
 
 	<!-- Categorization Layout -->
-	<div class="row" id="workContent1">
+	<div class="" id="workContent1">
 
 		<form action="{% url 'annotate' %}" method="post">
 		{% csrf_token %}
@@ -68,48 +68,37 @@
 		<!-- Tweet Relation Id-->
 		<input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
-		<div class="row">
-			<div class="col-sm-6">
-				<label>Target Tweet:</label>
-				<div class="well tweet-box" id="tweetTarget" data-tweet-id="{{ tweet_target_id }}" data-tweet-text="{{ tweet_target_text }}">
-				<!--input type="hidden" name="tw_tar_1"  /-->
+		<div class="row border rounded-0 py-4 px-2">
+				<div class="col-6">
+				<div class="card my-2 h-100" style="background-color: #f5f5f5;">
+					<label>Target Tweet:</label>
+					<div class="well tweet-box" id="tweetTarget" data-tweet-id="{{ tweet_target_id }}" data-tweet-text="{{ tweet_target_text }}">
+					</div>
 				</div>
-			</div>
-
-			<div class="col-sm-6">
-				<label>Response Tweet:</label>
-				<div class="well tweet-box" id="tweetResponse" data-tweet-id="{{ tweet_response_id }}"  data-tweet-text="{{ tweet_response_text }}">
-				<!--input type="hidden" name="tw_tar_1"/-->
 				</div>
-			</div>
-		</div>
-	<!--div>
-		<p>
-		<a class="btn btn-primary" href="#collapseExample" data-toggle="collapse"  role="button" aria-expanded="false" >
-			Link with href
-		</a>
-		</p>
-		<div class="collapse" id="collapseExample">
-		<div class="card card-body">
-			CONTENT
-		</div>
-		</div>
-	</div-->
 
-		<div class="row" id="annotationApp">
+				
+				<div class="col-6">
+				<div class="card my-2 h-100" style="background-color: #f5f5f5;">
+					<label>Response Tweet:</label>
+					<div class="well tweet-box" id="tweetResponse" data-tweet-id="{{ tweet_response_id }}"  data-tweet-text="{{ tweet_response_text }}">
+					</div>
+				</div>
+				</div>
+		</div>
+
+
+		<div class="row  border rounded-0 py-4 px-2" id="annotationApp">
 			<div class="col-sm-12">
-
 				<!-- Annotator -->
 				<input type="hidden"  name="annotator_id" value={{ user.id }} />
 
 				<div id="questionsAccordion">
-					<template v-for="(questions, section) in questionsGroupedBySection()" :key="section">
-						<p>
-							<button class="btn alert-dark btn-block" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false" >
+					<template v-for="(questions, section) in questionsGroupedBySection()" :key="section">						
+							<button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
 								#[[ section ]]
-							</button>
-						</p>
-						<div class="collapse" :id="idFromSentence(section)" data-parent="#questionsAccordion">
+							</button>						
+						<div class="collapse mb-2" :id="idFromSentence(section)" data-parent="#questionsAccordion">
 							<div class="card card-body">								
 								<template  v-for="question in questions">
 									<label> #[[ question.value ]] </label>
@@ -143,11 +132,10 @@
 				</div>
 
 				<div class="form-group row">
-					<div class="col-sm-10 text-center">
+					<div class="col-12 text-center my-3">
 					<button type="submit" class="btn btn-primary">Enviar</button>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	
