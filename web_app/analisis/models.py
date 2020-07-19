@@ -29,16 +29,19 @@ class Annotator(models.Model):
 class Annotation(models.Model):
     tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.SET_NULL,null=True)
     annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'Annotation : Id={self.id}, Annotator={self.annotator.name}'
     
 class Question(models.Model):
     TYPE = [("Checkbox","Checkbox"),("Choice","Choice")]
-    section = models.TextField(default=None)
+    name = models.TextField()
+    section = models.TextField()
     value = models.TextField()
     type = models.CharField(max_length=50, choices=TYPE)
-    options =  models.TextField(null=True) # json string
+    options =  models.TextField() # json string
 
     def __str__(self):
         return self.value
@@ -51,6 +54,8 @@ class Answer(models.Model):
     question = models.ForeignKey(Question,on_delete=models.SET_NULL,null=True)
     annotation = models.ForeignKey(Annotation,on_delete=models.SET_NULL,null=True)
     value = models.TextField() # json string
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'Answer : Annotation={self.annotation.id}'

@@ -4,8 +4,10 @@
 
 {% block content %}
 	<section>
-	<ul class="nav nav-pills">		
-		<p class="navbar-text navbar-left">Anotaciones realizadas {{ annotation_count }}</p>
+	<ul class="nav nav-pills">
+		<button class="btn btn-primary navbar-text navbar-left" type="button">
+			Anotaciones realizadas  <span class="badge">{{ annotation_count }}</span>
+		</button>
 		<p class="navbar-text navbar-right"><a href="{% url 'logout' %}">Log Out</a></p>
 		<p class="navbar-text navbar-right">Logged in as {{ user.username }}</p>
 	</ul>
