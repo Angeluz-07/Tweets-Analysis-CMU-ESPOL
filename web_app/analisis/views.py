@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
 from django.http import Http404
 from .models import *
@@ -71,6 +71,21 @@ def create_annotation(form_data: QueryDict) -> None:
             question_id=q.id,            
         )
 
+def GET_random_tweet_relation(request, annotator_id):
+    tweet_relation = get_random_tweet_relation(annotator_id)
+    resp = {
+        'id' : tweet_relation.id,
+        'relation_type' : tweet_relation.relation_type,
+        'tweet_target' :{
+            'id' : tweet_relation.tweet_target.id,
+            'text' : tweet_relation.tweet_target.text,
+        },
+        'tweet_response': {
+            'id' : tweet_relation.tweet_response.id,
+            'text' : tweet_relation.tweet_response.text,
+        }
+    }
+    return JsonResponse(resp)
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
@@ -84,11 +99,7 @@ def annotate(request):
 
     if request.method == 'POST':
         create_annotation(request.POST)
-
-    # TODO : parameterize
-    section1 = Question.objects.filter(section="Identificación del Evento")
-    section2 = Question.objects.filter(section="Postura con respecto a las protestas 1")
-    section3 = Question.objects.filter(section="Postura con respecto a las protestas 2")
+   
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_target_id' : tweet_relation.tweet_target.id,
@@ -97,9 +108,6 @@ def annotate(request):
         'tweet_response_text' : tweet_relation.tweet_response.text,
         'relation_type' : tweet_relation.relation_type,
         'annotation_count' : get_annotation_count(user_id),
-        'section1' : section1,
-        'section2' : section2,
-        'section3' : section3
     }
 
     return render(request, 'analisis/annotate.html', context = context)

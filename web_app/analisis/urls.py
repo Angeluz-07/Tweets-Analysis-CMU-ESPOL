@@ -15,4 +15,5 @@ urlpatterns = [
     path('login', auth_views.LoginView.as_view(template_name="analisis/login.html"), name='login'),
     path('logout', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('api/', include(router.urls)),
+    path('api/tweet-relation/random/<int:annotator_id>', views.GET_random_tweet_relation, name="GET_random_tweet_relation")
 ]
