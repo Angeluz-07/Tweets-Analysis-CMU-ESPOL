@@ -38,15 +38,9 @@
 </script>
 </head>
 
-<body>
-	<section>
-	<nav class="navbar navbar-light border-bottom mb-2">
-	<a class="navbar-brand" href="#"> <span class="badge badge-light border">{{ annotation_count }}</span> anotaciones realizadas</a>
-	<span class="navbar-text">
-      <b>Logged in as {{ user.username }} </b>| <a href="{% url 'logout' %}">Log Out</a>
-    </span>
-	</nav>
-	</section>
+<body>		
+	{% block nav %}
+	{% endblock %}	
     <div class="container">
 		{% block content %}
 		{% endblock %}

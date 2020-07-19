@@ -1,0 +1,90 @@
+#collapseTrigger{
+	color:#fff;
+	display: block;
+	text-decoration: none;
+	}
+	#submitButton{
+	white-space: normal;
+	}
+	#instructionBody table{
+	font-size: 14px;
+	margin-top: 10px;
+	}
+	#instructionBody table caption{
+	text-align: left;
+	padding: 0 0 5px 0;
+	}
+
+	.form-check-label{
+		font-weight: normal
+	}
+
+	.container {
+	margin-top: 2px;
+	}
+
+	table {
+		text-align: center;		
+	}
+
+	td {
+		padding: 5px 7px;
+	}
+	/*
+	.outer_div {
+	position: relative;
+	min-height: 150px;
+	}
+	.canvas_div {
+	width: 500px;
+	height: 75px;
+	}
+	.canvas_div canvas {
+	width: 420px;
+	height: 75px;
+	position: absolute;
+	top: 25%;
+	left: 0;
+	}
+	.radio_div {
+	width: 500px;
+	height: 75px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	}
+	.confidence table{
+	width: 250px;
+	border: none;
+	border-collapse: collapse;
+	}
+
+	.confidence table tr td {
+	font-size: 14px;
+	background-color: transparent;
+	vertical-align: top;
+	text-align: center;
+	border: none;
+	padding: 0px;
+	}
+	}  
+	.radio_div table {
+	width: 500px;
+	border: none;
+	border-collapse: collapse;
+	
+	}
+	.radio_div table tr td {
+	font-size: 14px;
+	background-color: transparent;
+	vertical-align: top;
+	text-align: center;
+	border: none;
+	padding: 0px;
+	}
+
+	.radio_div table tr:nth-child(1) td {
+	width: 20%;
+	height: 25px;
+	vertical-align: middle;
+	}*/
