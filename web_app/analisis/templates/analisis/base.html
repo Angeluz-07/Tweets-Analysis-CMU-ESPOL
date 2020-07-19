@@ -39,6 +39,14 @@
 </head>
 
 <body>
+	<section>
+	<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+  	<a class="navbar-brand" href="#"></a>
+	<span class="navbar-text">
+      Logged in as {{ user.username }} | <a href="{% url 'logout' %}">Log Out</a>
+    </span>
+	</nav>
+	</section>
     <div class="container">
 		{% block content %}
 		{% endblock %}
