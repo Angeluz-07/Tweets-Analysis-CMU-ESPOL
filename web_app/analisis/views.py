@@ -87,6 +87,17 @@ def GET_random_tweet_relation(request, annotator_id):
     }
     return JsonResponse(resp)
 
+def all_tweets_available(tweet_relation):
+    import requests as r
+    url = 'https://syndication.twitter.com/tweet'
+    tt_id = tweet_relation.tweet_target.id
+    tr_id = tweet_relation.tweet_response.id
+    resps = [
+        r.get(f'{url}?id={tt_id}&lang=en'),
+        r.get(f'{url}?id={tr_id}&lang=en')
+    ]
+    return all( resp.status_code==200 for resp in resps )
+
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
@@ -107,6 +118,7 @@ def annotate(request):
         'tweet_response_id' : tweet_relation.tweet_response.id,
         'tweet_response_text' : tweet_relation.tweet_response.text,
         'relation_type' : tweet_relation.relation_type,
+        'all_tweets_available' : all_tweets_available(tweet_relation),
         'annotation_count' : get_annotation_count(user_id),
     }
 
