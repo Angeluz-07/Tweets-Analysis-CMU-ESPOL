@@ -18,12 +18,7 @@ $(document).ready(function() {
 	}
 	//Render tweets
 	twttr.ready(function() {
-		let tweetOptions = {
-			align: "center",
-			width: "325",
-			dnt: true,
-			conversation: "none"
-		}
+		let tweetOptions = { align: "center", width: "325", dnt: true, conversation: "none"}
 
 		renderTweet('tweetTarget', tweetOptions);
 		renderTweet('tweetResponse', tweetOptions);
@@ -77,7 +72,7 @@ $(document).ready(function() {
 
 	});
 
- 	const ANNOTATOR_ID = 1
+
 	//Vue app
 	var annotationApp = new Vue({
 		el: '#annotationApp',		
@@ -105,21 +100,9 @@ $(document).ready(function() {
 					.then(() => console.log(this.questions))
                     .catch(error => console.error(error))
 			},
-			fetchTweetRelation(){
-				fetch(`/api/tweet-relation/random/${ANNOTATOR_ID}`)
-					.then(stream => stream.json())
-					.then(data => this.tweetRelation = data)
-					.then(function(data){
-						
-						const tt_id = data.tweet_target.id
-						const tr_id = data.tweet_response.id												
-					})
-					.then(() => console.log(this.tweetRelation))
-                    .catch(error => console.error(error))
-			},
 			groupBySection(questions){
 				const bySection = R.groupBy(q => q.section)
-				return bySection(questions)			
+				return bySection(questions)
 			},
 			idFromSentence(sectionName){
 				const copy = sectionName
@@ -128,7 +111,6 @@ $(document).ready(function() {
 		},
 		mounted(){
 			this.fetchQuestions()
-			this.fetchTweetRelation()		
 		}
 	})
 
