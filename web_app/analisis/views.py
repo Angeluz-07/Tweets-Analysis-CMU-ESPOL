@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
 from django.http import Http404
@@ -110,6 +110,7 @@ def annotate(request):
 
     if request.method == 'POST':
         create_annotation(request.POST)
+        return redirect('annotate')
    
     context = {
         'tweet_relation_id' : tweet_relation.id,
