@@ -33,7 +33,7 @@ class Annotation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Annotation : Id={self.id}, Annotator={self.annotator.name}'
+        return f'Annotation : Id={self.id}, Annotator={self.annotator.name if self.annotator else None}'
     
 class Question(models.Model):
     TYPE = [("Checkbox","Checkbox"),("Choice","Choice")]
@@ -58,4 +58,4 @@ class Answer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Answer : Annotation={self.annotation.id}'
+        return f'Answer : Annotation={self.annotation.id if self.annotation else None}'

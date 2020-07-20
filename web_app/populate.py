@@ -111,15 +111,7 @@ def add_questions():
                     "value" :  "¿Cuál es la postura de la respuesta con respecto al gobierno?",
                     "type" : "Choice",                    
                     "options" : ["A favor","En contra","Neutro","No es claro","No Aplica"]
-                },                
-        },
-                },                
-        },
-                },                
-                {
-        { 
-                {
-        { 
+                },
                 {
                     "value" :  "¿Cuál es la postura de la respuesta con respecto a las protestas?",
                     "type" : "Choice",                    
@@ -152,20 +144,12 @@ def add_questions():
                     "value" :  "¿La respuesta expresa que el original contiene información verdadera?",
                     "type" : "Choice",
                     "options" : ["Si" , "No", "No Aplica"]
-                },        
-        },
-                },        
-        },
-                },        
+                },
                 {
                     "value" :  "¿La respuesta expresa que el original contiene información falsa?",
                     "type" : "Choice",                    
                     "options" : ["Si" , "No", "No Aplica"]
                 },
-                {                    
-        {
-                {                    
-        {
                 {                    
                     "value" :  "¿Qué tipo de evidencia presenta la respuesta para soportar esto?",
                     "type" : "Choice",
