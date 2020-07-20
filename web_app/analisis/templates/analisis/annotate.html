@@ -71,64 +71,72 @@
 
 			<!-- Tweet Relation Id-->
 			<input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
-			{{ all_tweets_available }}
-			<div class="row border rounded-0 py-4 px-2">
-					<div class="col-md-6">
-					<div class="card my-2 h-100" style="background-color: #f5f5f5;">
-						<label>Target Tweet:</label>
-						<div class="well tweet-box" id="tweetTarget" data-tweet-id="{{ tweet_target_id }}" data-tweet-text="{{ tweet_target_text }}">
-						</div>
-					</div>
-					</div>
 
-					
-					<div class="col-md-6">
-					<div class="card my-2 h-100" style="background-color: #f5f5f5;">
-						<label>Response Tweet:</label>
-						<div class="well tweet-box" id="tweetResponse" data-tweet-id="{{ tweet_response_id }}"  data-tweet-text="{{ tweet_response_text }}">
-						</div>
-					</div>
-					</div>
-			</div>
-
-
-			<div class="row  border rounded-0 py-4 px-2" id="annotationApp">
-				<div class="col-sm-12">
-					<input type="hidden"  name="annotator_id" value={{ user.id }} />
-
-					<div id="questionsAccordion">
-						<div v-for="(questions, section) in questionsGrouped" :key="section">
-							<button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
-								<h6>#[[ section ]]</h6>
-							</button>						
-							<div class="collapse mb-2" :id="idFromSentence(section)" data-parent="#questionsAccordion">
-								<div class="card card-body">
-									<div class="form-group" v-for="question in questions">
-										<h6> #[[ question.value ]] </h6>
-										<div class="form-check-inline" v-for="option in question.options">
-											<label class="form-check-label">
-											<input 
-												class="form-check-input"
-												:type=" question.type==='Choice' ? 'radio' : 'checkbox' "
-												:name="question.id"
-												:value="option">
-												#[[ option ]]
-											</label>
-										</div>
-									</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="row border rounded-0 py-4 px-2">
+							{% if relation_type == 'Quote' and all_tweets_available is True %}
+							<div class="col-md-12 d-none">
+							{% else %}
+							<div class="col-md-12">
+							{% endif %}
+							<div class="card my-2 h-100" style="background-color: #f5f5f5;">
+								<label>Target Tweet:</label>
+								<div class="well tweet-box" id="tweetTarget" data-tweet-id="{{ tweet_target_id }}" data-tweet-text="{{ tweet_target_text }}">
 								</div>
-							</div>										
-						</div>
-					</div>
+							</div>
+							</div>
 
-					<div class="form-group row">
-						<div class="col-12 text-center my-3">
-						<button type="submit" class="btn btn-primary">Enviar</button>
+							<div class="col-md-12">
+							<div class="card my-2 h-100" style="background-color: #f5f5f5;">
+								<label>Response Tweet:</label>
+								<div class="well tweet-box" id="tweetResponse" data-tweet-id="{{ tweet_response_id }}"  data-tweet-text="{{ tweet_response_text }}">
+								</div>
+							</div>
+							</div>
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="row  border rounded-0 py-4 px-2" id="annotationApp">
+						<div class="col-sm-12">
+							<input type="hidden"  name="annotator_id" value={{ user.id }} />
+
+							<div id="questionsAccordion">
+								<div v-for="(questions, section) in questionsGrouped" :key="section">
+									<button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
+										<h6>#[[ section ]]</h6>
+									</button>						
+									<div class="collapse mb-2" :id="idFromSentence(section)" data-parent="#questionsAccordion">
+										<div class="card card-body">
+											<div class="form-group" v-for="question in questions">
+												<h6> #[[ question.value ]] </h6>
+												<div class="form-check-inline" v-for="option in question.options">
+													<label class="form-check-label">
+													<input 
+														class="form-check-input"
+														:type=" question.type==='Choice' ? 'radio' : 'checkbox' "
+														:name="question.id"
+														:value="option">
+														#[[ option ]]
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>										
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-12 text-center my-3">
+								<button type="submit" class="btn btn-primary">Enviar</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-	
+
 		</form>
 	</div>
 
