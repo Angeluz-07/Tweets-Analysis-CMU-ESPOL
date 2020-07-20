@@ -107,7 +107,7 @@
 									<button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
 										<h6>#[[ section ]]</h6>
 									</button>						
-									<div class="collapse mb-2" :id="idFromSentence(section)" data-parent="#questionsAccordion">
+									<div class="collapse mb-2" :id="idFromSentence(section)">
 										<div class="card card-body">
 											<div class="form-group" v-for="question in questions">
 												<h6> #[[ question.value ]] </h6>
