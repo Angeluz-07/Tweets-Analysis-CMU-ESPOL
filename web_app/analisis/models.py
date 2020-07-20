@@ -26,35 +26,36 @@ class Annotator(models.Model):
     def __str__(self):
         return f'Annotator : Name={self.name}, Id={self.id}'
 
-class Stance(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.TextField(max_length=300)
-
-    def __str__(self):
-        return f'Stance : Name={self.name}'
-
-class Confidence(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.TextField(max_length=300)
-
-    def __str__(self):
-        return f'Confidence : Name={self.name}'
-    
-class Expressivity(models.Model):
-    type = models.CharField(max_length=30)
-    value = models.BooleanField(default=False)
-    evidence = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f'Expressivity : Type={self.type},Value={self.value},Evidence={self.evidence}'
-    
 class Annotation(models.Model):
     tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.SET_NULL,null=True)
     annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True)
-    stance=models.ForeignKey(Stance,on_delete=models.SET_NULL,null=True)
-    confidence=models.ForeignKey(Confidence,on_delete=models.SET_NULL,null=True)
-    expressivity=models.ForeignKey(Expressivity,on_delete=models.SET_NULL,null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Annotation : Annotator={self.annotator}'
+        return f'Annotation : Id={self.id}, Annotator={self.annotator.name if self.annotator else None}'
     
+class Question(models.Model):
+    TYPE = [("Checkbox","Checkbox"),("Choice","Choice")]
+    name = models.TextField()
+    section = models.TextField()
+    value = models.TextField()
+    type = models.CharField(max_length=50, choices=TYPE)
+    options =  models.TextField() # json string
+
+    def __str__(self):
+        return self.value
+    
+    def options_list(self):
+        from json import loads
+        return loads(self.options)
+
+class Answer(models.Model):   
+    question = models.ForeignKey(Question,on_delete=models.SET_NULL,null=True)
+    annotation = models.ForeignKey(Annotation,on_delete=models.SET_NULL,null=True)
+    value = models.TextField() # json string
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Answer : Annotation={self.annotation.id if self.annotation else None}'
