@@ -5,7 +5,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'analisistweets.settings')
 import django
 django.setup()
 
-from analisis.models import Stance, Confidence, Expressivity, Tweet, TweetRelation, Annotator
+from analisis.models import *
+
 from django.contrib.auth.models import User
 import csv
 import json
@@ -76,79 +77,126 @@ def add_tweet_and_tweet_relations():
                 )
                 print(tr)
 
-def add_stances():
-    stances = [
+def add_questions():
+    sections = [
         {
-            "name" : "Explicit Support", 
-            "description" : "Cuando el tweet de respuesta expresa de forma explícita (incluye lenguaje) que esta de acuerdo con lo expresado en el tweet orginal o que este es cierto."
+            "name" : "Identificación del Evento",
+            "questions" : [
+                {
+                    "value" :  "¿De qué país se habla en el tweet original?",
+                    "type" :  "Checkbox",
+                    "options" : ["Bolivia","Chile","Colombia","Ecuador","Otros","No es claro"]
+                },
+                {
+                    "value" :  "¿El tweet original está relacionado con las protestas que ocurrieron en el (los) país(es) identificado(s) en la pregunta anterior?",
+                    "type" : "Choice",
+                    "options" : ["Si", "No", "No es claro"]
+                }
+            ]
         },
         {
-            "name" : "Implicit Support", 
-            "description" : "Cuando el tweet de respuesta implica (da a entender) que esta de acuerdo con lo expresado en el tweet orginal o que este es cierto."
+            "name" : "Postura con respecto a las protestas 1",
+            "questions" : [
+                {
+                    "value" :  "¿Cuál es la postura del original con respecto al gobierno?",
+                    "type" : "Choice",
+                    "options" : ["A favor","En contra","Neutro","No es claro","No Aplica"]
+                },
+                {
+                    "value" :  "¿Cuál es la postura del original con respecto a las protestas?",
+                    "type" : "Choice",                    
+                    "options" : ["A favor","En contra","Neutro","No es claro","No Aplica"]
+                },
+                {
+                    "value" :  "¿Cuál es la postura de la respuesta con respecto al gobierno?",
+                    "type" : "Choice",                    
+                    "options" : ["A favor","En contra","Neutro","No es claro","No Aplica"]
+                },                
         },
-        {
-            "name" : "Comment",
-            "description" : "Cuando el tweet the respuesta es neutral al, o solo comenta el, contenido del tweet original."
+                },                
         },
-        {
-            "name" : "Queries", # Pregunta por más información
-            "description" : "Cuando el tweet de respuesta pregunta por mas información sobre contenido del tweet original."
-        },
-        {
-            "name" : "Implicit Denial",
-            "description" : "Cuando el tweet de respuesta implica (da a entender) que esta en desacuerdo con lo expresado en el tweet orginal o que este es falso."
-        },
+                },                
+                {
         { 
-            "name" : "Explicit Denial",
-            "description" : "Cuando el tweet de respuesta expresa de forma explícita (incluye lenguaje) que esta en desacuerdo con lo expresado en el tweet orginal o que este es falso."
-        }
-    ]
-    for stance in stances:          
-        s, _ = Stance.objects.get_or_create(
-            name=stance['name'],
-            description=stance['description']
-        )
-        print(s)
-
-def add_confidences():
-    confidences = [
-        {
-            "name" : "Sure"
+                {
+        { 
+                {
+                    "value" :  "¿Cuál es la postura de la respuesta con respecto a las protestas?",
+                    "type" : "Choice",                    
+                    "options" : ["A favor","En contra","Neutro","No es claro","No Aplica"]
+                }
+            ]
         },
         {
-            "name" : "Not Sure"
+            "name" : "Postura con respecto a las protestas 2",
+            "questions" : [
+                {
+                    "value" :  "¿Cuál es la postura del tweet respuesta al contenido del tweet original?",
+                    "type" : "Choice",
+                    "options" : [
+                        "Soporte Explicito", 
+                        "Soporte Implícito", 
+                        "Comentario", 
+                        "Pregunta por más información", 
+                        "Negación Implícita", 
+                        "Soporte Explicito", 
+                        "Respuesta/Original No disponible"
+                    ]
+                },
+                {
+                    "value" :  "¿Qué tan seguro está de su respuesta?",
+                    "type" : "Choice",
+                    "options" : ["Inseguro", "Algo Seguro", "Seguro"]
+                },
+                {
+                    "value" :  "¿La respuesta expresa que el original contiene información verdadera?",
+                    "type" : "Choice",
+                    "options" : ["Si" , "No", "No Aplica"]
+                },        
         },
+                },        
+        },
+                },        
+                {
+                    "value" :  "¿La respuesta expresa que el original contiene información falsa?",
+                    "type" : "Choice",                    
+                    "options" : ["Si" , "No", "No Aplica"]
+                },
+                {                    
         {
-            "name" : "Some Sure"
-        }
+                {                    
+        {
+                {                    
+                    "value" :  "¿Qué tipo de evidencia presenta la respuesta para soportar esto?",
+                    "type" : "Choice",
+                    "options" : [
+                        "Experiencia de primera mano",
+                        "URL direccionando a la evidencia",
+                        "Cita verificable de terceros",
+                        "Cita no verificable de terceros",
+                        "Aplica razonamiento",
+                        "Ninguna"
+                    ]
+                }
+            ]
+        },        
     ]
-    for confidence in confidences:
-        c, _=Confidence.objects.get_or_create(name=confidence['name'])
-        print(c)
-
-def add_expressivities():
-    expressivities = [
-        { "type" : "Fake News", "value" : True, "evidence" : True },
-        { "type" : "Fake News", "value" : True, "evidence" : False },
-        { "type" : "Fake News", "value" : False, "evidence" : True },
-        { "type" : "Fake News", "value" : False, "evidence" : False },
-        { "type" : "True News", "value" : True, "evidence" : True },
-        { "type" : "True News", "value" : True, "evidence" : False },
-        { "type" : "True News", "value" : False, "evidence" : True },
-        { "type" : "True News", "value" : False, "evidence" : False },
-    ]
-    for expressivity in expressivities:
-        e, _=Expressivity.objects.get_or_create(
-            type=expressivity['type'],
-            value=expressivity['value'],
-            evidence=expressivity['evidence']
-        )
-        print(e)
+    for section in sections:
+        section_name = section['name']        
+        for question in section['questions']:
+            question['value']
+            question['type'] 
+            #print(dumps(question['options'], ensure_ascii=False))
+            q, _ = Question.objects.get_or_create(
+                section=section_name,
+                value=question['value'],
+                type=question['type'],
+                options=json.dumps(question['options'], ensure_ascii=False)
+            )
+            print(q)
 
 if __name__ == '__main__':
     print("Starting population script...")
-    add_stances()
-    add_confidences()
-    add_expressivities()
+    add_questions()
     add_tweet_and_tweet_relations()
     add_annotators()
