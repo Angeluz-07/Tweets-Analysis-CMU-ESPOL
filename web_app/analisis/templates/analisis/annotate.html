@@ -101,7 +101,6 @@
 					<div class="row  border rounded-0 py-4 px-2" id="annotationApp">
 						<div class="col-sm-12">
 							<input type="hidden"  name="annotator_id" value={{ user.id }} />
-
 							<div id="questionsAccordion">
 								<div v-for="(questions, section) in questionsGrouped" :key="section">
 									<button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
@@ -115,9 +114,17 @@
 													<label class="form-check-label">
 													<input 
 														class="form-check-input"
-														:type=" question.type==='Choice' ? 'radio' : 'checkbox' "
+														type="radio"
 														:name="question.id"
-														:value="option">
+														:value="option" 
+														v-if="question.type==='Choice'"
+														required>
+													<input 
+														class="form-check-input"
+														type="checkbox"
+														:name="question.id"
+														:value="option" 
+														v-else>
 														#[[ option ]]
 													</label>
 												</div>

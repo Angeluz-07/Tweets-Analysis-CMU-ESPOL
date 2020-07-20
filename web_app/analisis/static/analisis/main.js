@@ -73,12 +73,22 @@ $(document).ready(function() {
 	});
 
 
+	$('form').on('submit',function(){
+		var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+		var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+		if(checkedOne){
+			return true
+		}else{
+			alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')			
+			return false
+		}
+	});
 	//Vue app
 	var annotationApp = new Vue({
 		el: '#annotationApp',		
 		delimiters: ['#[[', ']]'],
 		data() {
-			return {		  		
+			return {
 				questions : null,
 				questionsGrouped : null,
 				tweetRelation : null,				
