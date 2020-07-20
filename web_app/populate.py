@@ -77,6 +77,54 @@ def add_tweet_and_tweet_relations():
                 )
                 print(tr)
 
+
+def fix_tweet_and_tweet_relations():
+    # TODO: Update this code with the final format of data to feed DB.
+    # Load tweet_texts in memory
+    data = []
+    with open('data/tweet_database.json') as f:
+        for line in f:
+            data.append(json.loads(line))
+
+    tweet_text_by_tweet_id = { item['tweet_id'] : item['tweet_text'] for item in data }
+    # Add tweets
+    with open('data/pair_database.csv') as csv_file:            
+        rows = list(csv.reader(csv_file, delimiter=','))
+
+        #for row in rows[1:500]: #<-- a little limit for test and debugging
+        for row in rows[1:]:
+            response_id : str = row[1]
+            target_id : str = row[2]
+
+            if response_id in tweet_text_by_tweet_id \
+               and target_id in tweet_text_by_tweet_id:
+                t = Tweet.objects.get(
+                    id = int(response_id),
+                    #text = tweet_text_by_tweet_id[response_id].encode('unicode_escape')
+                )
+                print(t)
+
+                t.text = tweet_text_by_tweet_id[response_id]
+                t.save()
+
+                t = Tweet.objects.get(
+                    id = int(target_id),
+                    #text = tweet_text_by_tweet_id[target_id].encode('unicode_escape')
+                )
+                print(t)
+
+                t.text = tweet_text_by_tweet_id[target_id]
+                t.save()
+                """
+                interaction_type = row[3]
+                tr, _ = TweetRelation.objects.get_or_create(
+                    tweet_target_id = int(target_id),
+                    tweet_response_id = int(response_id),
+                    relation_type = interaction_type
+                )
+                print(tr)
+                """
+
 def add_questions():
     sections = [
         {
@@ -183,4 +231,5 @@ if __name__ == '__main__':
     print("Starting population script...")
     add_questions()
     add_tweet_and_tweet_relations()
+    #fix_tweet_and_tweet_relations()
     add_annotators()
