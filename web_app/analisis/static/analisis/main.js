@@ -83,6 +83,55 @@ $(document).ready(function() {
 			return false
 		}
 	});
+	//
+	Vue.component('question-block', {
+		props : ['question','options'],
+		delimiters : ['#[[',']]'],
+  		data: function () {
+			return {
+			count: 0,
+			no_clear_selected: false,
+			cols: 2
+			}
+		},
+		computed: {
+			columns () {
+			  let columns = []
+			  let mid = Math.ceil(this.options.length / this.cols)
+			  for (let col = 0; col < this.cols; col++) {
+				columns.push(this.options.slice(col * mid, col * mid + mid))
+			  }
+			  return columns
+			}
+		},
+		template: `
+		<div>
+		<h6> #[[ question.value ]] </h6>
+			<div class="container_">
+				<div class="col_" v-for="options in columns">
+					<div class="form-check-inline item-container_" v-for="option in options">
+						<label class="form-check-label">
+						<input 
+							class="form-check-input"
+							type="radio"
+							:name="question.id"
+							:value="option" 
+							v-if="question.type==='Choice'"
+							required>
+						<input 
+							class="form-check-input"
+							type="checkbox"
+							:name="question.id"
+							:value="option" 
+							v-else>
+							#[[ option ]]
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		`
+	})
 	//Vue app
 	var annotationApp = new Vue({
 		el: '#annotationApp',		
