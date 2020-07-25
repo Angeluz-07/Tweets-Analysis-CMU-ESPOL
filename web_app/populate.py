@@ -143,7 +143,7 @@ def add_questions():
             ]
         },
         {
-            "name" : "Postura con respecto a las protestas 1",
+            "name" : "Postura del original con respecto a las protestas",
             "questions" : [
                 {
                     "value" :  "¿Cuál es la postura del original con respecto al gobierno?",
@@ -155,6 +155,11 @@ def add_questions():
                     "type" : "Choice",                    
                     "options" : ["A favor","En contra","Neutro","No es claro","No Aplica"]
                 },
+            ]
+        },
+        {
+            "name" : "Postura de la respuesta con respecto a las protestas",
+            "questions" : [
                 {
                     "value" :  "¿Cuál es la postura de la respuesta con respecto al gobierno?",
                     "type" : "Choice",                    
@@ -168,7 +173,7 @@ def add_questions():
             ]
         },
         {
-            "name" : "Postura con respecto a las protestas 2",
+            "name" : "Postura de la respuesta con respecto al original",
             "questions" : [
                 {
                     "value" :  "¿Cuál es la postura del tweet respuesta al contenido del tweet original?",
@@ -179,7 +184,7 @@ def add_questions():
                         "Comentario", 
                         "Pregunta por más información", 
                         "Negación Implícita", 
-                        "Soporte Explicito", 
+                        "Negación Explícita", 
                         "Respuesta/Original No disponible"
                     ]
                 },

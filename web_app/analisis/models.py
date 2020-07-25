@@ -39,7 +39,7 @@ class Question(models.Model):
     TYPE = [("Checkbox","Checkbox"),("Choice","Choice")]
     name = models.TextField()
     section = models.TextField()
-    value = models.TextField()
+    value = models.TextField(unique=True)
     type = models.CharField(max_length=50, choices=TYPE)
     options =  models.TextField() # json string
 
