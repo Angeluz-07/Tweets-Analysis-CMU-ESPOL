@@ -94,6 +94,22 @@ $(document).ready(function() {
 			cols: 2
 			}
 		},
+		methods : {
+			check: function(e){
+				if (e.target.value === 'No es claro' && e.target.checked === true){
+					//console.log(e);
+					//console.log(this.$el.querySelectorAll('input:not([value="No es claro"])'));
+					this.$el.querySelectorAll('input:not([value="No es claro"])').forEach(function(elem){
+						elem.checked=false
+						elem.disabled = true
+					})
+				}else if (e.target.value === 'No es claro' && e.target.checked === false){
+					this.$el.querySelectorAll('input:not([value="No es claro"])').forEach(function(elem){					
+						elem.disabled = false
+					})
+				}
+			}
+		},
 		computed: {
 			columns () {
 			  let columns = []
@@ -122,7 +138,8 @@ $(document).ready(function() {
 							class="form-check-input"
 							type="checkbox"
 							:name="question.id"
-							:value="option" 
+							:value="option"
+							@change="check($event)"
 							v-else>
 							#[[ option ]]
 						</label>
