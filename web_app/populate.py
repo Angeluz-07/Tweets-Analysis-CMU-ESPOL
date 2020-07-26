@@ -59,13 +59,13 @@ def add_tweet_and_tweet_relations():
                and target_id in tweet_text_by_tweet_id:
                 t, _ = Tweet.objects.get_or_create(
                     id = int(response_id),
-                    text = tweet_text_by_tweet_id[response_id].encode('unicode_escape')
+                    text = tweet_text_by_tweet_id[response_id]
                 )
                 print(t)
 
                 t, _ = Tweet.objects.get_or_create(
                     id = int(target_id),
-                    text = tweet_text_by_tweet_id[target_id].encode('unicode_escape')
+                    text = tweet_text_by_tweet_id[target_id]
                 )
                 print(t)
 
