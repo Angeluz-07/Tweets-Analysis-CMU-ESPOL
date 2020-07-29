@@ -145,27 +145,27 @@
 
 
 											<!-- TRUE NEWS -->
-											<div class="form-group" v-if="stance==='Soporte Explícito' || stance==='Soporte Implícito'"><div><h6> ¿La respuesta expresa que el original contiene información verdadera? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="Si">
+											<div class="form-group" v-if="stance==='Soporte Explícito' || stance==='Soporte Implícito'"><div><h6> ¿La respuesta expresa que el original contiene información verdadera? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="Si" v-model="evidence">
 												Si
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No" v-model="evidence">
 												No
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No Aplica">
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No Aplica" v-model="evidence">
 												No Aplica
 											</label></div></div></div></div></div>											
 
 
 											<!-- FAKE NEWS -->
-											<div class="form-group" v-if="stance==='Negación Explícita' || stance==='Negación Implícita' "><div><h6> ¿La respuesta expresa que el original contiene información falsa? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="Si">
+											<div class="form-group" v-if="stance==='Negación Explícita' || stance==='Negación Implícita' "><div><h6> ¿La respuesta expresa que el original contiene información falsa? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="Si" v-model="evidence">
 												Si
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No" v-model="evidence">
 												No
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No Aplica">
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No Aplica" v-model="evidence">
 												No Aplica
 											</label></div></div></div></div></div>
 
 
 											<!-- EVIDENCE -->
-											<div class="form-group"><div><h6> ¿Qué tipo de evidencia presenta la respuesta para soportar esto? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Experiencia de primera mano">
+											<div class="form-group" v-if=" (stance==='Soporte Explícito' || stance==='Soporte Implícito' || stance==='Negación Explícita' || stance==='Negación Implícita' ) && evidence==='Si'"><div><h6> ¿Qué tipo de evidencia presenta la respuesta para soportar esto? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Experiencia de primera mano">
 												Experiencia de primera mano
 											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="URL direccionando a la evidencia">
 												URL direccionando a la evidencia

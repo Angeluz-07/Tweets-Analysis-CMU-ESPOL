@@ -159,6 +159,7 @@ $(document).ready(function() {
 				questionsGrouped : null,
 				tweetRelation : null,
 				stance: null, //model for the last section of questions		
+				evidence: null, 	
 			}			
 		},
 		methods : {
