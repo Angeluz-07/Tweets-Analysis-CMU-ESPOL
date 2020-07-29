@@ -116,14 +116,70 @@
 												</question-block>
 											</div>
 										</div>
-										<div class="card card-body" v-else>											
-											<div class="form-group" v-for="question in questions">
-												<question-block
-												:question='question'
-												:options='question.options'
-												>
-												</question-block>
-											</div>
+										<div class="card card-body" v-else>
+
+
+											<div class="form-group"><div><h6> ¿Cuál es la postura del tweet respuesta al contenido del tweet original? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Explícito">
+												Soporte Explícito
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Implícito">
+												Soporte Implícito
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Comentario">
+												Comentario
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Pregunta por más información">
+												Pregunta por más información
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Explícita">
+												Negación Explícita
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Implícita">
+												Negación Implícita
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Respuesta/Original No disponible">
+												Respuesta/Original No disponible
+											</label></div></div></div></div></div>
+
+											<div class="form-group"><div><h6> ¿Qué tan seguro está de su respuesta? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="8" required="required" class="form-check-input" value="Inseguro">
+												Inseguro
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="8" required="required" class="form-check-input" value="Algo Seguro">
+												Algo Seguro
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="8" required="required" class="form-check-input" value="Seguro">
+												Seguro
+											</label></div></div></div></div></div>
+
+
+											<!-- TRUE NEWS -->
+											<div class="form-group"><div><h6> ¿La respuesta expresa que el original contiene información verdadera? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="Si">
+												Si
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No">
+												No
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No Aplica">
+												No Aplica
+											</label></div></div></div></div></div>											
+
+
+											<!-- FAKE NEWS -->
+											<div class="form-group"><div><h6> ¿La respuesta expresa que el original contiene información falsa? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="Si">
+												Si
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No">
+												No
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No Aplica">
+												No Aplica
+											</label></div></div></div></div></div>
+
+
+											<!-- EVIDENCE -->
+											<div class="form-group"><div><h6> ¿Qué tipo de evidencia presenta la respuesta para soportar esto? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Experiencia de primera mano">
+												Experiencia de primera mano
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="URL direccionando a la evidencia">
+												URL direccionando a la evidencia
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Cita verificable de terceros">
+												Cita verificable de terceros
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Cita no verificable de terceros">
+												Cita no verificable de terceros
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Aplica razonamiento">
+												Aplica razonamiento
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Ninguna">
+												Ninguna
+											</label></div></div></div></div></div>
+
+
 										</div>
 									</div>										
 								</div>
