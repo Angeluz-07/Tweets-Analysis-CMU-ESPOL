@@ -128,12 +128,12 @@ def add_questions():
                     "value" :  "¿Cuál es la postura del tweet respuesta al contenido del tweet original?",
                     "type" : "Choice",
                     "options" : [
-                        "Soporte Explicito", 
+                        "Soporte Explícito", 
                         "Soporte Implícito", 
                         "Comentario", 
-                        "Pregunta por más información", 
-                        "Negación Implícita", 
-                        "Negación Explícita", 
+                        "Pregunta por más información",                        
+                        "Negación Explícita",
+                        "Negación Implícita",
                         "Respuesta/Original No disponible"
                     ]
                 },

@@ -107,7 +107,16 @@
 										<h6>#[[ section ]]</h6>
 									</button>						
 									<div class="collapse mb-2" :id="idFromSentence(section)">
-										<div class="card card-body">
+										<div class="card card-body" v-if="idFromSentence(section)!==idFromSentence('Postura de la respuesta con respecto al original')">
+											<div class="form-group" v-for="question in questions">
+												<question-block
+												:question='question'
+												:options='question.options'
+												>
+												</question-block>
+											</div>
+										</div>
+										<div class="card card-body" v-else>											
 											<div class="form-group" v-for="question in questions">
 												<question-block
 												:question='question'
