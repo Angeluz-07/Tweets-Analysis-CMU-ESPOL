@@ -38,7 +38,7 @@ class AnnotatorAnnotatesTweetOnce(TestCase):
         )
 
     def test_tweet_relation_already_annotated_by_user_is_not_retrieved(self):
-        tr = get_random_tweet_relation('Quote', self.annotator.id)
+        tr = get_random_tweet_relation(self.annotator.id)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)
 
 
@@ -80,5 +80,5 @@ class TweetAnnotatedThriceIsNotRetrievedTest(TestCase):
             )
 
     def test_tweet_relation_annotated_thrice_is_not_retrieved(self):
-        tr = get_random_tweet_relation('Quote', annotator_id=100)
+        tr = get_random_tweet_relation(annotator_id=100)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)
