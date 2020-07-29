@@ -119,19 +119,19 @@
 										<div class="card card-body" v-else>
 
 
-											<div class="form-group"><div><h6> ¿Cuál es la postura del tweet respuesta al contenido del tweet original? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Explícito">
+											<div class="form-group"><div><h6> ¿Cuál es la postura del tweet respuesta al contenido del tweet original? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Explícito" v-model="stance">
 												Soporte Explícito
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Implícito">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Implícito" v-model="stance">
 												Soporte Implícito
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Comentario">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Comentario" v-model="stance">
 												Comentario
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Pregunta por más información">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Pregunta por más información" v-model="stance">
 												Pregunta por más información
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Explícita">
+											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Explícita" v-model="stance">
 												Negación Explícita
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Implícita">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Implícita" v-model="stance">
 												Negación Implícita
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Respuesta/Original No disponible">
+											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Respuesta/Original No disponible" v-model="stance">
 												Respuesta/Original No disponible
 											</label></div></div></div></div></div>
 
@@ -145,7 +145,7 @@
 
 
 											<!-- TRUE NEWS -->
-											<div class="form-group"><div><h6> ¿La respuesta expresa que el original contiene información verdadera? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="Si">
+											<div class="form-group" v-if="stance==='Soporte Explícito' || stance==='Soporte Implícito'"><div><h6> ¿La respuesta expresa que el original contiene información verdadera? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="Si">
 												Si
 											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No">
 												No
@@ -155,7 +155,7 @@
 
 
 											<!-- FAKE NEWS -->
-											<div class="form-group"><div><h6> ¿La respuesta expresa que el original contiene información falsa? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="Si">
+											<div class="form-group" v-if="stance==='Negación Explícita' || stance==='Negación Implícita' "><div><h6> ¿La respuesta expresa que el original contiene información falsa? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="Si">
 												Si
 											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No">
 												No

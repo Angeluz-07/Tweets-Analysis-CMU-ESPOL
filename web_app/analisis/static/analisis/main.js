@@ -157,7 +157,8 @@ $(document).ready(function() {
 			return {
 				questions : null,
 				questionsGrouped : null,
-				tweetRelation : null,				
+				tweetRelation : null,
+				stance: null, //model for the last section of questions		
 			}			
 		},
 		methods : {
