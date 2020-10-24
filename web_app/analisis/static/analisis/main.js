@@ -16,60 +16,13 @@ $(document).ready(function() {
 		});
 
 	}
+
 	//Render tweets
 	twttr.ready(function() {
 		let tweetOptions = { align: "center", width: "325", dnt: true, conversation: "none"}
 
 		renderTweet('tweetTarget', tweetOptions);
 		renderTweet('tweetResponse', tweetOptions);
-	});	
-
-
-	/*twttr.ready(function (twttr) {		
-	 $(".tweet-box").each(renderTweet);
-	});*/
-	
-	//Logic to handle dynamic changes of the form based on the stance selected
-	$("input[name='stance']").click(function(event){
-		positiveStance = event.target.value === "Explicit Support" || event.target.value === "Implicit Support";
-		negativeStance = event.target.value === "Explicit Denial"  || event.target.value === "Implicit Denial";
-		if( positiveStance ){
-			showExpressivityForm();
-			makeExpressivityFormRequired();
-
-			document.querySelector("p#expressivity_label").textContent = 'verdadera o correcta';
-			document.querySelector("input[name='expressivity_type']").value = 'True News';
-		} else if ( negativeStance ){
-			showExpressivityForm();			
-			makeExpressivityFormRequired();
-
-			document.querySelector("p#expressivity_label").textContent = 'falsa o incorrecta';
-			document.querySelector("input[name='expressivity_type']").value = 'Fake News';
-		} else {
-			hideExpressivityForm();
-			makeExpressivityFormNonRequired();
-
-			document.querySelector("input[name='expressivity_type']").value = '';
-		}
-
-		function showExpressivityForm(){
-			document.querySelector("div#expressivity_form").style.display = 'block';
-		}
-
-		function hideExpressivityForm(){
-			document.querySelector("div#expressivity_form").style.display = 'none';
-		}
-
-		function makeExpressivityFormRequired(){
-			document.querySelector("input[name='expressivity_value']").required = true;			
-			document.querySelector("input[name='evidence']").required = true;
-		}
-
-		function makeExpressivityFormNonRequired(){
-			document.querySelector("input[name='expressivity_value']").required = false;			
-			document.querySelector("input[name='evidence']").required = false;
-		}
-
 	});
 
 
