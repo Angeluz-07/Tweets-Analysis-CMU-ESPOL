@@ -52,10 +52,12 @@ def create_annotation(form_data: QueryDict) -> None:
 
     a = Annotator.objects.get(id=form_data['annotator_id'])
     tr = TweetRelation.objects.get(id=form_data['tweet_relation_id'])
+    ts = form_data['time_spent']
 
     ann = Annotation.objects.create(
         tweet_relation=tr, 
-        annotator=a
+        annotator=a,
+        time_spent=ts
     )
 
     questions = {k: v for k, v in form_data.items() if k.isnumeric()}   

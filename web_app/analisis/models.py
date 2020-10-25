@@ -31,6 +31,7 @@ class Annotation(models.Model):
     annotator = models.ForeignKey(Annotator,on_delete=models.SET_NULL,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    time_spent = models.IntegerField(null=True)
 
     def __str__(self):
         return f'Annotation : Id={self.id}, Annotator={self.annotator.name if self.annotator else None}'
