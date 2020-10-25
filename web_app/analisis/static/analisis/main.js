@@ -26,14 +26,34 @@ $(document).ready(function() {
 	});
 
 
-	$('form').on('submit',function(){
+	var START_TIME = new Date();
+	$('#mainForm').on('submit',function(){
 		var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 		var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
 		if(checkedOne){
+			/*
+			//Uncomment once backend is ready to save it.
+			var time_spent = dateDiffInSecond(START_TIME, new Date());
+			addFieldsToForm('time_spent',time_spent);
+			*/
 			return true
 		}else{
 			alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')			
 			return false
+		}
+
+		function addFieldsToForm(name, value){
+			$("<input/>")
+				.attr("type", "hidden")
+				.attr("name", name)
+				.attr("value", value)
+				.appendTo("#mainForm");
+		}
+
+		function dateDiffInSecond(startDate, endDate){
+			var timeDiff = Math.abs(endDate.getTime() - startDate.getTime()); // in miliseconds
+			var timeDiffInSecond = Math.ceil(timeDiff / 1000); // in second
+			return timeDiffInSecond;
 		}
 	});
 	//
