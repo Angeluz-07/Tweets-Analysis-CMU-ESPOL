@@ -7,6 +7,14 @@ Análisis de tweets en las revueltas ocurridas en Latinoamérica a finales del 2
 * Environ: pip install django-environ
 * Agregar el .env en /analisistweets
 
+## Perform backups
+1. Connect to server
+2. Backup :
+```
+cd CMU_backups
+mysqldump -u [DB_USER] -p[DB_PASS] --no-tablespaces [DB_NAME] > [filename].sql
+```
+
 ## Development workflow
 1. Start python virtual environment.
 2. Set environment variables :
