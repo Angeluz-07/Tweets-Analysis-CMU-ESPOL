@@ -6,36 +6,7 @@ import django
 django.setup()
 
 from analisis.models import *
-
-from django.contrib.auth.models import User
-import csv
 import json
-
-def random_password(length=10):
-    from string import digits, ascii_letters
-    from random import choices, shuffle
-    chars = list(f"{digits}{ascii_letters}!#$%&'*+-<=>?@^_|~")
-    shuffle(chars)
-    result = choices(chars, k=length)
-    return ''.join(result)
-
-def add_annotators():
-    with open('data/Lista_anotadores.csv', encoding="ISO-8859-1") as csv_file:            
-        rows = list(csv.reader(csv_file, delimiter=','))
-        for row in rows:
-            username = row[1] #same as email
-            password = row[2]
-            u, _ = User.objects.get_or_create(username=username)
-            u.set_password(password)
-            u.save()
-            print(u)
-
-            #Mirror an annotator with same id as user
-            name = row[0]
-            name = name.strip('"').replace(',',' ')
-            a, _ = Annotator.objects.get_or_create(id=u.id, name=name)
-            print(a)
-
 
 def add_tweet_and_tweet_relations():
     # Load tweet_texts in memory
@@ -185,4 +156,3 @@ if __name__ == '__main__':
     print("Starting population script...")    
     add_tweet_and_tweet_relations()
     add_questions()
-    add_annotators()
