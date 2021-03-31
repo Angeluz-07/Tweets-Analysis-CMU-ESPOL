@@ -13,13 +13,17 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     http_method_names = ['get']
 
-def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
+def get_random_tweet_relation_type():
+    from random import shuffle
+    relation_types = ['Quote','Reply']
+    shuffle(relation_types)
+    return relation_types[0], relation_types[1]
+
+def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
     from random import choice
     from django.db.models import Count
     from .models import TweetRelation
-
-    relation_type = choice(['Quote','Reply'])
 
     tr_ids_annotated_thrice = [
         item.id for item in
@@ -34,13 +38,43 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
         .filter(annotation__annotator_id=annotator_id)
     ]
 
+    if eager_mode:
+        # Eager mode means, only retrieve tweets that have been
+        # annotated once or twice. So we can quickly reach
+        # more tweets that are annotated thrice.
+        #
+        # To do so, we exclude tweets with zero annotations. This
+        # only makes sense when the DB contains a good set of tweets annotated
+        # once or twice.
+        tr_ids_with_zero_annotations = [
+            item.id for item in
+            TweetRelation.objects \
+            .annotate(annotation_count=Count('annotation')) \
+            .filter(annotation_count__exact=0)
+        ]
+    else:
+        tr_ids_with_zero_annotations = []
+
+    relation_type_a, relation_type_b = get_random_tweet_relation_type()
+
     trs = TweetRelation.objects \
-    .filter(relation_type=relation_type) \
+    .filter(relation_type=relation_type_a) \
+    .exclude(id__in=tr_ids_with_zero_annotations) \
     .exclude(id__in=tr_ids_annotated_thrice) \
     .exclude(id__in=tr_ids_already_annotated_by_user) \
     .all()
 
-    assert len(trs) > 0 #If not, all tweets have been annotated or DB is empty
+    if len(trs) == 0:
+        trs = TweetRelation.objects \
+        .filter(relation_type=relation_type_b) \
+        .exclude(id__in=tr_ids_with_zero_annotations) \
+        .exclude(id__in=tr_ids_annotated_thrice) \
+        .exclude(id__in=tr_ids_already_annotated_by_user) \
+        .all()
+
+        if len(trs) == 0:
+            return None
+
     return choice(trs)
 
 def get_annotation_count(annotator_id: int) -> int:
@@ -109,6 +143,8 @@ def annotate(request):
 
     user_id = request.user.id # User logged in
     tweet_relation = get_random_tweet_relation(user_id)
+    if tweet_relation is None:
+        return HttpResponse("Ok. It seems all tweets have been annotated :) . Log out <a href='/logout'>here</a>")
 
     if request.method == 'POST':
         create_annotation(request.POST)
