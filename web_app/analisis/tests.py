@@ -1,6 +1,7 @@
 from django.test import TestCase
 from analisis.models import Tweet, TweetRelation, Annotator, Annotation
 from analisis.views import get_random_tweet_relation
+from unittest.mock import patch, Mock
 
 # Create your tests here.
 class AnnotatorAnnotatesTweetOnce(TestCase):
@@ -37,8 +38,9 @@ class AnnotatorAnnotatesTweetOnce(TestCase):
             tweet_relation_id = self.tweet_relation_annotated.id
         )
 
+    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value='Quote'))
     def test_tweet_relation_already_annotated_by_user_is_not_retrieved(self):
-        tr = get_random_tweet_relation(self.annotator.id)
+        tr = get_random_tweet_relation(self.annotator.id, False)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)
 
 
@@ -79,6 +81,7 @@ class TweetAnnotatedThriceIsNotRetrievedTest(TestCase):
                 tweet_relation_id=self.tweet_relation_annotated_thrice.id
             )
 
+    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value='Quote'))
     def test_tweet_relation_annotated_thrice_is_not_retrieved(self):
-        tr = get_random_tweet_relation(annotator_id=100)
+        tr = get_random_tweet_relation(100, False)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)

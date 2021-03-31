@@ -13,13 +13,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     http_method_names = ['get']
 
-def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
+def get_random_tweet_relation_type():
+    from random import choice
+    return choice(['Quote','Reply'])
+
+def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> TweetRelation:
     # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
     from random import choice
     from django.db.models import Count
     from .models import TweetRelation
-
-    relation_type = choice(['Quote','Reply'])
 
     tr_ids_annotated_thrice = [
         item.id for item in
@@ -28,14 +30,38 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
         .filter(annotation_count__gte=3)
     ]
 
+    #print(tr_ids_annotated_thrice)
     tr_ids_already_annotated_by_user = [
         item.id for item in
         TweetRelation.objects \
         .filter(annotation__annotator_id=annotator_id)
     ]
+    #print(tr_ids_already_annotated_by_user)
+
+    if eager_mode:
+        # Eager mode means, only retrieve tweets that have been
+        # annotated once or twice. So we can quickly reach
+        # more tweets to are annotated thrice.
+        #
+        # To do so, we exclude tweets with zero annotations. This
+        # only makes sense when the DB contains a good set of tweets annotated
+        # once or twice.
+        tr_ids_with_zero_annotations = [
+            item.id for item in
+            TweetRelation.objects \
+            .annotate(annotation_count=Count('annotation')) \
+            .filter(annotation_count__exact=0)
+        ]
+    else:
+        tr_ids_with_zero_annotations = []
+
+    #print(tr_ids_with_zero_annotations)
+
+    relation_type = get_random_tweet_relation_type()
 
     trs = TweetRelation.objects \
     .filter(relation_type=relation_type) \
+    .exclude(id__in=tr_ids_with_zero_annotations) \
     .exclude(id__in=tr_ids_annotated_thrice) \
     .exclude(id__in=tr_ids_already_annotated_by_user) \
     .all()
