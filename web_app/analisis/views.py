@@ -39,7 +39,7 @@ def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> Twe
     if eager_mode:
         # Eager mode means, only retrieve tweets that have been
         # annotated once or twice. So we can quickly reach
-        # more tweets to are annotated thrice.
+        # more tweets that are annotated thrice.
         #
         # To do so, we exclude tweets with zero annotations. This
         # only makes sense when the DB contains a good set of tweets annotated
@@ -56,10 +56,10 @@ def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> Twe
     relation_type = get_random_tweet_relation_type()
 
     trs = TweetRelation.objects \
-    .filter(relation_type=relation_type) \
     .exclude(id__in=tr_ids_with_zero_annotations) \
     .exclude(id__in=tr_ids_annotated_thrice) \
     .exclude(id__in=tr_ids_already_annotated_by_user) \
+    .filter(relation_type=relation_type) \
     .all()
 
     assert len(trs) > 0 #If not, all tweets have been annotated or DB is empty
