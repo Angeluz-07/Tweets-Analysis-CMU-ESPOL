@@ -38,7 +38,7 @@ class AnnotatorAnnotatesTweetOnce(TestCase):
             tweet_relation_id = self.tweet_relation_annotated.id
         )
 
-    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value='Quote'))
+    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value=('Quote','')))
     def test_tweet_relation_already_annotated_by_user_is_not_retrieved(self):
         tr = get_random_tweet_relation(self.annotator.id, False)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)
@@ -81,7 +81,7 @@ class TweetAnnotatedThriceIsNotRetrieved(TestCase):
                 tweet_relation_id=self.tweet_relation_annotated_thrice.id
             )
 
-    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value='Quote'))
+    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value=('Quote','')))
     def test_tweet_relation_annotated_thrice_is_not_retrieved(self):
         tr = get_random_tweet_relation(100, False)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)
@@ -123,7 +123,7 @@ class TweetNonAnnotatedIsNotRetrievedInEagerMode(TestCase):
             tweet_relation_id=self.tweet_relation_annotated_once.id
         )
 
-    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value='Quote'))
+    @patch('analisis.views.get_random_tweet_relation_type',Mock(return_value=('Quote','')))
     def test_tweet_relation_non_annotated_is_not_retrieved_in_eager_mode(self):
         another_annotator_id = 101
         tr = get_random_tweet_relation(another_annotator_id)
