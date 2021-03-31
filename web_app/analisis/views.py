@@ -30,13 +30,11 @@ def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> Twe
         .filter(annotation_count__gte=3)
     ]
 
-    #print(tr_ids_annotated_thrice)
     tr_ids_already_annotated_by_user = [
         item.id for item in
         TweetRelation.objects \
         .filter(annotation__annotator_id=annotator_id)
     ]
-    #print(tr_ids_already_annotated_by_user)
 
     if eager_mode:
         # Eager mode means, only retrieve tweets that have been
@@ -54,8 +52,6 @@ def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> Twe
         ]
     else:
         tr_ids_with_zero_annotations = []
-
-    #print(tr_ids_with_zero_annotations)
 
     relation_type = get_random_tweet_relation_type()
 
