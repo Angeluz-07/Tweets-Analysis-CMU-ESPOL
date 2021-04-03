@@ -1,5 +1,14 @@
 /* Start - style for options */
+.card-columns {
+	/*
+		Style to show list of options of the questions as two columns.
+		This solution is a bit hacky. But is better than hard coded conditional rendering
+		ref: https://stackoverflow.com/questions/52877199/how-to-break-a-list-in-multiple-columns-with-bootstrap-4
+	*/
+	column-count: 2 !important;
+}
 
+/*
 .container_ {
 	display: flex;
 	border: 1px ;
@@ -13,5 +22,5 @@ flex-direction: column;
 .item-container_ {
 border: 1px ;
 padding: 4px;
-}
+}*/
 /* End - style for options */

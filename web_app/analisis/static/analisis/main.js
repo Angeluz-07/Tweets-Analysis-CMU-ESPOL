@@ -80,44 +80,35 @@ $(document).ready(function() {
 			}
 		},
 		computed: {
-			columns () {
-			  let columns = []
-			  let mid = Math.ceil(this.options.length / this.cols)
-			  for (let col = 0; col < this.cols; col++) {
-				columns.push(this.options.slice(col * mid, col * mid + mid))
-			  }
-			  return columns
-			}
 		},
 		template: `
 		<div>
-		<h6> #[[ question.value ]] </h6>
-			<div class="container_">
-				<div class="col_" v-for="options in columns">
-					<div class="form-check-inline item-container_" v-for="option in options">
-						<label class="form-check-label">
-						<input 
-							class="form-check-input"
-							type="radio"
-							:name="question.id"
-							:value="option" 
-							v-if="question.type==='Choice'"
-							required>
-						<input 
-							class="form-check-input"
-							type="checkbox"
-							:name="question.id"
-							:value="option"
-							@change="check($event)"
-							v-else>
-							#[[ option ]]
-						</label>
-					</div>
-				</div>
-			</div>
+			<h6> #[[ question.value ]] </h6>
+			<ul class="list-unstyled card-columns">
+				<li class="form-check" v-for="option in options">
+					<input 
+						class="form-check-input"
+						type="radio"
+						:name="question.id"
+						:value="option" 
+						v-if="question.type==='Choice'"
+						required>
+					<input 
+						class="form-check-input"
+						type="checkbox"
+						:name="question.id"
+						:value="option"
+						@change="check($event)"
+						v-else>
+					<label class="form-check-label">
+						#[[ option ]]
+					</label>
+				</li>
+			</ul>
 		</div>
 		`
 	})
+
 	//Vue app
 	var annotationApp = new Vue({
 		el: '#annotationApp',		
