@@ -113,6 +113,13 @@ def all_tweets_available(tweet_relation):
     ]
     return all( resp.status_code==200 for resp in resps )
 
+def hide_target_tweet(tweet_relation):
+    response_tweet_is_available = all_tweets_available(tweet_relation)
+
+    # If relation is quote, it means we only need to display the response tweet.
+    # But only if the response tweet is available. Otherwise display both.
+    return tweet_relation.relation_type == "Quote" and response_tweet_is_available
+
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
@@ -128,15 +135,14 @@ def annotate(request):
     if request.method == 'POST':
         create_annotation(request.POST)
         return redirect('annotate')
-   
+
     context = {
         'tweet_relation_id' : tweet_relation.id,
         'tweet_target_id' : tweet_relation.tweet_target.id,
         'tweet_target_text' : tweet_relation.tweet_target.text,
         'tweet_response_id' : tweet_relation.tweet_response.id,
         'tweet_response_text' : tweet_relation.tweet_response.text,
-        'relation_type' : tweet_relation.relation_type,
-        'all_tweets_available' : all_tweets_available(tweet_relation),
+        'hide_target_tweet' : hide_target_tweet(tweet_relation),
         'annotation_count' : get_annotation_count(user_id),
     }
 

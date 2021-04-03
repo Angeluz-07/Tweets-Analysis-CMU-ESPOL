@@ -1,19 +1,17 @@
 $(document).ready(function() {
 	function renderTweet(divId, tweetOptions){
-		// https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/scripting-factory-functions		console.log(document.getElementById(divId))
+		// https://developer.twitter.com/en/docs/twitter-for-websites/javascript-api/guides/scripting-factory-functions
 		twttr.widgets.createTweet(
 			document.getElementById(divId).dataset.tweetId,
 			document.getElementById(divId),
 			tweetOptions
 		)
 		.then(function(el){
-			// Hides tweet card inside target tweet in Quote
-			$(el.shadowRoot).find(".Tweet-card").hide();
+			if(el == undefined){
+				console.info(`The tweet ${divId} is not available. Display text instead.`);
+				document.getElementById(divId).textContent = document.getElementById(divId).dataset.tweetText;
+			}
 		})
-		.catch(function(err){
-			//Enter here when can't render the tweet because it has been deleted
-			document.getElementById(divId).textContent = document.getElementById(divId).dataset.tweetText;
-		});
 
 	}
 
