@@ -1,7 +1,7 @@
 # common
 Django==2.2.4
 django-environ==0.4.5
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 
 # production
 mysqlclient==2.0.0
