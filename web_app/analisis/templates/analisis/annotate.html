@@ -105,79 +105,56 @@
 										<h6>#[[ section ]]</h6>
 									</button>						
 									<div class="collapse mb-2" :id="idFromSentence(section)">
-										<div class="card card-body" v-if="idFromSentence(section)!==idFromSentence('Postura de la respuesta con respecto al original')">
-											<div class="form-group" v-for="question in questions">
+										<div class="card card-body">
+											<template v-for="question in questions">
+												<question-block-target-tweet-country
+												:question='question'
+												:options='question.options'
+												v-if ='question.id == 1'
+												>
+												</question-block-target-tweet-country>
+
+												<question-block-stance-of-response-to-target-content
+												:question='question'
+												:options='question.options'
+												@stancechanged="updateStance"
+												v-else-if ='question.id == 7'
+												>
+												</question-block-stance-of-response-to-target-content>
+												
+												<question-block-true-news
+												:question='question'
+												:options='question.options'
+												:show = 'showTrueNewsQuestion'
+												@evidencechanged="updateEvidence"
+												v-else-if ="question.id == 9 "
+												>
+												</question-block-true-news>
+											
+												<question-block-fake-news
+												:question='question'
+												:options='question.options'
+												:show = 'showFakeNewsQuestion'																							
+												@evidencechanged="updateEvidence"
+												v-else-if ="question.id == 10 "
+												>
+												</question-block-fake-news>
+
+												<question-block
+												:question='question'
+												:options='question.options'												
+												:show = 'showEvidenceQuestion'
+												v-else-if ="question.id == 11 "
+												>
+												</question-block>
+
 												<question-block
 												:question='question'
 												:options='question.options'
+												v-else
 												>
 												</question-block>
-											</div>
-										</div>
-										<div class="card card-body" v-else>
-
-
-											<div class="form-group"><div><h6> ¿Cuál es la postura del tweet respuesta al contenido del tweet original? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Explícito" v-model="stance">
-												Soporte Explícito
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Soporte Implícito" v-model="stance">
-												Soporte Implícito
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Comentario" v-model="stance">
-												Comentario
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Pregunta por más información" v-model="stance">
-												Pregunta por más información
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Explícita" v-model="stance">
-												Negación Explícita
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Negación Implícita" v-model="stance">
-												Negación Implícita
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="7" required="required" class="form-check-input" value="Respuesta/Original No disponible" v-model="stance">
-												Respuesta/Original No disponible
-											</label></div></div></div></div></div>
-
-											<div class="form-group"><div><h6> ¿Qué tan seguro está de su respuesta? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="8" required="required" class="form-check-input" value="Inseguro">
-												Inseguro
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="8" required="required" class="form-check-input" value="Algo Seguro">
-												Algo Seguro
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="8" required="required" class="form-check-input" value="Seguro">
-												Seguro
-											</label></div></div></div></div></div>
-
-
-											<!-- TRUE NEWS -->
-											<div class="form-group" v-if="stance==='Soporte Explícito' || stance==='Soporte Implícito'"><div><h6> ¿La respuesta expresa que el original contiene información verdadera? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="Si" v-model="evidence">
-												Si
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No" v-model="evidence">
-												No
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="9" required="required" class="form-check-input" value="No Aplica" v-model="evidence">
-												No Aplica
-											</label></div></div></div></div></div>											
-
-
-											<!-- FAKE NEWS -->
-											<div class="form-group" v-if="stance==='Negación Explícita' || stance==='Negación Implícita' "><div><h6> ¿La respuesta expresa que el original contiene información falsa? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="Si" v-model="evidence">
-												Si
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No" v-model="evidence">
-												No
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="10" required="required" class="form-check-input" value="No Aplica" v-model="evidence">
-												No Aplica
-											</label></div></div></div></div></div>
-
-
-											<!-- EVIDENCE -->
-											<div class="form-group" v-if=" (stance==='Soporte Explícito' || stance==='Soporte Implícito' || stance==='Negación Explícita' || stance==='Negación Implícita' ) && evidence==='Si'"><div><h6> ¿Qué tipo de evidencia presenta la respuesta para soportar esto? </h6> <div class="container_"><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Experiencia de primera mano">
-												Experiencia de primera mano
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="URL direccionando a la evidencia">
-												URL direccionando a la evidencia
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Cita verificable de terceros">
-												Cita verificable de terceros
-											</label></div></div><div class="col_"><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Cita no verificable de terceros">
-												Cita no verificable de terceros
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Aplica razonamiento">
-												Aplica razonamiento
-											</label></div><div class="form-check-inline item-container_"><label class="form-check-label"><input type="radio" name="11" required="required" class="form-check-input" value="Ninguna">
-												Ninguna
-											</label></div></div></div></div></div>
-
-
+											</template>
 										</div>
 									</div>										
 								</div>

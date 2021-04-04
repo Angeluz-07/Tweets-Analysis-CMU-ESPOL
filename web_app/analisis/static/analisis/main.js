@@ -52,34 +52,24 @@ $(document).ready(function() {
 			return timeDiffInSecond;
 		}
 	});
-	//
-	Vue.component('question-block', {
+
+	// Component for the question "¿De qué país se habla en el tweet original?"
+	Vue.component('question-block-target-tweet-country', {		
 		props : ['question','options'],
 		delimiters : ['#[[',']]'],
-  		data: function () {
-			return {
-			count: 0,
-			no_clear_selected: false,
-			cols: 2
-			}
-		},
 		methods : {
-			check: function(e){
+			handler: function(e){
 				if (e.target.value === 'No es claro' && e.target.checked === true){
-					//console.log(e);
-					//console.log(this.$el.querySelectorAll('input:not([value="No es claro"])'));
 					this.$el.querySelectorAll('input:not([value="No es claro"])').forEach(function(elem){
 						elem.checked=false
 						elem.disabled = true
 					})
 				}else if (e.target.value === 'No es claro' && e.target.checked === false){
-					this.$el.querySelectorAll('input:not([value="No es claro"])').forEach(function(elem){					
+					this.$el.querySelectorAll('input:not([value="No es claro"])').forEach(function(elem){
 						elem.disabled = false
 					})
 				}
 			}
-		},
-		computed: {
 		},
 		template: `
 		<div>
@@ -88,26 +78,68 @@ $(document).ready(function() {
 				<li class="form-check" v-for="option in options">
 					<input 
 						class="form-check-input"
-						type="radio"
-						:name="question.id"
-						:value="option" 
-						v-if="question.type==='Choice'"
-						required>
-					<input 
-						class="form-check-input"
 						type="checkbox"
 						:name="question.id"
 						:value="option"
-						@change="check($event)"
-						v-else>
-					<label class="form-check-label">
-						#[[ option ]]
-					</label>
+						@change="handler"
+					>
+					<label class="form-check-label"> #[[ option ]] </label>
 				</li>
 			</ul>
 		</div>
 		`
 	})
+
+	// Component for one-choice questions without any additional logic
+	var questionBlock = Vue.component('question-block', {
+		props : ['question','options','show'],
+		delimiters : ['#[[',']]'],
+		methods: {
+			handler: function(e){}
+		},
+		template: `
+		<div v-if="show==true || show == undefined">
+			<h6> #[[ question.value ]] </h6>
+			<ul class="list-unstyled card-columns">
+				<li class="form-check" v-for="option in options">
+					<input 
+						class="form-check-input"
+						type="radio"
+						:name="question.id"
+						:value="option"
+						@change="handler"
+					>
+					<label class="form-check-label"> #[[ option ]] </label>
+				</li>
+			</ul>
+		</div>
+		`
+	})
+
+	// Component for the one-choice question "¿Cuál es la postura del tweet respuesta al contenido del tweet original?"
+	Vue.component('question-block-stance-of-response-to-target-content',{
+		extends: questionBlock,
+		methods: {
+			handler: function(e){
+				console.log("stancechanged", e.target.value)
+				this.$emit('stancechanged', e.target.value)
+			}
+		},
+	})
+	
+	// Component for the one-choice question "¿La respuesta expresa que el original contiene información verdadera?"
+	var questionBlockTrueNews = Vue.component('question-block-true-news',{
+		extends: questionBlock,
+		methods: {
+			handler: function(e){
+				console.log("evidencechanged", e.target.value)
+				this.$emit('evidencechanged', e.target.value)
+			}
+		},
+	})
+
+	// Component for the one-choice question "¿La respuesta expresa que el original contiene información falsa?"
+	Vue.component('question-block-fake-news',{ extends: questionBlockTrueNews })
 
 	//Vue app
 	var annotationApp = new Vue({
@@ -118,9 +150,20 @@ $(document).ready(function() {
 				questions : null,
 				questionsGrouped : null,
 				tweetRelation : null,
-				stance: null, //model for the last section of questions		
-				evidence: null, 	
+				stance: '', //model for the last section of questions		
+				evidence: '', 	
 			}			
+		},
+		computed: {
+			showTrueNewsQuestion: function(){
+				return this.stance==='Soporte Explícito' || this.stance==='Soporte Implícito';
+			},
+			showFakeNewsQuestion: function(){
+				return this.stance==='Negación Explícita' || this.stance==='Negación Implícita';
+			},
+			showEvidenceQuestion: function(){
+				return  (this.showTrueNewsQuestion || this.showFakeNewsQuestion) && this.evidence === 'Si';
+			}
 		},
 		methods : {
 			fetchQuestions(){
@@ -146,6 +189,12 @@ $(document).ready(function() {
 				const copy = sectionName
 				return copy.replace(/[^0-9a-zA-Z-]/g, '').toLowerCase()
 			},
+			updateStance(value){
+				this.stance = value;
+			},
+			updateEvidence(value){
+				this.evidence = value;
+			}
 		},
 		mounted(){
 			this.fetchQuestions()
