@@ -121,7 +121,6 @@ $(document).ready(function() {
 		extends: questionBlock,
 		methods: {
 			handler: function(e){
-				console.log("stancechanged", e.target.value)
 				this.$emit('stancechanged', e.target.value)
 			}
 		},
@@ -132,7 +131,6 @@ $(document).ready(function() {
 		extends: questionBlock,
 		methods: {
 			handler: function(e){
-				console.log("evidencechanged", e.target.value)
 				this.$emit('evidencechanged', e.target.value)
 			}
 		},
