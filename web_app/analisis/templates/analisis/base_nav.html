@@ -11,9 +11,11 @@
             <li class="nav-item">
               <a href="{% url 'annotate' %}" class="nav-link">Anotar tweets</a>
             </li>
+            {% if request.user.is_staff %}
             <li class="nav-item">
               <a href="{% url 'resolve_tweets_annotations' %}" class="nav-link">Resolver anotaciones</a>
             </li>
+            {% endif %}
           </ul>
           <ul class="navbar-nav ml-auto">
             <li class="nav-item navbar-text">

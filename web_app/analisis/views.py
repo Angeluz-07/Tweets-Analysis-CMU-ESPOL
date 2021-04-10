@@ -3,6 +3,8 @@ from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
 from .models import *
 
 from rest_framework import viewsets
@@ -149,6 +151,7 @@ def annotate(request):
     return render(request, 'analisis/annotate.html', context = context)
 
 
+@staff_member_required(login_url='annotate')
 @login_required(login_url='login')
 def resolve_tweet_annotations(request):
     context = {}
