@@ -28,15 +28,15 @@ $(document).ready(function() {
 	$('#mainForm').on('submit',function(){
 		var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 		var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
-		if(checkedOne){
-			var time_spent = dateDiffInSecond(START_TIME, new Date());
-			addFieldsToForm('time_spent',time_spent);			
-			$("#mainFormSubmitButton").attr('disabled', true);
-			return true
-		}else{
-			alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')			
-			return false
+		if(!checkedOne){
+			alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')
+			return false;
 		}
+
+		var time_spent = dateDiffInSecond(START_TIME, new Date());
+		addFieldsToForm('time_spent',time_spent);
+		$("#mainFormSubmitButton").attr('disabled', true);
+		return true;
 
 		function addFieldsToForm(name, value){
 			$("<input/>")
@@ -108,6 +108,7 @@ $(document).ready(function() {
 						:name="question.id"
 						:value="option"
 						@change="handler"
+						required
 					>
 					<label class="form-check-label"> #[[ option ]] </label>
 				</li>
