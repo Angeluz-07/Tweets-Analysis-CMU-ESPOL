@@ -7,9 +7,21 @@
      another template to help view ambiguos annotations
 	</div>
 
+	<div class="row py-1">
+		{% include "analisis/sub/annotation_count.html" %}
+	</div>
+
 	<!-- Categorization Layout -->
 	<div class="row py-1">
-    ...
+		{% include "analisis/sub/annotation_tweets.html" %}
+		{% include "analisis/sub/annotation_form.html" %}
 	</div>
 	<!-- End Categorization Layout -->
+{% endblock %}
+
+
+{% block bottom_assets %}
+<!-- Open internal javascript -->
+<script src="{% static "analisis/main.js" %}"></script>
+
 {% endblock %}

@@ -151,8 +151,37 @@ def annotate(request):
     return render(request, 'analisis/annotate.html', context = context)
 
 
+def get_ambigous_tweet_relations():
+    from .models import TweetRelation
+
+    tr_ids = [ 1, 2 ,3 ,4]
+
+    trs = TweetRelation.objects \
+    .filter(id__in=tr_ids) \
+    .all()
+    
+    return trs
+
 @staff_member_required(login_url='login')
 @login_required(login_url='login')
 def resolve_tweet_annotations(request):
-    context = {}
+    values = get_ambigous_tweet_relations()
+    from pprint import pprint
+    pprint(values)
+
+    user_id = request.user.id
+    tweet_relation = values[0]
+    if request.method == 'POST':
+        #create_annotation(request.POST)
+        return redirect('annotate')
+
+    context = {
+        'tweet_relation_id' : tweet_relation.id,
+        'tweet_target_id' : tweet_relation.tweet_target.id,
+        'tweet_target_text' : tweet_relation.tweet_target.text,
+        'tweet_response_id' : tweet_relation.tweet_response.id,
+        'tweet_response_text' : tweet_relation.tweet_response.text,
+        'hide_target_tweet' : hide_target_tweet(tweet_relation),
+        'annotation_count' : get_annotation_count(user_id),
+    }
     return render(request, 'analisis/resolve_tweet_annotations.html', context = context)
