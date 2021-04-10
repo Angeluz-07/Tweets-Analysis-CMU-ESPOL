@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
 from django.http import Http404
+from django.contrib.auth.decorators import login_required
 from .models import *
 
 from rest_framework import viewsets
@@ -123,10 +124,9 @@ def hide_target_tweet(tweet_relation):
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
-def annotate(request):
-    if not request.user.is_authenticated:
-        return HttpResponse("User is not authenticated. Log in <a href='/login'>here</a>")
 
+@login_required(login_url='login')
+def annotate(request):
     user_id = request.user.id # User logged in
     tweet_relation = get_random_tweet_relation(user_id)
     if tweet_relation is None:
@@ -147,3 +147,9 @@ def annotate(request):
     }
 
     return render(request, 'analisis/annotate.html', context = context)
+
+
+@login_required(login_url='login')
+def resolve_tweet_annotations(request):
+    context = {}
+    return render(request, 'analisis/resolve_tweet_annotations.html', context = context)

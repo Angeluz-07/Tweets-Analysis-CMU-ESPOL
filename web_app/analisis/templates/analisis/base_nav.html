@@ -1,0 +1,26 @@
+{%  extends "analisis/base.html" %}
+
+{% block nav %}
+  <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="navbar-brand" href="#"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a href="{% url 'annotate' %}" class="nav-link">Anotar tweets</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'resolve_tweets_annotations' %}" class="nav-link">Resolver anotaciones</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item navbar-text">
+              <b> Logged in as {{ user.username }} </b>|
+              <a href="{% url 'logout' %}" >Logout</a>
+            </li>
+          </ul>
+      </div>
+    </nav>
+{% endblock %}

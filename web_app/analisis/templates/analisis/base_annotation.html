@@ -1,0 +1,29 @@
+{%  extends "analisis/base_nav.html" %}
+{% load  static %}
+
+{% block top_assets %}
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+
+  <link href="{% static "analisis/style.css" %}" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.min.js"></script>
+	<script>
+		window.twttr = (function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0],
+			t = window.twttr || {};
+		if (d.getElementById(id)) return t;
+		js = d.createElement(s);
+		js.id = id;
+		js.src = "https://platform.twitter.com/widgets.js";
+		fjs.parentNode.insertBefore(js, fjs);
+
+		t._e = [];
+		t.ready = function(f) {
+			t._e.push(f);
+		};
+
+		return t;
+		}(document, "script", "twitter-wjs"));
+	</script>
+{% endblock %}

@@ -1,17 +1,6 @@
-
-{% extends 'analisis/base.html' %}
+{% extends 'analisis/base_annotation.html' %}
 {% load  static %}
 
-{% block nav %}
-	<section>
-		<nav class="navbar navbar-light border-bottom mb-2">
-	<a class="navbar-brand" href="#">Annotation app v1 </a>
-	<span class="navbar-text">
-	<b>Logged in as {{ user.username }} </b>| <a href="{% url 'logout' %}">Log Out</a>
-	</span>
-	</nav>
-	</section>
-{% endblock %}
 	
 {% block content %}
 
@@ -31,7 +20,7 @@
 	<!-- End Categorization Layout -->
 {% endblock %}
 
-{% block bottom %}
+{% block bottom_assets %}
 <!-- Open internal javascript -->
 <script src="{% static "analisis/main.js" %}"></script>
 
