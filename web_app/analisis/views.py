@@ -151,7 +151,7 @@ def annotate(request):
     return render(request, 'analisis/annotate.html', context = context)
 
 
-@staff_member_required(login_url='annotate')
+@staff_member_required(login_url='login')
 @login_required(login_url='login')
 def resolve_tweet_annotations(request):
     context = {}
