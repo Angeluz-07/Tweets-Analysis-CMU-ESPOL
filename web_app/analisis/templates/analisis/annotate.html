@@ -5,7 +5,7 @@
 {% block nav %}
 	<section>
 		<nav class="navbar navbar-light border-bottom mb-2">
-	<a class="navbar-brand" href="#"> <span class="badge badge-light border">{{ annotation_count }}</span> anotaciones realizadas</a>
+	<a class="navbar-brand" href="#">Annotation app v1 </a>
 	<span class="navbar-text">
 	<b>Logged in as {{ user.username }} </b>| <a href="{% url 'logout' %}">Log Out</a>
 	</span>
@@ -15,14 +15,18 @@
 	
 {% block content %}
 
+	<div class="row py-1">
 	{% include "analisis/sub/instructions_legacy.html" %}
+	</div>
+
+	<div class="row py-1">
+		{% include "analisis/sub/annotation_count.html" %}
+	</div>
 
 	<!-- Categorization Layout -->
-	<div  id="workContent1">
-		<div class="row">
-			{% include "analisis/sub/annotation_tweets.html" %}
-			{% include "analisis/sub/annotation_form.html" %}
-		</div>
+	<div class="row py-1">
+		{% include "analisis/sub/annotation_tweets.html" %}
+		{% include "analisis/sub/annotation_form.html" %}
 	</div>
 	<!-- End Categorization Layout -->
 {% endblock %}
