@@ -7,6 +7,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'questions', views.QuestionViewSet)
+router.register(r'resolve-tweet-annotations', views.ResolveTweetAnnotationsViewSet)
 
 
 urlpatterns = [

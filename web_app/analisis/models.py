@@ -65,10 +65,15 @@ class Question(models.Model):
 
 class Answer(models.Model):   
     question = models.ForeignKey(Question,on_delete=models.SET_NULL,null=True)
-    annotation = models.ForeignKey(Annotation,on_delete=models.CASCADE)
+    annotation = models.ForeignKey(Annotation,on_delete=models.CASCADE, related_name='answers')
     value = models.TextField() # json string
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'Answer : Annotation={self.annotation.id if self.annotation else None}'
+
+    @property
+    def value_json(self):
+        from json import loads
+        return loads(self.value)

@@ -4,6 +4,8 @@ from django.http.request import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import *
 
@@ -12,9 +14,26 @@ from .serializers import *
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     http_method_names = ['get']
+
+class ResolveTweetAnnotationsViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Annotation.objects.all()
+    serializer_class = ResolveTweetAnnotationsSerializer
+    http_method_names = ['get']
+
+    
+    def list(self, request):
+        queryset = Annotation.objects.all()
+        tweet_relation_id = self.request.query_params.get('tweet_relation.id', None)
+        if tweet_relation_id:
+            queryset = Annotation.objects.filter(tweet_relation__id=tweet_relation_id)
+
+        serializer = ResolveTweetAnnotationsSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     from random import choice
@@ -167,10 +186,14 @@ def get_ambigous_tweet_relations():
 def resolve_tweet_annotations(request):
     values = get_ambigous_tweet_relations()
     from pprint import pprint
-    pprint(values)
+    #pprint(values)
 
     user_id = request.user.id
     tweet_relation = values[0]
+
+    from .models import Annotation
+    ans = Annotation.objects.filter(tweet_relation__id=tweet_relation.id).all()
+    pprint(ans)
     if request.method == 'POST':
         #create_annotation(request.POST)
         return redirect('annotate')
