@@ -1,5 +1,5 @@
 <div class="col-md-6">
-    <form action="{% url 'annotate' %}" method="post" id="mainForm">
+    <form action="{% url 'resolve_tweets_annotations' %}" method="post" id="mainForm">
     <!-- For some reason the form tag can't be inside the Vue app `annotationApp` because then, $('#mainForm').. doesnt work -->
         {% csrf_token %}
         <div class="row  border rounded-0 py-4 px-2" id="annotationApp">
@@ -73,7 +73,7 @@
 
                 <div class="form-group row">
                     <div class="col-12 text-center my-3">
-                    <button type="submit" class="btn btn-primary" v-if="questions.length">Enviar</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="annotation_form" v-if="questions.length">Enviar</button>
                     </div>
                 </div>
             </div>

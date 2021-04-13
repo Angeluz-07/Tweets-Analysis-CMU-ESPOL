@@ -154,7 +154,7 @@ def annotate(request):
         return HttpResponse("Ok. It seems all tweets have been annotated :) . Log out <a href='/logout'>here</a>")
 
     if request.method == 'POST':
-        create_annotation(request.POST)
+        #create_annotation(request.POST)
         return redirect('annotate')
 
     context = {
@@ -193,8 +193,10 @@ def resolve_tweet_annotations(request):
 
     from .models import Annotation
     ans = Annotation.objects.filter(tweet_relation__id=tweet_relation.id).all()
-    pprint(ans)
-    if request.method == 'POST':
+    sr = ResolveTweetAnnotationsSerializer(ans, many=True)
+    pprint(sr.data)
+    if request.method == 'POST' and request.POST['action']=='annotation_form':
+        print('hello')
         #create_annotation(request.POST)
         return redirect('annotate')
 
@@ -206,5 +208,6 @@ def resolve_tweet_annotations(request):
         'tweet_response_text' : tweet_relation.tweet_response.text,
         'hide_target_tweet' : hide_target_tweet(tweet_relation),
         'annotation_count' : get_annotation_count(user_id),
+        'ans' : sr.data
     }
     return render(request, 'analisis/resolve_tweet_annotations.html', context = context)
