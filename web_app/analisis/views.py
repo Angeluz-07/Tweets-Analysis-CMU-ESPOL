@@ -13,69 +13,41 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     http_method_names = ['get']
 
-def get_random_tweet_relation_type():
-    from random import shuffle
-    relation_types = ['Quote','Reply']
-    shuffle(relation_types)
-    return relation_types[0], relation_types[1]
-
-def get_random_tweet_relation(annotator_id: int, eager_mode: bool = True) -> TweetRelation:
-    # https://medium.com/better-programming/django-annotations-and-aggregations-48685994d149
+def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     from random import choice
     from django.db.models import Count
     from .models import TweetRelation
 
-    tr_ids_annotated_thrice = [
-        item.id for item in
-        TweetRelation.objects \
+    def get_trs_count(count, annotator_id):
+        result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
-        .filter(annotation_count__gte=3)
-    ]
+        .filter(annotation_count__exact=count) \
+        .exclude(annotation__annotator_id=annotator_id) \
+        .count()
+        return result
 
-    tr_ids_already_annotated_by_user = [
-        item.id for item in
-        TweetRelation.objects \
-        .filter(annotation__annotator_id=annotator_id)
-    ]
-
-    if eager_mode:
-        # Eager mode means, only retrieve tweets that have been
-        # annotated once or twice. So we can quickly reach
-        # more tweets that are annotated thrice.
-        #
-        # To do so, we exclude tweets with zero annotations. This
-        # only makes sense when the DB contains a good set of tweets annotated
-        # once or twice.
-        tr_ids_with_zero_annotations = [
-            item.id for item in
-            TweetRelation.objects \
-            .annotate(annotation_count=Count('annotation')) \
-            .filter(annotation_count__exact=0)
-        ]
-    else:
-        tr_ids_with_zero_annotations = []
-
-    relation_type_a, relation_type_b = get_random_tweet_relation_type()
-
-    trs = TweetRelation.objects \
-    .filter(relation_type=relation_type_a) \
-    .exclude(id__in=tr_ids_with_zero_annotations) \
-    .exclude(id__in=tr_ids_annotated_thrice) \
-    .exclude(id__in=tr_ids_already_annotated_by_user) \
-    .all()
-
-    if len(trs) == 0:
-        trs = TweetRelation.objects \
-        .filter(relation_type=relation_type_b) \
-        .exclude(id__in=tr_ids_with_zero_annotations) \
-        .exclude(id__in=tr_ids_annotated_thrice) \
-        .exclude(id__in=tr_ids_already_annotated_by_user) \
+    def get_trs(count, annotator_id):
+        result = TweetRelation.objects \
+        .annotate(annotation_count=Count('annotation')) \
+        .filter(annotation_count__exact=count) \
+        .exclude(annotation__annotator_id=annotator_id) \
         .all()
+        return result
 
-        if len(trs) == 0:
-            return None
+    trs_annotated_twice_count = get_trs_count(2, annotator_id)
+    trs_annotated_once_count = get_trs_count(1, annotator_id)
+    trs_annotated_zero_count = get_trs_count(0, annotator_id)
 
-    return choice(trs)
+    if trs_annotated_twice_count > 0:
+        trs = get_trs(2, annotator_id)
+    elif trs_annotated_once_count > 0:
+        trs = get_trs(1, annotator_id)
+    elif trs_annotated_zero_count > 0:
+        trs = get_trs(0, annotator_id)
+    else:
+        trs = None
+
+    return choice(trs) if trs else trs
 
 def get_annotation_count(annotator_id: int) -> int:
     from .models import TweetRelation
