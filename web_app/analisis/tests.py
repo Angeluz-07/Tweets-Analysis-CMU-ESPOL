@@ -268,7 +268,7 @@ class TweetAnnotationRelevant(TestCase):
         """
         Create a TweetRelation
         """
-        self.tweet_relation_inactive = TweetRelation.objects.create(
+        TweetRelation.objects.create(
             tweet_target_id = 100,
             tweet_response_id = 101,
             relation_type = 'Quote',
