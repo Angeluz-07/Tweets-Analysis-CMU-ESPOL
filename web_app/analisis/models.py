@@ -15,9 +15,15 @@ class TweetRelation(models.Model):
     tweet_target=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweet_target')
     tweet_response=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweet_response')
     relation_type=models.CharField(max_length=50, choices=TYPE)
+    relevant = models.BooleanField(default=True)
 
     def __str__(self):
         return f'TweetRelation : TweetTarget={self.tweet_target}, TweetResponse={self.tweet_response}, RelationType={self.relation_type}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['tweet_target', 'tweet_response'], name='unique tweet_relation for a pair of tweets')
+        ]
 
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)

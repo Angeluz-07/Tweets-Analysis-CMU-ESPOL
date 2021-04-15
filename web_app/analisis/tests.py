@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from analisis.models import Tweet, TweetRelation, Annotator, Annotation
 from analisis.views import get_random_tweet_relation
 from unittest.mock import patch, Mock
@@ -173,8 +173,6 @@ class TweetAnnotatedOnce(TestCase):
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr.id, self.tweet_relation_annotated_once.id)
 
-
-
 class TweetAnnotatedZero(TestCase):
 
     def setUp(self):
@@ -219,7 +217,6 @@ class TweetAnnotatedZero(TestCase):
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr.id, self.tweet_relation_annotated_zero.id)
 
-
 class AllTweetsAnnotated(TestCase):
 
     def setUp(self):
@@ -257,3 +254,59 @@ class AllTweetsAnnotated(TestCase):
         Annotator.objects.create(id=annotator_id)
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr, None)
+
+class TweetAnnotationRelevant(TestCase):
+
+    def setUp(self):
+        """
+        Create two Tweets
+        """
+        for tt_id, tr_id in [(100,101)]:
+            Tweet.objects.create(id=tt_id)
+            Tweet.objects.create(id=tr_id)
+
+        """
+        Create a TweetRelation
+        """
+        TweetRelation.objects.create(
+            tweet_target_id = 100,
+            tweet_response_id = 101,
+            relation_type = 'Quote',
+            relevant=False
+        )
+
+    def test_is_not_retrieved(self):
+        tr = get_random_tweet_relation(annotator_id=100)
+        self.assertEqual(tr, None)
+
+class TweetRelationUnique(TransactionTestCase):
+
+    def setUp(self):
+        """
+        Create two Tweets
+        """
+        for tt_id, tr_id in [(100,101)]:
+            Tweet.objects.create(id=tt_id)
+            Tweet.objects.create(id=tr_id)
+
+        """
+        Create one TweetRelation
+        """
+        self.tweet_relation_valid = TweetRelation.objects.create(
+            tweet_target_id = 100,
+            tweet_response_id = 101,
+            relation_type = 'Quote'
+        )
+
+    def test_error_on_duplicate(self):
+        try:
+            tweet_relation_invalid = TweetRelation.objects.create(
+                tweet_target_id = 100,
+                tweet_response_id = 101,
+                relation_type = 'Quote'
+            )
+        except Exception as e:
+            from django.db.utils import IntegrityError
+            self.assertIsInstance(e, IntegrityError)
+        finally:
+            self.assertEqual(TweetRelation.objects.all().count(), 1)
