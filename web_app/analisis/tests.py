@@ -255,8 +255,7 @@ class AllTweetsAnnotated(TestCase):
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr, None)
 
-# Create your tests here.
-class TweetAnnotationInactive(TestCase):
+class TweetAnnotationRelevant(TestCase):
 
     def setUp(self):
         """
