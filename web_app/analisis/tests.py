@@ -173,8 +173,6 @@ class TweetAnnotatedOnce(TestCase):
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr.id, self.tweet_relation_annotated_once.id)
 
-
-
 class TweetAnnotatedZero(TestCase):
 
     def setUp(self):
@@ -219,7 +217,6 @@ class TweetAnnotatedZero(TestCase):
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr.id, self.tweet_relation_annotated_zero.id)
 
-
 class AllTweetsAnnotated(TestCase):
 
     def setUp(self):
@@ -258,6 +255,30 @@ class AllTweetsAnnotated(TestCase):
         tr = get_random_tweet_relation(annotator_id)
         self.assertEqual(tr, None)
 
+# Create your tests here.
+class TweetAnnotationInactive(TestCase):
+
+    def setUp(self):
+        """
+        Create two Tweets
+        """
+        for tt_id, tr_id in [(100,101)]:
+            Tweet.objects.create(id=tt_id)
+            Tweet.objects.create(id=tr_id)
+
+        """
+        Create a TweetRelation
+        """
+        self.tweet_relation_inactive = TweetRelation.objects.create(
+            tweet_target_id = 100,
+            tweet_response_id = 101,
+            relation_type = 'Quote',
+            relevant=False
+        )
+
+    def test_is_not_retrieved(self):
+        tr = get_random_tweet_relation(annotator_id=100)
+        self.assertEqual(tr, None)
 
 class TweetRelationUnique(TransactionTestCase):
 

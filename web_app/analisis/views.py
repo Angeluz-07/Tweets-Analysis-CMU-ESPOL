@@ -22,6 +22,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
         result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=count) \
+        .filter(relevant=True) \
         .exclude(annotation__annotator_id=annotator_id) \
         .count()
         return result
@@ -30,6 +31,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
         result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=count) \
+        .filter(relevant=True) \
         .exclude(annotation__annotator_id=annotator_id) \
         .all()
         return result
