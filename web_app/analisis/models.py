@@ -19,6 +19,11 @@ class TweetRelation(models.Model):
     def __str__(self):
         return f'TweetRelation : TweetTarget={self.tweet_target}, TweetResponse={self.tweet_response}, RelationType={self.relation_type}'
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['tweet_target', 'tweet_response'], name='unique tweet_relation for a pair of tweets')
+        ]
+
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
