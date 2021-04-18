@@ -15,8 +15,8 @@ def add_tweet_and_tweet_relations():
         for line in f:
             data.append(json.loads(line))
 
-    for info in data[:10]: #<-- a little limit for test and debugging
-    #for info in data:
+    #for info in data[:10]: #<-- a little limit for test and debugging
+    for info in data:
         tweet_target_id = int(info['tweet_target_id'])
         tweet_target_text = info['tweet_target_text'].encode('unicode_escape') #this encode is neccesary because we use MYSQL. Postgresql doesnt need it.
 
