@@ -32,7 +32,8 @@ $(document).ready(function() {
 		var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
 		if(checkedOne){
 			var time_spent = dateDiffInSecond(START_TIME, new Date());
-			addFieldsToForm('time_spent',time_spent);
+			addFieldsToForm('time_spent',time_spent);			
+			$("#mainFormSubmitButton").attr('disabled', true);
 			return true
 		}else{
 			alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')			
