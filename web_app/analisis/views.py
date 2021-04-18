@@ -62,24 +62,29 @@ def create_annotation(form_data: QueryDict) -> None:
     tr = TweetRelation.objects.get(id=form_data['tweet_relation_id'])
     ts = form_data['time_spent']
 
-    ann = Annotation.objects.create(
-        tweet_relation=tr, 
-        annotator=a,
-        time_spent=ts
-    )
+    anotation_on_tweet_by_user_exists =  Annotation.objects \
+    .filter(tweet_relation=tr, annotator=a) \
+    .exists()
 
-    questions = {k: v for k, v in form_data.items() if k.isnumeric()}   
-    for k, v in questions.items():
-        q = Question.objects.get(id=k)
-        if q.type == "Checkbox":
-            value = json.dumps(form_data.getlist(k), ensure_ascii=False)
-        else:
-            value = json.dumps(v, ensure_ascii=False)
-        answer = Answer.objects.create(
-            value=value,
-            annotation_id=ann.id,
-            question_id=q.id,            
+    if not anotation_on_tweet_by_user_exists:
+        ann = Annotation.objects.create(
+            tweet_relation=tr,
+            annotator=a,
+            time_spent=ts
         )
+
+        questions = {k: v for k, v in form_data.items() if k.isnumeric()}
+        for k, v in questions.items():
+            q = Question.objects.get(id=k)
+            if q.type == "Checkbox":
+                value = json.dumps(form_data.getlist(k), ensure_ascii=False)
+            else:
+                value = json.dumps(v, ensure_ascii=False)
+            answer = Answer.objects.create(
+                value=value,
+                annotation_id=ann.id,
+                question_id=q.id,            
+            )
 
 def GET_random_tweet_relation(request, annotator_id):
     tweet_relation = get_random_tweet_relation(annotator_id)
