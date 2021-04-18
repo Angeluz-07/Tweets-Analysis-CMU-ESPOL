@@ -15,27 +15,48 @@ def add_tweet_and_tweet_relations():
         for line in f:
             data.append(json.loads(line))
 
-    #for info in data[:10]: #<-- a little limit for test and debugging
-    for info in data:
+    for info in data[:10]: #<-- a little limit for test and debugging
+    #for info in data:
         tweet_target_id = int(info['tweet_target_id'])
-        tweet_target_text = info['tweet_target_text']
+        tweet_target_text = info['tweet_target_text'].encode('unicode_escape') #this encode is neccesary because we use MYSQL. Postgresql doesnt need it.
 
         tweet_response_id = int(info['tweet_response_id'])
-        tweet_response_text = info['tweet_response_text']
+        tweet_response_text = info['tweet_response_text'].encode('unicode_escape')
 
         interaction_type = info['interaction_type']
 
-        t, _ = Tweet.objects.get_or_create(
-            id = tweet_target_id,
-            text = tweet_target_text
-        )
-        print(t)
+        
+        try:                     
+            t, _ = Tweet.objects.get_or_create(
+                id = tweet_target_id,
+                text = tweet_target_text
+            )
+        except Exception as e:
+            from django.db.utils import IntegrityError
+            if isinstance(e, IntegrityError):
+                t = Tweet.objects.get(
+                    id = tweet_target_id
+                )
+                t.text = tweet_target_text
+                t.save()
+        finally:       
+            print(t)
 
-        t, _ = Tweet.objects.get_or_create(
-            id = tweet_response_id,
-            text = tweet_response_text
-        )
-        print(t)
+        try:
+            t, _ = Tweet.objects.get_or_create(
+                id = tweet_response_id,
+                text = tweet_response_text
+            )
+        except Exception as e:
+            from django.db.utils import IntegrityError
+            if isinstance(e, IntegrityError):      
+                t = Tweet.objects.get(
+                    id = tweet_response_id
+                )                
+                t.text = tweet_response_text
+                t.save()
+        finally:
+            print(t)
         
 
         try:
