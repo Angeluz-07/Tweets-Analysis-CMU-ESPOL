@@ -65,7 +65,7 @@ class Question(models.Model):
 
 class Answer(models.Model):   
     question = models.ForeignKey(Question,on_delete=models.SET_NULL,null=True)
-    annotation = models.ForeignKey(Annotation,on_delete=models.SET_NULL,null=True)
+    annotation = models.ForeignKey(Annotation,on_delete=models.CASCADE)
     value = models.TextField() # json string
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
