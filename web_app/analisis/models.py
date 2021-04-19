@@ -42,6 +42,12 @@ class Annotation(models.Model):
     def __str__(self):
         return f'Annotation : Id={self.id}, Annotator={self.annotator.name if self.annotator else None}'
     
+    # First remove duplicates in DB, then apply migration
+    #class Meta:
+    #    constraints = [
+    #        models.UniqueConstraint(fields=['tweet_relation', 'annotator'], name='unique annotation for the pair (annotator,tweet_relation)')
+    #    ]
+
 class Question(models.Model):
     TYPE = [("Checkbox","Checkbox"),("Choice","Choice")]
     name = models.TextField()

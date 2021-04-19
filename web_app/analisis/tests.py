@@ -1,6 +1,6 @@
 from django.test import TestCase, TransactionTestCase
 from analisis.models import Tweet, TweetRelation, Annotator, Annotation
-from analisis.views import get_random_tweet_relation
+from analisis.views import get_random_tweet_relation, create_annotation
 from unittest.mock import patch, Mock
 
 # Create your tests here.
@@ -310,3 +310,45 @@ class TweetRelationUnique(TransactionTestCase):
             self.assertIsInstance(e, IntegrityError)
         finally:
             self.assertEqual(TweetRelation.objects.all().count(), 1)
+
+class AnnotationOnTweetUniqueByAnnotator(TransactionTestCase):
+
+    def setUp(self):
+        """
+        Create two Tweets
+        """
+        for tt_id, tr_id in [(100,101)]:
+            Tweet.objects.create(id=tt_id)
+            Tweet.objects.create(id=tr_id)
+
+        """
+        Create one TweetRelation
+        """
+        self.tweet_relation_annotated = TweetRelation.objects.create(
+            tweet_target_id = 100,
+            tweet_response_id = 101,
+            relation_type = 'Quote'
+        )
+
+        """
+        Create one annotator
+        """
+        self.annotator = Annotator.objects.create(id='100')
+
+        """
+        Create one annotation for given tweet_relation
+        """
+        self.first_annotation = Annotation.objects.create(
+            annotator_id = self.annotator.id,
+            tweet_relation_id = self.tweet_relation_annotated.id
+        )
+
+
+    def test_error_on_duplicate(self):
+        form_data = {
+            'annotator_id' : self.annotator.id,
+            'tweet_relation_id' : self.tweet_relation_annotated.id,
+            'time_spent' : 10
+        }
+        create_annotation(form_data)
+        self.assertEqual(Annotation.objects.all().count(), 1)
