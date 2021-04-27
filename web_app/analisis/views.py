@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
 from django.http import Http404
@@ -154,7 +154,7 @@ def annotate(request):
         return HttpResponse("Ok. It seems all tweets have been annotated :) . Log out <a href='/logout'>here</a>")
 
     if request.method == 'POST':
-        #create_annotation(request.POST)
+        create_annotation(request.POST)
         return redirect('annotate')
 
     context = {
@@ -169,7 +169,7 @@ def annotate(request):
 
     return render(request, 'analisis/annotate.html', context = context)
 
-
+"""
 def get_ambigous_tweet_relations():
     from .models import TweetRelation
 
@@ -211,3 +211,25 @@ def resolve_tweet_annotations(request):
         'ans' : sr.data
     }
     return render(request, 'analisis/resolve_tweet_annotations.html', context = context)
+"""
+
+@staff_member_required(login_url='login')
+@login_required(login_url='login')
+def resolve_tweet_annotation(request, tweet_relation_id):
+    from .models import TweetRelation
+    tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
+
+    if request.method == 'POST':
+        #create_annotation(request.POST)
+        return redirect('annotate')
+
+    context = {
+        'tweet_relation_id' : tweet_relation.id,
+        'tweet_target_id' : tweet_relation.tweet_target.id,
+        'tweet_target_text' : tweet_relation.tweet_target.text,
+        'tweet_response_id' : tweet_relation.tweet_response.id,
+        'tweet_response_text' : tweet_relation.tweet_response.text,
+        'hide_target_tweet' : hide_target_tweet(tweet_relation),
+    }
+
+    return render(request, 'analisis/annotate.html', context = context)
