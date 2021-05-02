@@ -112,3 +112,6 @@ db.sqlite3
 # vs code
 .vscode
 .vs
+
+# local experiments
+.local

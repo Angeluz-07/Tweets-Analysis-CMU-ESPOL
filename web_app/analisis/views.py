@@ -169,6 +169,17 @@ def annotate(request):
 
     return render(request, 'analisis/annotate.html', context = context)
 
+@staff_member_required(login_url='login')
+@login_required(login_url='login')
+def problematic_tweet_relations(request):
+    trs = TweetRelation.objects.all()
+
+    context = {
+        'trs' : trs
+    }
+    return render(request, 'analisis/problematic_tweet_relations.html', context = context)
+
+
 """
 def get_ambigous_tweet_relations():
     from .models import TweetRelation
@@ -215,7 +226,7 @@ def resolve_tweet_annotations(request):
 
 @staff_member_required(login_url='login')
 @login_required(login_url='login')
-def resolve_tweet_annotation(request, tweet_relation_id):
+def resolve_tweet_relation(request, tweet_relation_id):
     from .models import TweetRelation
     tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
 

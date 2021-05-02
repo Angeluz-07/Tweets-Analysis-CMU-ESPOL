@@ -13,7 +13,7 @@
             </li>
             {% if request.user.is_staff %}
             <li class="nav-item">
-              <a href="" class="nav-link">Resolver anotaciones</a>
+              <a href="{% url 'problematic_tweet_relations' %}" class="nav-link">Tweets problemáticos</a>
             </li>
             {% endif %}
           </ul>
