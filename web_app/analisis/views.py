@@ -19,6 +19,22 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     http_method_names = ['get']
 
+class AnswerViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    http_method_names = ['get']
+
+    def list(self, request):
+        queryset = Answer.objects.all()
+        question_id = self.request.query_params.get('question.id', None)
+        tweet_relation_id = self.request.query_params.get('tweet_relation.id', None)
+        if question_id and tweet_relation_id:
+            queryset = Answer.objects.filter(question__id=question_id, annotation__tweet_relation__id=tweet_relation_id)
+
+        serializer = AnswerSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 class ResolveTweetAnnotationsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Annotation.objects.all()
@@ -243,4 +259,4 @@ def resolve_tweet_relation(request, tweet_relation_id):
         'hide_target_tweet' : hide_target_tweet(tweet_relation),
     }
 
-    return render(request, 'analisis/annotate.html', context = context)
+    return render(request, 'analisis/resolve_tweet_relation.html', context = context)

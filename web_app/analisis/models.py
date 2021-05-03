@@ -77,3 +77,7 @@ class Answer(models.Model):
     def value_json(self):
         from json import loads
         return loads(self.value)
+    
+    @property
+    def tweet_relation(self):
+        return self.annotation.tweet_relation.id

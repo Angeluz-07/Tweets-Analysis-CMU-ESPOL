@@ -53,9 +53,59 @@ $(document).ready(function() {
 		}
 	});
 
+	// Component for ...
+	Vue.component('previous-answers', {			
+		props : ['questionId','tweet_relation_id'],		
+		delimiters : ['#[[',']]'],
+		data() {
+			return {
+				answers: []
+			}			
+		},		
+		computed: {
+			helpText: function(){	
+				result = this.answers
+				.map(x => {
+					x.value = JSON.stringify(x.value_json)
+					return x
+				})
+				.map(x => `<li>Annotation:${x.annotation}. Answer: ${x.value}</li>`)
+				.join('')
+				result = `<ul>${result}</ul>`
+				return result
+			} 
+		},
+		methods : {
+			fetchAnswers(){
+				const URL=`/api/answers/?question.id=${this.questionId}&tweet_relation.id=${this.tweet_relation_id}`
+				fetch(URL)
+					.then(stream => stream.json())
+					.then((data) => this.answers = data)					
+					.then(() => console.log(this.answers))
+                    .catch(error => console.error(error))
+			}
+		},
+		mounted() {
+			$('[data-toggle="popover"]').popover();
+			this.fetchAnswers()
+		},
+		template: `
+		<button 
+			type="button" 
+			class="btn btn-secondary btn-sm" 			
+			data-html="true" 
+			data-container="body" 
+			data-toggle="popover" 
+			data-placement="top" 
+			:data-content="helpText" >
+  			previous answers
+		</button>
+		`
+	})
+	
 	// Component for the question "¿De qué país se habla en el tweet original?"
 	Vue.component('question-block-target-tweet-country', {		
-		props : ['question','options'],
+		props : ['question','options','tweet_relation_id'],
 		delimiters : ['#[[',']]'],
 		methods : {
 			handler: function(e){
@@ -73,7 +123,14 @@ $(document).ready(function() {
 		},
 		template: `
 		<div>
-			<h6> #[[ question.value ]] </h6>
+			<h6> 
+				#[[ question.value ]] 
+				<previous-answers 
+				:questionId="question.id" 
+				:tweet_relation_id="tweet_relation_id"
+				>
+				</previous-answers> 
+			</h6>
 			<ul class="list-unstyled card-columns">
 				<li class="form-check" v-for="option in options">
 					<input 
@@ -149,6 +206,7 @@ $(document).ready(function() {
 				questions : null,
 				questionsGrouped : null,
 				tweetRelation : null,
+				tweetRelationId: document.getElementById('tweet_relation_id').value,
 				stance: '', //model for the last section of questions		
 				evidence: '', 	
 			}			
