@@ -55,7 +55,7 @@ $(document).ready(function() {
 
 	// Component for ...
 	Vue.component('previous-answers', {			
-		props : ['questionId','tweet_relation_id'],		
+		props : ['questionId'],		
 		delimiters : ['#[[',']]'],
 		data() {
 			return {
@@ -77,7 +77,7 @@ $(document).ready(function() {
 		},
 		methods : {
 			fetchAnswers(){
-				const URL=`/api/answers/?question.id=${this.questionId}&tweet_relation.id=${this.tweet_relation_id}`
+				const URL=`/api/answers/?question.id=${this.questionId}&tweet_relation.id=${this.$store.state.tweetRelationId}`
 				fetch(URL)
 					.then(stream => stream.json())
 					.then((data) => this.answers = data)					
@@ -90,7 +90,7 @@ $(document).ready(function() {
 			this.fetchAnswers()
 		},
 		template: `
-		<button 
+		<button  v-if="this.$store.state.showPreviousAnswers==true"
 			type="button" 
 			class="btn btn-secondary btn-sm" 			
 			data-html="true" 
@@ -105,7 +105,7 @@ $(document).ready(function() {
 	
 	// Component for the question "¿De qué país se habla en el tweet original?"
 	Vue.component('question-block-target-tweet-country', {		
-		props : ['question','options','tweet_relation_id'],
+		props : ['question','options'],
 		delimiters : ['#[[',']]'],
 		methods : {
 			handler: function(e){
@@ -126,8 +126,7 @@ $(document).ready(function() {
 			<h6> 
 				#[[ question.value ]] 
 				<previous-answers 
-				:questionId="question.id" 
-				:tweet_relation_id="tweet_relation_id"
+				:questionId="question.id"
 				>
 				</previous-answers> 
 			</h6>
@@ -197,6 +196,13 @@ $(document).ready(function() {
 	// Component for the one-choice question "¿La respuesta expresa que el original contiene información falsa?"
 	Vue.component('question-block-fake-news',{ extends: questionBlockTrueNews })
 
+	const store = new Vuex.Store({
+		state: {
+			tweetRelationId: document.getElementById('tweet_relation_id').value,
+			showPreviousAnswers: true
+		},
+	})
+
 	//Vue app
 	var annotationApp = new Vue({
 		el: '#annotationApp',		
@@ -206,7 +212,6 @@ $(document).ready(function() {
 				questions : null,
 				questionsGrouped : null,
 				tweetRelation : null,
-				tweetRelationId: document.getElementById('tweet_relation_id').value,
 				stance: '', //model for the last section of questions		
 				evidence: '', 	
 			}			
@@ -255,7 +260,8 @@ $(document).ready(function() {
 		},
 		mounted(){
 			this.fetchQuestions()
-		}
+		},		
+		store: store,
 	})
 
 	});
