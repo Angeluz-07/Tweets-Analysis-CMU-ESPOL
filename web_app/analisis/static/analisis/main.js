@@ -155,7 +155,13 @@ $(document).ready(function() {
 		},
 		template: `
 		<div v-if="show==true || show == undefined">
-			<h6> #[[ question.value ]] </h6>
+			<h6> 
+			#[[ question.value ]] 
+			<previous-answers 
+			:questionId="question.id"
+			>
+			</previous-answers> 
+			</h6>
 			<ul class="list-unstyled card-columns">
 				<li class="form-check" v-for="option in options">
 					<input 
