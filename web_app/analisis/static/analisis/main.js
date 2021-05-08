@@ -205,7 +205,7 @@ $(document).ready(function() {
 	const store = new Vuex.Store({
 		state: {
 			tweetRelationId: document.getElementById('tweet_relation_id').value,
-			showPreviousAnswers: true
+			showPreviousAnswers: document.getElementById('showPreviousAnswers').dataset.value.toLowerCase() == "true"
 		},
 	})
 

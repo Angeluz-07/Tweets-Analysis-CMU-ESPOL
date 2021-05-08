@@ -4,6 +4,9 @@
         {% csrf_token %}
         <div class="row  border rounded-0 py-4 px-2" id="annotationApp">
             <div class="col-sm-12">
+
+                <div id="showPreviousAnswers" data-value="{{ show_previous_answers }}" /></div>
+
                 <!-- Tweet Relation Id-->
                 <input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
@@ -14,7 +17,7 @@
                     <div v-for="(questions, section) in questionsGrouped" :key="section">
                         <button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
                             <h6>#[[ section ]]</h6>
-                        </button>						
+                        </button>					                                                                             	
                         <div class="collapse mb-2" :id="idFromSentence(section)">
                             <div class="card card-body">
                                 <template v-for="question in questions">

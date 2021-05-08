@@ -181,9 +181,33 @@ def annotate(request):
         'tweet_response_text' : tweet_relation.tweet_response.text,
         'hide_target_tweet' : hide_target_tweet(tweet_relation),
         'annotation_count' : get_annotation_count(user_id),
+        'show_previous_answers' : False
     }
 
     return render(request, 'analisis/annotate.html', context = context)
+
+
+@staff_member_required(login_url='login')
+@login_required(login_url='login')
+def resolve_tweet_relation(request, tweet_relation_id):
+    from .models import TweetRelation
+    tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
+
+    if request.method == 'POST':
+        #create_annotation(request.POST)
+        return redirect('annotate')
+
+    context = {
+        'tweet_relation_id' : tweet_relation.id,
+        'tweet_target_id' : tweet_relation.tweet_target.id,
+        'tweet_target_text' : tweet_relation.tweet_target.text,
+        'tweet_response_id' : tweet_relation.tweet_response.id,
+        'tweet_response_text' : tweet_relation.tweet_response.text,
+        'hide_target_tweet' : hide_target_tweet(tweet_relation),
+        'show_previous_answers' : True
+    }
+
+    return render(request, 'analisis/resolve_tweet_relation.html', context = context)
 
 @staff_member_required(login_url='login')
 @login_required(login_url='login')
@@ -239,24 +263,3 @@ def resolve_tweet_annotations(request):
     }
     return render(request, 'analisis/resolve_tweet_annotations.html', context = context)
 """
-
-@staff_member_required(login_url='login')
-@login_required(login_url='login')
-def resolve_tweet_relation(request, tweet_relation_id):
-    from .models import TweetRelation
-    tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
-
-    if request.method == 'POST':
-        #create_annotation(request.POST)
-        return redirect('annotate')
-
-    context = {
-        'tweet_relation_id' : tweet_relation.id,
-        'tweet_target_id' : tweet_relation.tweet_target.id,
-        'tweet_target_text' : tweet_relation.tweet_target.text,
-        'tweet_response_id' : tweet_relation.tweet_response.id,
-        'tweet_response_text' : tweet_relation.tweet_response.text,
-        'hide_target_tweet' : hide_target_tweet(tweet_relation),
-    }
-
-    return render(request, 'analisis/resolve_tweet_relation.html', context = context)
