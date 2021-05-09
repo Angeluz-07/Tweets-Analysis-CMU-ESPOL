@@ -53,7 +53,7 @@ $(document).ready(function() {
 		}
 	});
 
-	// Component for ...
+	// Component for showing previous answers on a given question.
 	Vue.component('previous-answers', {			
 		props : ['questionId'],		
 		delimiters : ['#[[',']]'],
@@ -202,6 +202,102 @@ $(document).ready(function() {
 	// Component for the one-choice question "¿La respuesta expresa que el original contiene información falsa?"
 	Vue.component('question-block-fake-news',{ extends: questionBlockTrueNews })
 
+
+	Vue.component('section-collapsible', {
+		props : ['section'],
+		delimiters : ['#[[',']]'],
+		data() {
+			return {
+				stance: '', //model for the last section of questions
+				evidence: '', 
+			}			
+		},
+		computed: {
+			showTrueNewsQuestion: function(){
+				return this.stance==='Soporte Explícito' || this.stance==='Soporte Implícito';
+			},
+			showFakeNewsQuestion: function(){
+				return this.stance==='Negación Explícita' || this.stance==='Negación Implícita';
+			},
+			showEvidenceQuestion: function(){
+				return  (this.showTrueNewsQuestion || this.showFakeNewsQuestion) && this.evidence === 'Si';
+			}
+		},
+		methods: {
+			updateStance(value){
+				this.stance = value;
+			},
+			updateEvidence(value){
+				this.evidence = value;
+			}
+		},
+		template: `
+			<div>
+				<button 
+					class="btn btn-block alert-primary mt-2" 
+					:data-target="'#'.concat(section.id)" 
+					data-toggle="collapse"  
+					type="button" role="button" aria-expanded="false"
+				>
+					<h6>#[[ section.name ]]</h6>
+				</button>					                                                                             	
+				<div class="collapse mb-2" :id="section.id">
+					<div class="card card-body">
+						<template v-for="question in section.questions">
+							<question-block-target-tweet-country
+							:question='question'
+							:options='question.options'
+							v-if ='question.id == 1'
+							>
+							</question-block-target-tweet-country>
+
+							<question-block-stance-of-response-to-target-content
+							:question='question'
+							:options='question.options'
+							@stancechanged="updateStance"
+							v-else-if ='question.id == 7'
+							>
+							</question-block-stance-of-response-to-target-content>
+							
+							<question-block-true-news
+							:question='question'
+							:options='question.options'
+							:show = 'showTrueNewsQuestion'
+							@evidencechanged="updateEvidence"
+							v-else-if ="question.id == 9 "
+							>
+							</question-block-true-news>
+						
+							<question-block-fake-news
+							:question='question'
+							:options='question.options'
+							:show = 'showFakeNewsQuestion'																							
+							@evidencechanged="updateEvidence"
+							v-else-if ="question.id == 10 "
+							>
+							</question-block-fake-news>
+
+							<question-block
+							:question='question'
+							:options='question.options'												
+							:show = 'showEvidenceQuestion'
+							v-else-if ="question.id == 11 "
+							>
+							</question-block>
+
+							<question-block
+							:question='question'
+							:options='question.options'
+							v-else
+							>
+							</question-block>
+						</template>
+					</div>
+				</div>
+			</div>
+		`
+	})
+
 	const store = new Vuex.Store({
 		state: {
 			tweetRelationId: document.getElementById('tweet_relation_id').value,
@@ -217,20 +313,9 @@ $(document).ready(function() {
 			return {
 				sections: [],
 				tweetRelation : null,
-				stance: '', //model for the last section of questions		
-				evidence: '', 	
 			}			
 		},
 		computed: {
-			showTrueNewsQuestion: function(){
-				return this.stance==='Soporte Explícito' || this.stance==='Soporte Implícito';
-			},
-			showFakeNewsQuestion: function(){
-				return this.stance==='Negación Explícita' || this.stance==='Negación Implícita';
-			},
-			showEvidenceQuestion: function(){
-				return  (this.showTrueNewsQuestion || this.showFakeNewsQuestion) && this.evidence === 'Si';
-			}
 		},
 		methods : {
 			fetchSections(){
@@ -240,12 +325,6 @@ $(document).ready(function() {
 					.then(() => console.log(this.sections))
 					.catch(error => console.error(error))
 			},
-			updateStance(value){
-				this.stance = value;
-			},
-			updateEvidence(value){
-				this.evidence = value;
-			}
 		},
 		mounted(){
 			this.fetchSections()

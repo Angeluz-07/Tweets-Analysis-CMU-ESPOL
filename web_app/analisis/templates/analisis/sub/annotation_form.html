@@ -13,65 +13,13 @@
                 <!-- Annotator Id-->
                 <input type="hidden"  name="annotator_id" value={{ user.id }} />
 
-                <div id="questionsAccordion">
-                    <div v-for="section in sections" :key="section.id">
-                        <button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(section.id)" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
-                            <h6>#[[ section.name ]]</h6>
-                        </button>					                                                                             	
-                        <div class="collapse mb-2" :id="section.id">
-                            <div class="card card-body">
-                                <template v-for="question in section.questions">
-                                    <question-block-target-tweet-country
-                                    :question='question'
-                                    :options='question.options'
-                                    v-if ='question.id == 1'
-                                    >
-                                    </question-block-target-tweet-country>
-
-                                    <question-block-stance-of-response-to-target-content
-                                    :question='question'
-                                    :options='question.options'
-                                    @stancechanged="updateStance"
-                                    v-else-if ='question.id == 7'
-                                    >
-                                    </question-block-stance-of-response-to-target-content>
-                                    
-                                    <question-block-true-news
-                                    :question='question'
-                                    :options='question.options'
-                                    :show = 'showTrueNewsQuestion'
-                                    @evidencechanged="updateEvidence"
-                                    v-else-if ="question.id == 9 "
-                                    >
-                                    </question-block-true-news>
-                                
-                                    <question-block-fake-news
-                                    :question='question'
-                                    :options='question.options'
-                                    :show = 'showFakeNewsQuestion'																							
-                                    @evidencechanged="updateEvidence"
-                                    v-else-if ="question.id == 10 "
-                                    >
-                                    </question-block-fake-news>
-
-                                    <question-block
-                                    :question='question'
-                                    :options='question.options'												
-                                    :show = 'showEvidenceQuestion'
-                                    v-else-if ="question.id == 11 "
-                                    >
-                                    </question-block>
-
-                                    <question-block
-                                    :question='question'
-                                    :options='question.options'
-                                    v-else
-                                    >
-                                    </question-block>
-                                </template>
-                            </div>
-                        </div>										
-                    </div>
+                <!-- Question Sections-->
+                <div>
+                    <section-collapsible
+                        v-for="section in sections"
+                        :section='section'
+                        :key="section.id">
+                    </section-collapsible>
                 </div>
 
                 <div class="form-group row">
