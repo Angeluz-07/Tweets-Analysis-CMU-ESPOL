@@ -1,6 +1,6 @@
 from django.test import TestCase, TransactionTestCase
-from analisis.models import Tweet, TweetRelation, Annotator, Annotation
-from analisis.views import get_random_tweet_relation, create_annotation
+from analisis.models import Tweet, TweetRelation, Annotator, Annotation, Question, Answer
+from analisis.views import get_random_tweet_relation, create_annotation, get_problematic_tweet_relations
 from unittest.mock import patch, Mock
 
 # Create your tests here.
@@ -352,3 +352,58 @@ class AnnotationOnTweetUniqueByAnnotator(TransactionTestCase):
         }
         create_annotation(form_data)
         self.assertEqual(Annotation.objects.all().count(), 1)
+
+
+class ProblematicTweetRelation(TransactionTestCase):
+
+    def setUp(self):
+        self.tweet_relation_problematic = TweetRelation.objects.create(
+            tweet_target_id = None,
+            tweet_response_id = None,
+            relation_type = 'Quote'
+        )
+   
+        self.tweet_relation_non_problematic = TweetRelation.objects.create(
+            tweet_target_id = None,
+            tweet_response_id = None,
+            relation_type = 'Quote'
+        )
+
+        def _setup_annotations_question_and_answers(tweet_relation_id, question_id, annotation_ids, answer_values):
+            assert len(annotation_ids) == len(answer_values)
+            for i in annotation_ids:
+                Annotation.objects.create(
+                    id=i,
+                    annotator_id = None,
+                    tweet_relation_id = self.tweet_relation_problematic.id
+                )
+
+            Question.objects.create(id=question_id)
+
+            for answer_value, annotation_id in zip(answer_values, annotation_ids):
+                Answer.objects.create(
+                    value=answer_value,
+                    question_id=question_id,
+                    annotation_id=annotation_id
+                )
+
+        _setup_annotations_question_and_answers(
+            self.tweet_relation_problematic.id,
+            question_id=1, 
+            annotation_ids=[1,2,3], 
+            answer_values=[ "\"Si\"", "\"No\"", "\"No es claro\""]
+        )
+
+        _setup_annotations_question_and_answers(
+            self.tweet_relation_non_problematic.id,
+            question_id=2, 
+            annotation_ids=[4,5,6], 
+            answer_values=[ "\"Si\"", "\"No\"", "\"No\""]
+        )
+        pass
+
+
+    def test_retrieve(self):
+        trs = get_problematic_tweet_relations()
+        self.assertIn(self.tweet_relation_problematic,trs)
+        self.assertNotIn(self.tweet_relation_non_problematic, trs)

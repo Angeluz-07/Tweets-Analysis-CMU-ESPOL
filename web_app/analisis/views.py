@@ -263,6 +263,10 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
     return render(request, 'analisis/resolve_tweet_relation.html', context = context)
 
+
+def get_problematic_tweet_relations():
+    return TweetRelation.objects.all()
+
 @staff_member_required(login_url='login')
 @login_required(login_url='login')
 def problematic_tweet_relations(request):
