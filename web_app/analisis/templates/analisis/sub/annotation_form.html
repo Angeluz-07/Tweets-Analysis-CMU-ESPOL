@@ -14,13 +14,13 @@
                 <input type="hidden"  name="annotator_id" value={{ user.id }} />
 
                 <div id="questionsAccordion">
-                    <div v-for="(questions, section) in questionsGrouped" :key="section">
-                        <button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(idFromSentence(section))" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
-                            <h6>#[[ section ]]</h6>
+                    <div v-for="section in sections" :key="section.id">
+                        <button class="btn btn-block alert-primary mt-2" :data-target="'#'.concat(section.id)" data-toggle="collapse"  type="button" role="button" aria-expanded="false">
+                            <h6>#[[ section.name ]]</h6>
                         </button>					                                                                             	
-                        <div class="collapse mb-2" :id="idFromSentence(section)">
+                        <div class="collapse mb-2" :id="section.id">
                             <div class="card card-body">
-                                <template v-for="question in questions">
+                                <template v-for="question in section.questions">
                                     <question-block-target-tweet-country
                                     :question='question'
                                     :options='question.options'
@@ -76,7 +76,7 @@
 
                 <div class="form-group row">
                     <div class="col-12 text-center my-3">
-                    <button type="submit" class="btn btn-primary" name="action" value="annotation_form" v-if="questions.length">Enviar</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="annotation_form" v-if="sections.length">Enviar</button>
                     </div>
                 </div>
             </div>

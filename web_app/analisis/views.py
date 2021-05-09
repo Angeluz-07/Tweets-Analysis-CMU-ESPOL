@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from .models import *
 
@@ -18,6 +19,33 @@ class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     http_method_names = ['get']
+
+    @action(detail=False, methods=['GET'])
+    def grouped_by_section(self, request):        
+        questions = Question.objects.all().values()
+
+        def parse_options(question):
+            from json import loads
+            _question = question.copy()
+            _question['options'] = loads(question['options'])
+            return _question
+
+        questions = list(map(parse_options, questions))
+
+        sections = list(dict.fromkeys(map(lambda item: item['section'],questions)))
+
+        def build_section_info(index, section_name, questions):
+            section_id = f'section_{index}'
+            _questions = list(filter(lambda item: item['section']==section_name, questions))
+            result = {
+                'id' : section_id,
+                'name': section_name,
+                'questions': _questions
+            }
+            return result
+
+        sections = [ build_section_info(i, section_name, questions)  for i, section_name in enumerate(sections)]
+        return Response(sections)
 
 class AnswerViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -192,6 +220,8 @@ def annotate(request):
 def resolve_tweet_relation(request, tweet_relation_id):
     from .models import TweetRelation
     tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
+
+    # Validate if is problematic before return
 
     if request.method == 'POST':
         #create_annotation(request.POST)

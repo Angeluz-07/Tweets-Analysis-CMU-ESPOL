@@ -215,8 +215,7 @@ $(document).ready(function() {
 		delimiters: ['#[[', ']]'],
 		data() {
 			return {
-				questions : null,
-				questionsGrouped : null,
+				sections: [],
 				tweetRelation : null,
 				stance: '', //model for the last section of questions		
 				evidence: '', 	
@@ -234,28 +233,12 @@ $(document).ready(function() {
 			}
 		},
 		methods : {
-			fetchQuestions(){
-				fetch('/api/questions')
+			fetchSections(){
+				fetch('/api/questions/grouped_by_section')	
 					.then(stream => stream.json())
-					.then(function(data){
-						data.forEach(q => q.options = JSON.parse(q.options))
-						return data
-					})
-					.then((data) => {
-						this.questions = data
-						this.questionsGrouped = this.groupBySection(data)
-						return data
-					})
-					.then(() => console.log(this.questions))
-                    .catch(error => console.error(error))
-			},
-			groupBySection(questions){
-				const bySection = R.groupBy(q => q.section)
-				return bySection(questions)
-			},
-			idFromSentence(sectionName){
-				const copy = sectionName
-				return copy.replace(/[^0-9a-zA-Z-]/g, '').toLowerCase()
+					.then((data) => this.sections = data)
+					.then(() => console.log(this.sections))
+					.catch(error => console.error(error))
 			},
 			updateStance(value){
 				this.stance = value;
@@ -265,7 +248,7 @@ $(document).ready(function() {
 			}
 		},
 		mounted(){
-			this.fetchQuestions()
+			this.fetchSections()
 		},		
 		store: store,
 	})
