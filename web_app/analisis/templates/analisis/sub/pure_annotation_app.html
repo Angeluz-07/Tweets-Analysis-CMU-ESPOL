@@ -1,12 +1,11 @@
 <div class="col-md-6">
-    <form action="{% url 'annotate' %}" method="post" id="mainForm">
-    <!-- For some reason the form tag can't be inside the Vue app `annotationApp` because then, $('#mainForm').. doesnt work -->
-        {% csrf_token %}
-        <div class="row  border rounded-0 py-4 px-2" id="annotationApp">
-            <div class="col-sm-12">
+    <div class="row  border rounded-0 py-4 px-2" id="annotationApp">
+        <div class="col-sm-12">
 
-                <div id="showPreviousAnswers" data-value="{{ show_previous_answers }}" /></div>
+            <div id="showPreviousAnswers" data-value="false" /></div>
 
+            <form action="{% url 'annotate' %}" method="post" id="mainForm">
+                {% csrf_token %}
                 <!-- Tweet Relation Id-->
                 <input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
@@ -30,8 +29,8 @@
                         class="btn btn-primary" 
                         v-if="sections.length">Enviar</button>
                     </div>
-                </div>
-            </div>
-        </div>          
-    </form>
+                </div>                  
+            </form>
+        </div>
+    </div>    
 </div>

@@ -24,34 +24,6 @@ $(document).ready(function() {
 	});
 
 
-	var START_TIME = new Date();
-	$('#mainForm').on('submit',function(){
-		var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-		var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
-		if(!checkedOne){
-			alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')
-			return false;
-		}
-
-		var time_spent = dateDiffInSecond(START_TIME, new Date());
-		addFieldsToForm('time_spent',time_spent);
-		$("#mainFormSubmitButton").attr('disabled', true);
-		return true;
-
-		function addFieldsToForm(name, value){
-			$("<input/>")
-				.attr("type", "hidden")
-				.attr("name", name)
-				.attr("value", value)
-				.appendTo("#mainForm");
-		}
-
-		function dateDiffInSecond(startDate, endDate){
-			var timeDiff = Math.abs(endDate.getTime() - startDate.getTime()); // in miliseconds
-			var timeDiffInSecond = Math.ceil(timeDiff / 1000); // in second
-			return timeDiffInSecond;
-		}
-	});
 
 	// Component for showing previous answers on a given question.
 	Vue.component('previous-answers', {			
@@ -305,17 +277,11 @@ $(document).ready(function() {
 		},
 	})
 
-	//Vue app
-	var annotationApp = new Vue({
-		el: '#annotationApp',		
-		delimiters: ['#[[', ']]'],
+	const annotation_form_mixin = {
 		data() {
 			return {
 				sections: [],
-				tweetRelation : null,
 			}			
-		},
-		computed: {
 		},
 		methods : {
 			fetchSections(){
@@ -326,10 +292,68 @@ $(document).ready(function() {
 					.catch(error => console.error(error))
 			},
 		},
-		mounted(){
+		mounted: function(){
 			this.fetchSections()
-		},		
-		store: store,
-	})
+
+			// Pre-submit form checking and processing
+			// TODO: refactor to make this with Vue. When doing it
+			// It is important to check that works as expected, i.e.
+			// That sends time spent in form and blocks submit button when submitting. Also validations.
+
+			var START_TIME = new Date();
+			$('#mainForm').on('submit',function(){
+				var checkboxes = document.querySelectorAll('#mainForm input[type="checkbox"]');
+				var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+				if(!checkedOne){
+					alert('Debe seleccionar al menos una opcion. En preguntas de opción múltiple.')
+					return false;
+				}
+
+				var time_spent = dateDiffInSecond(START_TIME, new Date());
+				addFieldsToForm('time_spent',time_spent);
+				$("#mainFormSubmitButton").attr('disabled', true);
+				return true;
+
+				function addFieldsToForm(name, value){
+					$("<input/>")
+						.attr("type", "hidden")
+						.attr("name", name)
+						.attr("value", value)
+						.appendTo("#mainForm");
+				}
+
+				function dateDiffInSecond(startDate, endDate){
+					var timeDiff = Math.abs(endDate.getTime() - startDate.getTime()); // in miliseconds
+					var timeDiffInSecond = Math.ceil(timeDiff / 1000); // in second
+					return timeDiffInSecond;
+				}
+			});
+
+		}
+	}
+	//Vue annotation app
+	if(document.getElementById("annotationApp")){
+		var annotationApp = new Vue({
+			mixins:[annotation_form_mixin],
+			el: '#annotationApp',		
+			delimiters: ['#[[', ']]'],
+			store: store,
+		})
+	}
+
+	if(document.getElementById("resolveTweetRelationApp")){
+		//Vue resolve tweet relation app
+		var resolveTweetRelationApp = new Vue({
+			mixins:[annotation_form_mixin],
+			el: '#resolveTweetRelationApp',
+			delimiters: ['#[[', ']]'],
+			data() {
+				return {
+					skip: false,
+				}			
+			},
+			store: store,
+		})
+	}
 
 	});

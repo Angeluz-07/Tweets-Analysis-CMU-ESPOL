@@ -225,7 +225,7 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
     if request.method == 'POST':
         #create_annotation(request.POST)
-        return redirect('annotate')
+        return redirect('resolve_tweet_relation', request.POST['tweet_relation_id'])
 
     context = {
         'tweet_relation_id' : tweet_relation.id,
