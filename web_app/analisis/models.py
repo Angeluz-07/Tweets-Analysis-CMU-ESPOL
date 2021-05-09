@@ -25,6 +25,20 @@ class TweetRelation(models.Model):
             models.UniqueConstraint(fields=['tweet_target', 'tweet_response'], name='unique tweet_relation for a pair of tweets')
         ]
 
+
+    @property
+    def is_skipped(self):
+        if Revision.objects.all() \
+           .filter(tweet_relation__id=self.id)\
+           .exists():
+           revision = Revision.objects.get(tweet_relation__id=self.id)
+           return revision.skipped
+        return None
+
+    @property
+    def has_revision(self):
+        return Revision.objects.all().filter(tweet_relation__id=self.id).exists()
+
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -81,3 +95,13 @@ class Answer(models.Model):
     @property
     def tweet_relation(self):
         return self.annotation.tweet_relation.id
+
+class Revision(models.Model):
+    tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.CASCADE)
+    annotation = models.ForeignKey(Annotation,on_delete=models.CASCADE, null=True)
+    skipped = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['tweet_relation'], name='unique revision for tweet_relation')
+        ]

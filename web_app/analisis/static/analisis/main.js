@@ -349,7 +349,7 @@ $(document).ready(function() {
 			delimiters: ['#[[', ']]'],
 			data() {
 				return {
-					skip: false,
+					skip: document.getElementById('isSkipped').dataset.value.toLowerCase() == "true",
 				}			
 			},
 			store: store,

@@ -3,31 +3,24 @@
         <div class="col-sm-12">
 
             
-            <!-- Revision Form-->
-            <form  method="post" id="revisionForm">
-                 {% csrf_token %}
-                <div class="form-group row">
-                    
+
+            <div id="showPreviousAnswers" data-value="true" /></div>
+            <div id="isSkipped" data-value="{% if is_skipped %}true{% else%}false{% endif%}" /></div>
+                        
+            <form action="{% url 'resolve_tweet_relation' tweet_relation_id %}" method="post" id="mainForm">
+                {% csrf_token %}
+
+                <div class="col-12 text-center my-3">
+                    <input 
+                        class="form-check-input mt-3" 
+                        type="checkbox"
+                        v-model="skip" 
+                        name="skipped">
+                    <label class="form-check-label mt-2">
+                    Skip tweet
+                    </label>
                 </div>
 
-               <div class="form-group row">
-                    <div class="col-8 text-center my-3">
-                        <input class="form-check-input mt-3" type="checkbox" v-model="skip">
-                        <label class="form-check-label mt-2">
-                        Skip tweet
-                        </label>
-                    </div>
-                    <div class="col-4 text-center my-3">                        
-                        <button v-if="skip" type="submit" class="btn btn-primary">Enviar</button>
-                    </div>
-                </div>                  
-            </form>
-        
-            <!-- Annotation Form-->
-            
-            <div id="showPreviousAnswers" data-value="true" /></div>
-            <form v-show="!skip" action="{% url 'resolve_tweet_relation' tweet_relation_id %}" method="post" id="mainForm">
-                {% csrf_token %}
                 <!-- Tweet Relation Id-->
                 <input id="tweet_relation_id" type="hidden" name="tweet_relation_id" value={{ tweet_relation_id }} />
 
@@ -35,7 +28,7 @@
                 <input type="hidden"  name="annotator_id" value={{ user.id }} />
 
                 <!-- Question Sections-->
-                <div>
+                <div v-if="!skip">
                     <section-collapsible
                         v-for="section in sections"
                         :section='section'
