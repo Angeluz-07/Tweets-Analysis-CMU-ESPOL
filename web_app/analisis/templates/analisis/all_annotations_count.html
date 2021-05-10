@@ -1,0 +1,39 @@
+{% extends 'analisis/base_nav.html' %}
+{% load  static %}
+
+
+{% block content %}
+
+	<div class="mt-4">
+      	<table id="" class="table table-bordered table-hover">
+			<thead>
+			<tr>
+				<th></th>				
+				<th>Count</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>tweets zero annotations</td> <td>{{ zero }}</td>
+				</tr>
+				<tr>
+					<td>tweets one annotations</td> <td>{{ one  }}</td>
+				</tr>
+				<tr>
+					<td>tweets two annotations</td> <td>{{ two  }}</td>
+				</tr>
+				<tr>
+					<td>tweets three annotations</td> <td>{{ three  }}</td>
+				</tr>
+				<tr>
+					<td>tweets four annotations</td> <td>{{ four  }}</td>
+				</tr>
+				<tr>
+					<td>tweets five annotations</td> <td>{{ five  }}</td>
+				</tr>
+			</tbody>
+      	</table>
+    </div>
+  </div>
+
+{% endblock %}

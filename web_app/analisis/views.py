@@ -270,7 +270,7 @@ def get_problematic_tweet_relations():
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=3) \
         .filter(relevant=True) \
-        .all()
+        .all()[:100]
     result = [ item for item in result if item.is_problematic]
     return result
 
@@ -284,6 +284,30 @@ def problematic_tweet_relations(request):
     }
     return render(request, 'analisis/problematic_tweet_relations.html', context = context)
 
+
+@staff_member_required(login_url='login')
+@login_required(login_url='login')
+def all_annotations_count(request):
+    
+    from django.db.models import Count
+    from .models import TweetRelation
+    def get_trs_count(count):
+        result = TweetRelation.objects \
+        .annotate(annotation_count=Count('annotation')) \
+        .filter(annotation_count__exact=count) \
+        .filter(relevant=True) \
+        .count()
+        return result
+    
+    context = {
+        'zero' : get_trs_count(0),
+        'one' : get_trs_count(1),
+        'two' : get_trs_count(2),
+        'three': get_trs_count(3),
+        'four': get_trs_count(4), 
+        'five': get_trs_count(5) 
+    }
+    return render(request, 'analisis/all_annotations_count.html', context = context)
 
 """
 def get_ambigous_tweet_relations():
