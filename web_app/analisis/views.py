@@ -277,7 +277,7 @@ def get_problematic_tweet_relations():
 @staff_member_required(login_url='login')
 @login_required(login_url='login')
 def problematic_tweet_relations(request):
-    trs = TweetRelation.objects.all()
+    trs = get_problematic_tweet_relations()
 
     context = {
         'trs' : trs

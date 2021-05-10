@@ -14,7 +14,8 @@
 			<thead>
 			<tr>
 				<th>Tweets to resolve</th>				
-				<th>Skipped</th>
+				<th>Skipped</th>						
+				<th class="w-25">Inconsistent Info</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -27,6 +28,9 @@
 						{% if item.is_skipped is not None%} 
 							{{ item.is_skipped }}
 						{% endif %}
+					</td>							
+					<td>
+						{{ item.annotation_inconsistent_answers_as_json }}
 					</td>
 				</tr>
 			{% endfor %}

@@ -72,12 +72,17 @@ class TweetRelation(models.Model):
 
         grouped:List[dict] = [group for group in grouped if has_enough_answers(group['total_answers']) ]        
         grouped:List[dict] = [group for group in grouped if has_inconsistent_answers(group['answers_relative_freq']) ]
-
+        
         return grouped
 
     @property
     def is_problematic(self):
         return len(self.annotation_inconsistent_answers)>0
+
+    @property
+    def annotation_inconsistent_answers_as_json(self):
+        from json import dumps
+        return dumps(self.annotation_inconsistent_answers)
 
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)
