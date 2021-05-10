@@ -264,8 +264,15 @@ def resolve_tweet_relation(request, tweet_relation_id):
     return render(request, 'analisis/resolve_tweet_relation.html', context = context)
 
 
-def get_problematic_tweet_relations():
-    return TweetRelation.objects.all()
+def get_problematic_tweet_relations():    
+    from django.db.models import Count
+    result = TweetRelation.objects \
+        .annotate(annotation_count=Count('annotation')) \
+        .filter(annotation_count__exact=3) \
+        .filter(relevant=True) \
+        .all()
+    result = [ item for item in result if item.is_problematic]
+    return result
 
 @staff_member_required(login_url='login')
 @login_required(login_url='login')
