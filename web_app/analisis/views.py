@@ -63,22 +63,6 @@ class AnswerViewSet(viewsets.ModelViewSet):
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
-class ResolveTweetAnnotationsViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Annotation.objects.all()
-    serializer_class = ResolveTweetAnnotationsSerializer
-    http_method_names = ['get']
-
-    
-    def list(self, request):
-        queryset = Annotation.objects.all()
-        tweet_relation_id = self.request.query_params.get('tweet_relation.id', None)
-        if tweet_relation_id:
-            queryset = Annotation.objects.filter(tweet_relation__id=tweet_relation_id)
-
-        serializer = ResolveTweetAnnotationsSerializer(queryset, many=True)
-        return Response(serializer.data)
-
 def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     from random import choice
     from django.db.models import Count
@@ -311,46 +295,3 @@ def all_annotations_count(request):
     }
     return render(request, 'analisis/all_annotations_count.html', context = context)
 
-"""
-def get_ambigous_tweet_relations():
-    from .models import TweetRelation
-
-    tr_ids = [ 1, 2 ,3 ,4]
-
-    trs = TweetRelation.objects \
-    .filter(id__in=tr_ids) \
-    .all()
-    
-    return trs
-
-@staff_member_required(login_url='login')
-@login_required(login_url='login')
-def resolve_tweet_annotations(request):
-    values = get_ambigous_tweet_relations()
-    from pprint import pprint
-    #pprint(values)
-
-    user_id = request.user.id
-    tweet_relation = values[0]
-
-    from .models import Annotation
-    ans = Annotation.objects.filter(tweet_relation__id=tweet_relation.id).all()
-    sr = ResolveTweetAnnotationsSerializer(ans, many=True)
-    pprint(sr.data)
-    if request.method == 'POST' and request.POST['action']=='annotation_form':
-        print('hello')
-        #create_annotation(request.POST)
-        return redirect('annotate')
-
-    context = {
-        'tweet_relation_id' : tweet_relation.id,
-        'tweet_target_id' : tweet_relation.tweet_target.id,
-        'tweet_target_text' : tweet_relation.tweet_target.text,
-        'tweet_response_id' : tweet_relation.tweet_response.id,
-        'tweet_response_text' : tweet_relation.tweet_response.text,
-        'hide_target_tweet' : hide_target_tweet(tweet_relation),
-        'annotation_count' : get_annotation_count(user_id),
-        'ans' : sr.data
-    }
-    return render(request, 'analisis/resolve_tweet_annotations.html', context = context)
-"""

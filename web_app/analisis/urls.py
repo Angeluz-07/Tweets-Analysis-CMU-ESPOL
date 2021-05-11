@@ -8,8 +8,6 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'questions', views.QuestionViewSet)
 router.register(r'answers', views.AnswerViewSet)
-router.register(r'resolve-tweet-annotations', views.ResolveTweetAnnotationsViewSet)
-
 
 urlpatterns = [
     path('', RedirectView.as_view(url='annotate')),
