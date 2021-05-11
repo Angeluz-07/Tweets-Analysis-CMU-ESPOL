@@ -1,0 +1,50 @@
+{% extends 'analisis/base_nav.html' %}
+{% load  static %}
+
+
+{% block top_assets %}
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+	<div class="mt-4">
+      	<table id="problematic_tweets" class="table table-bordered table-hover">
+			<thead>
+			<tr>
+				<th>Tweets to resolve</th>				
+				<th>Skipped</th>						
+				<th class="w-25">Inconsistent Info</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for item in trs %}
+				<tr>
+					<td>
+					<a href="{% url 'resolve_tweet_relation' item.id %}">Tweet Relation {{ item.id }}</a>
+					</td>
+					<td>
+						{% if item.is_skipped is not None%} 
+							{{ item.is_skipped }}
+						{% endif %}
+					</td>							
+					<td>
+						{{ item.annotation_inconsistent_answers_as_json }}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+      	</table>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block bottom_assets %}
+<script>
+$(document).ready( function () {
+    $('#problematic_tweets').DataTable();
+});
+</script>
+{% endblock %}

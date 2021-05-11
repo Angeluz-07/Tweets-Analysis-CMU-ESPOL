@@ -1,33 +1,46 @@
-
 {% extends 'analisis/base.html' %}
-{% load  static %}
 
 {% block content %}
-
-<div class="col-md-4">
-</div>
-<div class="col-md-4">
-  <div class="login-panel panel panel-default">
-          <div class="panel-heading">
-              <h3 class="panel-title">Log In</h3>
+<div class="container-fluid col-sm-12 col-md-4">
+  <form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+        <div class="row my-3 mx-auto">
+            <h1>Log In</h1>
+        </div>
+        <div class="row my-3 mx-auto">
+            <input
+                class="form-control"
+                type="text"
+                name="username"
+                placeholder="Username" />
+        </div>
+        <div class="row my-3 mx-auto">
+            <input
+                class="form-control"
+                type="password"
+                name="password"
+                placeholder="Password" />
+        </div>
+        {% if next %}
+          <div class="row my-3 mx-auto">
+            <input type="hidden" name="next" value="{{ next }}" />
           </div>
-          <div class="panel-body">
-              <form role="form" method="post">              
-              {% csrf_token %}         
-                  <fieldset>
-                    {{ form.as_p }}
-                    <button type="submit">Login</button>
-                  </fieldset>
-              </form>
+        {% endif %}
+
+        <div class="row my-3 mx-auto">
+            <button type="submit" class="btn btn-success">
+            Login
+            </button>
+        </div>
+
+        {% if form.errors %}
+          <div class="row my-3 mx-auto">
+            <p class=" label label-danger">
+                Your username and password didn't match.
+                Please try again.
+            </p>
           </div>
-      </div>
-  </div>
+        {% endif %}
+  </form>
 </div>
-<div class="col-md-4">
-</div>
-
-{% endblock %}
-
-{% block bottom %}
-<script src="{% static "analisis/login.js" %}"></script>
 {% endblock %}

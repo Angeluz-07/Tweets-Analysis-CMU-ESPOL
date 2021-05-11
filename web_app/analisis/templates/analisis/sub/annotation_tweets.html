@@ -1,0 +1,21 @@
+<div class="col-md-6">
+    <div class="row border rounded-0 py-4 px-2">
+        <div
+            class="col-md-12  {% if hide_target_tweet is True  %} d-none {% endif %}"
+        >
+        <div class="card my-2 h-100" style="background-color: #f5f5f5;">
+            <label>Target Tweet:</label>
+            <div class="well tweet-box" id="tweetTarget" data-tweet-id="{{ tweet_target_id }}" data-tweet-text="{{ tweet_target_text }}">
+            </div>
+        </div>
+        </div>
+
+        <div class="col-md-12">
+        <div class="card my-2 h-100" style="background-color: #f5f5f5;">
+            <label>Response Tweet:</label>
+            <div class="well tweet-box" id="tweetResponse" data-tweet-id="{{ tweet_response_id }}"  data-tweet-text="{{ tweet_response_text }}">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

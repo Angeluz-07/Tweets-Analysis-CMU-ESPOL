@@ -1,24 +1,16 @@
 {% extends 'analisis/base_annotation.html' %}
 {% load  static %}
 
-	
 {% block content %}
-
-	<div class="row py-1">
-	{% include "analisis/sub/instructions_legacy.html" %}
-	</div>
-
-	<div class="row py-1">
-		{% include "analisis/sub/annotation_count.html" %}
-	</div>
 
 	<!-- Categorization Layout -->
 	<div class="row py-1">
 		{% include "analisis/sub/annotation_tweets.html" %}
-		{% include "analisis/sub/pure_annotation_app.html" %}
+		{% include "analisis/sub/resolve_tweet_relation_app.html" %}
 	</div>
 	<!-- End Categorization Layout -->
 {% endblock %}
+
 
 {% block bottom_assets %}
 <!-- Open internal javascript -->
