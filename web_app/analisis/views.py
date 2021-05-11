@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -225,13 +225,15 @@ def create_revision(skipped, tweet_relation_id, annotation):
     )
     return result
 
-@staff_member_required(login_url='login')
 @login_required(login_url='login')
+@permission_required('analisis.view_tweetrelation',login_url='login')
 def resolve_tweet_relation(request, tweet_relation_id):
     from .models import TweetRelation, Revision
     tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
 
     # Validate if is problematic before return
+    if not tweet_relation.is_problematic:
+        return redirect('resolve_tweet_relation', tweet_relation_id)
 
     if request.method == 'POST':
         skipped = 'skipped' in request.POST
@@ -274,8 +276,8 @@ def get_problematic_tweet_relations():
     result = [ item for item in result if item.is_problematic]
     return result
 
-@staff_member_required(login_url='login')
 @login_required(login_url='login')
+@permission_required('analisis.view_tweetrelation',login_url='login')
 def problematic_tweet_relations(request):
     trs = get_problematic_tweet_relations()
 
@@ -285,8 +287,8 @@ def problematic_tweet_relations(request):
     return render(request, 'analisis/problematic_tweet_relations.html', context = context)
 
 
-@staff_member_required(login_url='login')
 @login_required(login_url='login')
+@permission_required('analisis.view_tweetrelation',login_url='login')
 def all_annotations_count(request):
     
     from django.db.models import Count
