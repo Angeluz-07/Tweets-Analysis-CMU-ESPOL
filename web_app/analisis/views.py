@@ -90,9 +90,9 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     trs_annotated_once_count = get_trs_count(1, annotator_id)
     trs_annotated_zero_count = get_trs_count(0, annotator_id)
 
-    if trs_annotated_twice_count > 0:
-        trs = get_trs(2, annotator_id)
-    elif trs_annotated_once_count > 0:
+    #if trs_annotated_twice_count > 100:
+    #    trs = get_trs(2, annotator_id)
+    if trs_annotated_once_count > 100:
         trs = get_trs(1, annotator_id)
     elif trs_annotated_zero_count > 0:
         trs = get_trs(0, annotator_id)
@@ -217,25 +217,27 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
     # Validate if is problematic before return
     if not tweet_relation.is_problematic:
-        return redirect('resolve_tweet_relation', tweet_relation_id)
+        return redirect('problematic_tweet_relations')
 
     if request.method == 'POST':
         skipped = 'skipped' in request.POST
         if not tweet_relation.has_revision and skipped:
-            print(1)
-            #create_revision(skipped,tweet_relation_id, annotation=None)
+            create_revision(skipped,tweet_relation_id, annotation=None)            
+            return redirect('problematic_tweet_relations')
         elif not tweet_relation.has_revision and not skipped:
-            print(2)
-            #annotation = create_annotation(request.POST)            
-            #create_revision(skipped, tweet_relation_id, annotation=annotation)
+            annotation = create_annotation(request.POST)
+            create_revision(skipped, tweet_relation_id, annotation=annotation)            
+            return redirect('problematic_tweet_relations')
         elif tweet_relation.has_revision and not skipped:
-            print(3)
-            #annotation = create_annotation(request.POST)
-            #revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
-            #revision.annotation = annotation
-            #revision.save()
-        print(4,tweet_relation.has_revision)
-        return redirect('resolve_tweet_relation', tweet_relation_id)
+            annotation = create_annotation(request.POST)
+            revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
+            revision.annotation = annotation
+            revision.skipped = False
+            revision.save()
+            return redirect('problematic_tweet_relations')
+        else:            
+            return redirect('problematic_tweet_relations')
+
 
     context = {
         'tweet_relation_id' : tweet_relation.id,
@@ -244,7 +246,7 @@ def resolve_tweet_relation(request, tweet_relation_id):
         'tweet_response_id' : tweet_relation.tweet_response.id,
         'tweet_response_text' : tweet_relation.tweet_response.text,
         'hide_target_tweet' : hide_target_tweet(tweet_relation),
-        'is_skipped' : tweet_relation.is_skipped
+        'is_skipped' : tweet_relation.is_skipped,
     }
 
     return render(request, 'analisis/resolve_tweet_relation.html', context = context)
