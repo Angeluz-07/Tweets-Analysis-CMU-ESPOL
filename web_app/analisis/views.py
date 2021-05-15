@@ -282,26 +282,25 @@ def get_problematic_tweet_relations():
     from django.db.models import Count
     from django.db.models import Prefetch
 
-    answer_of_interests = Answer.objects.exclude(question__id__in=[1,8,11]).only('question_id','value')
-    annotations_of_interest = Annotation.objects.only('id','tweet_relation')
+    answers_of_interest = Answer.objects.exclude(question__id__in=[1,8,11]).only('id','question_id','value','annotation_id')
+    annotations_of_interest = Annotation.objects.only('id','tweet_relation_id')
 
     result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=3) \
         .filter(relevant=True) \
-        .all() \
         .prefetch_related(
             Prefetch(                
                 'annotation_set',
-                queryset = annotations_of_interest.prefetch_related(
-                    Prefetch(
+                queryset = annotations_of_interest.prefetch_related(      
+                    Prefetch(                
                         'answers',
-                        queryset=answer_of_interests,                        
+                        queryset = answers_of_interest,                        
                         to_attr='answers_list',
-                    )
+                    ),
                 ),
                 to_attr='annotations_list',
-            )
+            ),
         ) \
         .only('id')
     result = [ item for item in result if item.is_problematic]
