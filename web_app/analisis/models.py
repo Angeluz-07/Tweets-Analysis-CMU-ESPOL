@@ -46,7 +46,7 @@ class TweetRelation(models.Model):
         .all()
 
         answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question.id , 'value' : item.value_json}, answers))
-        question_ids:List[str] = list(set(map(lambda item: item['question_id'],answers)))
+        #question_ids:List[str] = list(set(map(lambda item: item['question_id'],answers)))
 
         def build_group(question_id, answers):
             from collections import Counter
@@ -62,7 +62,7 @@ class TweetRelation(models.Model):
             }
             return result
 
-        grouped:List[dict] = [ build_group(_id, answers)  for _id in question_ids]
+        grouped:List[dict] = [ build_group(_id, answers)  for _id in self.question_ids_of_interest]
 
         def has_inconsistent_answers(answers_relative_freq: dict) -> bool:
             return all(list(map(lambda x: x<=0.5, answers_relative_freq.values())))
@@ -83,6 +83,10 @@ class TweetRelation(models.Model):
     def annotation_inconsistent_answers_as_json(self):
         from json import dumps
         return dumps(self.annotation_inconsistent_answers)
+
+    @property
+    def question_ids_of_interest(self):
+        return [2,3,4,5,6,7,9,10]
 
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)
