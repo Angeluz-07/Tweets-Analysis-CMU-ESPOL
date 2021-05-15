@@ -16,9 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include, path
+from django.conf.urls import url
 
+from django.contrib.admin.views.decorators import staff_member_required
+import debug_toolbar
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include("analisis.urls"))
+    path('',include("analisis.urls")),
+]
+
+# in settings we validate this view to only staff members
+urlpatterns += [
+    url(r'^__debug__/', include(debug_toolbar.urls)),
 ]
