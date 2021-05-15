@@ -42,7 +42,7 @@ class TweetRelation(models.Model):
     def annotation_inconsistent_answers(self):
         answers = Answer.objects\
         .filter(annotation__tweet_relation__id=self.id,annotation__tweet_relation__relevant=True)\
-        .exclude(question__id__in=[1,9,10,11])\
+        .exclude(question__id__in=[1,8,11])\
         .all()
 
         answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question.id , 'value' : item.value_json}, answers))
