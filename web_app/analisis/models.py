@@ -1,4 +1,6 @@
 from django.db import models
+from itertools import chain
+from collections import Counter
 
 # Create your models here.
 
@@ -39,18 +41,24 @@ class TweetRelation(models.Model):
         return Revision.objects.all().filter(tweet_relation__id=self.id).exists()
 
     @property
-    def annotation_inconsistent_answers(self):
-        answers = Answer.objects\
-        .filter(annotation__tweet_relation__id=self.id,annotation__tweet_relation__relevant=True)\
-        .exclude(question__id__in=[1,8,11])\
-        .all()
+    def annotation_inconsistent_answers(self):        
+        answers = list(
+            chain.from_iterable(
+                [
+                    a.answers.all().exclude(question__id__in=[1,8,11]) 
+                    for a in self.annotation_set.all()
+                ]
+            )
+        )
+        #answers = Answer.objects\
+        #.filter(annotation__tweet_relation__id=self.id,annotation__tweet_relation__relevant=True)\
+        #.exclude(question__id__in=[1,8,11])\
+        #.all()
 
         answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question.id , 'value' : item.value_json}, answers))
         #question_ids:List[str] = list(set(map(lambda item: item['question_id'],answers)))
 
         def build_group(question_id, answers):
-            from collections import Counter
-
             _answers:List[dict] = list(filter(lambda item: item['question_id']==question_id, answers))
             _answers:List[str] = list(map(lambda item: item['value'], _answers))
             answers_relative_freq:dict[str,float] = { k : (v/len(_answers)) for k, v in dict(Counter(_answers)).items()}
@@ -70,8 +78,11 @@ class TweetRelation(models.Model):
         def has_enough_answers(total_answers: int ) -> bool:
             return total_answers == 3
 
-        grouped:List[dict] = [group for group in grouped if has_enough_answers(group['total_answers']) ]        
-        grouped:List[dict] = [group for group in grouped if has_inconsistent_answers(group['answers_relative_freq']) ]
+        grouped:List[dict] = [
+            group for group in grouped 
+            if has_enough_answers(group['total_answers']) and has_inconsistent_answers(group['answers_relative_freq'])
+        ]        
+        #grouped:List[dict] = [group for group in grouped if has_inconsistent_answers(group['answers_relative_freq']) ]
         
         return grouped
 

@@ -284,7 +284,8 @@ def get_problematic_tweet_relations():
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=3) \
         .filter(relevant=True) \
-        .all()[:100]
+        .all() \
+        .prefetch_related('annotation_set__answers__question')
     result = [ item for item in result if item.is_problematic]
     return result
 
