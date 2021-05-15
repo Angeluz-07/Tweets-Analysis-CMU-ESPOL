@@ -63,17 +63,38 @@ class AnswerViewSet(viewsets.ModelViewSet):
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
+
+def add_id_to_in_progress_ids(_id):    
+    from django.core.cache import cache
+    cache.set('IN_PROGRESS_IDS', [_id] + cache.get('IN_PROGRESS_IDS',[]),timeout=None)# 1 hour
+    print('Add id to in progress ids:', cache.get('IN_PROGRESS_IDS',[]))
+    return None
+
+def remove_id_from_in_progress_ids(input_id):
+    from django.core.cache import cache
+    cache.set('IN_PROGRESS_IDS', [_id for _id in cache.get('IN_PROGRESS_IDS',[]) if _id != input_id ], timeout=None)
+    print('Remove _id to in progress ids:',cache.get('IN_PROGRESS_IDS',[]))
+    return None
+
+def get_in_progress_ids():
+    from django.core.cache import cache
+    result = cache.get('IN_PROGRESS_IDS',[])
+    print('Get in progress ids:',result)
+    return result
+
 def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     from random import choice
     from django.db.models import Count
     from .models import TweetRelation
 
+    IN_PROGRESS_IDS = get_in_progress_ids()
     def get_trs_count(count, annotator_id):
         result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=count) \
         .filter(relevant=True) \
         .exclude(annotation__annotator_id=annotator_id) \
+        .exclude(id__in=IN_PROGRESS_IDS) \
         .count()
         return result
 
@@ -83,6 +104,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
         .filter(annotation_count__exact=count) \
         .filter(relevant=True) \
         .exclude(annotation__annotator_id=annotator_id) \
+        .exclude(id__in=IN_PROGRESS_IDS) \
         .all()
         return result
 
@@ -99,7 +121,12 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     else:
         trs = None
 
-    return choice(trs) if trs else trs
+    result = choice(trs) if trs else trs
+
+    if result:
+        add_id_to_in_progress_ids(result.id)
+
+    return result
 
 def get_annotation_count(annotator_id: int) -> int:
     from .models import TweetRelation
@@ -135,6 +162,8 @@ def create_annotation(form_data: QueryDict):
                 annotation_id=ann.id,
                 question_id=q.id,            
             )
+
+        remove_id_from_in_progress_ids(tr.id)
 
         return ann
     return None
@@ -186,7 +215,7 @@ def annotate(request):
 
     if request.method == 'POST':
         create_annotation(request.POST)
-        return redirect('annotate')
+        #return redirect('annotate')
 
     context = {
         'tweet_relation_id' : tweet_relation.id,
