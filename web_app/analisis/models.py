@@ -45,8 +45,7 @@ class TweetRelation(models.Model):
         answers = list(
             chain.from_iterable(
                 [
-                    a.answers.all().exclude(question__id__in=[1,8,11]) 
-                    for a in self.annotation_set.all()
+                    a.answers_list for a in self.annotations_list
                 ]
             )
         )
@@ -55,7 +54,7 @@ class TweetRelation(models.Model):
         #.exclude(question__id__in=[1,8,11])\
         #.all()
 
-        answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question.id , 'value' : item.value_json}, answers))
+        answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question_id , 'value' : item.value_json}, answers))
         #question_ids:List[str] = list(set(map(lambda item: item['question_id'],answers)))
 
         def build_group(question_id, answers):
