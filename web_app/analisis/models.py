@@ -29,33 +29,27 @@ class TweetRelation(models.Model):
 
     @property
     def is_skipped(self):
-        if Revision.objects.all() \
-           .filter(tweet_relation__id=self.id)\
-           .exists():
-           revision = Revision.objects.get(tweet_relation__id=self.id)
-           return revision.skipped
-        return None
+        return self.has_revision and self.revision.skipped
 
     @property
     def has_revision(self):
-        return Revision.objects.all().filter(tweet_relation__id=self.id).exists()
+        return hasattr(self, 'revision') and self.revision is not None
+
+    @property
+    def is_resolved(self):
+        return self.has_revision and self.revision.annotation_id is not None
 
     @property
     def annotation_inconsistent_answers(self):        
         answers = list(
             chain.from_iterable(
                 [
-                    a.answers_list for a in self.annotations_list
+                    a.answers.all() for a in self.annotation_set.all()
                 ]
             )
         )
-        #answers = Answer.objects\
-        #.filter(annotation__tweet_relation__id=self.id,annotation__tweet_relation__relevant=True)\
-        #.exclude(question__id__in=[1,8,11])\
-        #.all()
 
         answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question_id , 'value' : item.value_json}, answers))
-        #question_ids:List[str] = list(set(map(lambda item: item['question_id'],answers)))
 
         def build_group(question_id, answers):
             _answers:List[dict] = list(filter(lambda item: item['question_id']==question_id, answers))
@@ -79,10 +73,9 @@ class TweetRelation(models.Model):
 
         grouped:List[dict] = [
             group for group in grouped 
-            if has_enough_answers(group['total_answers']) and has_inconsistent_answers(group['answers_relative_freq'])
-        ]        
-        #grouped:List[dict] = [group for group in grouped if has_inconsistent_answers(group['answers_relative_freq']) ]
-        
+            if has_inconsistent_answers(group['answers_relative_freq']) and has_enough_answers(group['total_answers'])
+        ]
+
         return grouped
 
     @property
@@ -156,11 +149,6 @@ class Answer(models.Model):
         return self.annotation.tweet_relation.id
 
 class Revision(models.Model):
-    tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.CASCADE)
-    annotation = models.ForeignKey(Annotation,on_delete=models.CASCADE, null=True)
+    tweet_relation = models.OneToOneField(TweetRelation,on_delete=models.CASCADE)
+    annotation = models.OneToOneField(Annotation,on_delete=models.CASCADE, null=True)
     skipped = models.BooleanField(default=False)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['tweet_relation'], name='unique revision for tweet_relation')
-        ]
