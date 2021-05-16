@@ -123,6 +123,9 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'in_process_tweet_relations',
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
     }
 }
 

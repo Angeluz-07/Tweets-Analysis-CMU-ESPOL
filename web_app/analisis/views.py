@@ -66,13 +66,13 @@ class AnswerViewSet(viewsets.ModelViewSet):
 
 def add_id_to_in_progress_ids(_id):    
     from django.core.cache import cache
-    cache.set('IN_PROGRESS_IDS', [_id] + cache.get('IN_PROGRESS_IDS',[]),timeout=None)# 1 hour
+    cache.set('IN_PROGRESS_IDS', [_id] + cache.get('IN_PROGRESS_IDS',[]), timeout=36000)# 1 hour
     print('Add id to in progress ids:', cache.get('IN_PROGRESS_IDS',[]))
     return None
 
 def remove_id_from_in_progress_ids(input_id):
     from django.core.cache import cache
-    cache.set('IN_PROGRESS_IDS', [_id for _id in cache.get('IN_PROGRESS_IDS',[]) if _id != input_id ], timeout=None)
+    cache.set('IN_PROGRESS_IDS', [_id for _id in cache.get('IN_PROGRESS_IDS',[]) if _id != input_id ], timeout=36000)
     print('Remove _id to in progress ids:',cache.get('IN_PROGRESS_IDS',[]))
     return None
 
@@ -112,9 +112,9 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     trs_annotated_once_count = get_trs_count(1, annotator_id)
     trs_annotated_zero_count = get_trs_count(0, annotator_id)
 
-    #if trs_annotated_twice_count > 100:
-    #    trs = get_trs(2, annotator_id)
-    if trs_annotated_once_count > 100:
+    if trs_annotated_twice_count > 0:
+        trs = get_trs(2, annotator_id)
+    if trs_annotated_once_count > 0:
         trs = get_trs(1, annotator_id)
     elif trs_annotated_zero_count > 0:
         trs = get_trs(0, annotator_id)
