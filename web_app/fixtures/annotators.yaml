@@ -1,0 +1,30 @@
+- model: auth.User
+  pk: 2
+  fields:
+    username: user1
+    password: pbkdf2_sha256$150000$Q4LmlYEBOd0I$/VHAx34hshytKqWzilU1NT0Gg61A4Gh+ARFg5lJ/7XQ=
+- model: analisis.Annotator
+  pk: 2
+  fields:
+    id: 2
+    name: usser1
+- model: auth.User
+  pk: 3
+  fields:
+    username: user2
+    password: pbkdf2_sha256$150000$n8nyubzF5HQH$WOnievFAC5+jdDKe3T+MkUx624Apsye3aj86UdYoN7U=
+- model: analisis.Annotator
+  pk: 3
+  fields:
+    id: 3
+    name: user2
+- model: auth.User
+  pk: 4
+  fields:
+    username: user3
+    password: pbkdf2_sha256$150000$0OUyAzIhg9vT$J7dDKlU8Lm1BtrpW4fnPgs59gif322NgcdwvtiujEKM=
+- model: analisis.Annotator
+  pk: 4
+  fields:
+    id: 4
+    name: user3

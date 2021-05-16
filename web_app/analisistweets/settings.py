@@ -119,6 +119,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'in_process_tweet_relations',
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
+}
+
+CACHE_TIMEOUT = 36000
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

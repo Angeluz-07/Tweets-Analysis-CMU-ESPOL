@@ -4,6 +4,7 @@ from django.http.request import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -63,17 +64,35 @@ class AnswerViewSet(viewsets.ModelViewSet):
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
+
+def add_id_to_cache(ids_type, _id):    
+    from django.core.cache import cache
+    cache.set(ids_type, [_id] + cache.get(ids_type, []), timeout=settings.CACHE_TIMEOUT)
+    return None
+
+def remove_id_from_cache(ids_type, input_id):
+    from django.core.cache import cache
+    cache.set(ids_type, [_id for _id in cache.get(ids_type, []) if _id != input_id ], timeout=settings.CACHE_TIMEOUT)
+    return None
+
+def get_ids_in_cache(ids_type):
+    from django.core.cache import cache
+    result = cache.get(ids_type, [])
+    return result
+
 def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     from random import choice
     from django.db.models import Count
     from .models import TweetRelation
 
+    IN_PROGRESS_IDS = get_ids_in_cache('IN_PROGRESS_IDS')
     def get_trs_count(count, annotator_id):
         result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=count) \
         .filter(relevant=True) \
         .exclude(annotation__annotator_id=annotator_id) \
+        .exclude(id__in=IN_PROGRESS_IDS) \
         .count()
         return result
 
@@ -83,6 +102,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
         .filter(annotation_count__exact=count) \
         .filter(relevant=True) \
         .exclude(annotation__annotator_id=annotator_id) \
+        .exclude(id__in=IN_PROGRESS_IDS) \
         .all()
         return result
 
@@ -90,16 +110,21 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     trs_annotated_once_count = get_trs_count(1, annotator_id)
     trs_annotated_zero_count = get_trs_count(0, annotator_id)
 
-    #if trs_annotated_twice_count > 100:
-    #    trs = get_trs(2, annotator_id)
-    if trs_annotated_once_count > 100:
+    if trs_annotated_twice_count > 0:
+        trs = get_trs(2, annotator_id)
+    if trs_annotated_once_count > 0:
         trs = get_trs(1, annotator_id)
     elif trs_annotated_zero_count > 0:
         trs = get_trs(0, annotator_id)
     else:
         trs = None
 
-    return choice(trs) if trs else trs
+    result = choice(trs) if trs else trs
+
+    if result:
+        add_id_to_cache('IN_PROGRESS_IDS', result.id)
+
+    return result
 
 def get_annotation_count(annotator_id: int) -> int:
     from .models import TweetRelation
@@ -135,6 +160,8 @@ def create_annotation(form_data: QueryDict):
                 annotation_id=ann.id,
                 question_id=q.id,            
             )
+
+        remove_id_from_cache('IN_PROGRESS_IDS', tr.id)
 
         return ann
     return None
@@ -186,7 +213,6 @@ def annotate(request):
 
     if request.method == 'POST':
         create_annotation(request.POST)
-        return redirect('annotate')
 
     context = {
         'tweet_relation_id' : tweet_relation.id,
