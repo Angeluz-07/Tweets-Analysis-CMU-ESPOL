@@ -213,7 +213,6 @@ def annotate(request):
 
     if request.method == 'POST':
         create_annotation(request.POST)
-        #return redirect('annotate')
 
     context = {
         'tweet_relation_id' : tweet_relation.id,
