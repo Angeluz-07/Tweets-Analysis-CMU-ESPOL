@@ -4,6 +4,7 @@ from django.http.request import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -64,22 +65,19 @@ class AnswerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-def add_id_to_in_progress_ids(_id):    
+def add_id_to_cache(ids_type, _id):    
     from django.core.cache import cache
-    cache.set('IN_PROGRESS_IDS', [_id] + cache.get('IN_PROGRESS_IDS',[]), timeout=36000)# 1 hour
-    print('Add id to in progress ids:', cache.get('IN_PROGRESS_IDS',[]))
+    cache.set(ids_type, [_id] + cache.get(ids_type, []), timeout=settings.CACHE_TIMEOUT)
     return None
 
-def remove_id_from_in_progress_ids(input_id):
+def remove_id_from_cache(ids_type, input_id):
     from django.core.cache import cache
-    cache.set('IN_PROGRESS_IDS', [_id for _id in cache.get('IN_PROGRESS_IDS',[]) if _id != input_id ], timeout=36000)
-    print('Remove _id to in progress ids:',cache.get('IN_PROGRESS_IDS',[]))
+    cache.set(ids_type, [_id for _id in cache.get(ids_type, []) if _id != input_id ], timeout=settings.CACHE_TIMEOUT)
     return None
 
-def get_in_progress_ids():
+def get_ids_in_cache(ids_type):
     from django.core.cache import cache
-    result = cache.get('IN_PROGRESS_IDS',[])
-    print('Get in progress ids:',result)
+    result = cache.get(ids_type, [])
     return result
 
 def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
@@ -87,7 +85,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     from django.db.models import Count
     from .models import TweetRelation
 
-    IN_PROGRESS_IDS = get_in_progress_ids()
+    IN_PROGRESS_IDS = get_ids_in_cache('IN_PROGRESS_IDS')
     def get_trs_count(count, annotator_id):
         result = TweetRelation.objects \
         .annotate(annotation_count=Count('annotation')) \
@@ -124,7 +122,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
     result = choice(trs) if trs else trs
 
     if result:
-        add_id_to_in_progress_ids(result.id)
+        add_id_to_cache('IN_PROGRESS_IDS', result.id)
 
     return result
 
@@ -163,7 +161,7 @@ def create_annotation(form_data: QueryDict):
                 question_id=q.id,            
             )
 
-        remove_id_from_in_progress_ids(tr.id)
+        remove_id_from_cache('IN_PROGRESS_IDS', tr.id)
 
         return ann
     return None
