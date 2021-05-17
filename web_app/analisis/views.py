@@ -307,9 +307,16 @@ def problematic_tweet_relations(request):
 
     resolved_tweet_relations_count = Revision.objects.exclude(annotation=None).count()
 
+    user_id = request.user.id # User logged in
+    resolved_tweet_relations_count_by_user = Revision.objects \
+        .exclude(annotation=None) \
+        .filter(annotation__annotator_id=user_id) \
+        .count()
+
     context = {
         'trs' : trs,
-        'resolved_tweet_relations_count' : resolved_tweet_relations_count
+        'resolved_tweet_relations_count' : resolved_tweet_relations_count,
+        'resolved_tweet_relations_count_by_user' : resolved_tweet_relations_count_by_user
     }
     return render(request, 'analisis/problematic_tweet_relations.html', context = context)
 
@@ -327,14 +334,17 @@ def all_annotations_count(request):
         .filter(annotation_count__exact=count) \
         .count()
         return result
-    
+
+    resolved_tweet_relations_count = Revision.objects.exclude(annotation=None).count()
+
     context = {
         'zero' : get_trs_count(0),
         'one' : get_trs_count(1),
         'two' : get_trs_count(2),
         'three': get_trs_count(3),
         'four': get_trs_count(4), 
-        'five': get_trs_count(5) 
+        'five': get_trs_count(5),
+        'resolved' : resolved_tweet_relations_count
     }
     return render(request, 'analisis/all_annotations_count.html', context = context)
 
