@@ -152,3 +152,8 @@ class Revision(models.Model):
     tweet_relation = models.OneToOneField(TweetRelation,on_delete=models.CASCADE)
     annotation = models.OneToOneField(Annotation,on_delete=models.CASCADE, null=True)
     skipped = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['tweet_relation'], name='unique revision for tweet_relation')
+        ]
