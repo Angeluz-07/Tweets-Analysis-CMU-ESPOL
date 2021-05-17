@@ -15,7 +15,7 @@
 			<tr>
 				<th>Tweets to resolve</th>				
 				<th>Status</th>						
-				<th class="w-25">Inconsistent Info</th>
+				<th class="w-50">Inconsistent Info</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -44,7 +44,9 @@
 {% block bottom_assets %}
 <script>
 $(document).ready( function () {
-    $('#problematic_tweets').DataTable();
+    $('#problematic_tweets').DataTable({
+        "order": [[ 1, "asc" ]]
+    });
 });
 </script>
 {% endblock %}

@@ -279,11 +279,6 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
 def get_problematic_tweet_relations():    
     from django.db.models import Count
-    from django.db.models import Prefetch
-
-    #answers_of_interest = Answer.objects.exclude(question__id__in=[1,8,11]).only('id','question_id','value','annotation_id')
-    #annotations_of_interest = Annotation.objects.only('id','tweet_relation_id')
-    #revisions_of_interest =  Revision.objects.only('id','tweet_relation_id','skipped','annotation_id')
 
     queryset = TweetRelation.objects \
         .filter(relevant=True) \

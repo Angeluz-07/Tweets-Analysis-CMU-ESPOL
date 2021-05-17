@@ -54,7 +54,7 @@ class TweetRelation(models.Model):
         def build_group(question_id, answers):
             _answers:List[dict] = list(filter(lambda item: item['question_id']==question_id, answers))
             _answers:List[str] = list(map(lambda item: item['value'], _answers))
-            answers_relative_freq:dict[str,float] = { k : (v/len(_answers)) for k, v in dict(Counter(_answers)).items()}
+            answers_relative_freq:dict[str,float] = { k : round((v/len(_answers)),2) for k, v in dict(Counter(_answers)).items()}
 
             result = {
                 'question_id' : question_id,
