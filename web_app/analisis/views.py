@@ -305,8 +305,11 @@ def get_problematic_tweet_relations():
 def problematic_tweet_relations(request):
     trs = get_problematic_tweet_relations()
 
+    resolved_tweet_relations_count = Revision.objects.exclude(annotation=None).count()
+
     context = {
-        'trs' : trs
+        'trs' : trs,
+        'resolved_tweet_relations_count' : resolved_tweet_relations_count
     }
     return render(request, 'analisis/problematic_tweet_relations.html', context = context)
 
