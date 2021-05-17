@@ -258,7 +258,6 @@ def resolve_tweet_relation(request, tweet_relation_id):
             annotation = create_annotation(request.POST)
             revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
             revision.annotation = annotation
-            revision.skipped = False
             revision.save()
             return redirect('problematic_tweet_relations')
         else:            
@@ -280,12 +279,21 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
 def get_problematic_tweet_relations():    
     from django.db.models import Count
-    result = TweetRelation.objects \
+
+    queryset = TweetRelation.objects \
+        .filter(relevant=True) \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=3) \
-        .filter(relevant=True) \
-        .all()[:100]
-    result = [ item for item in result if item.is_problematic]
+        .prefetch_related(      
+            'annotation_set__answers',
+            'revision',
+        ) \
+        .only('id')[:100]
+
+    result = [ 
+        item for item in queryset
+        if item.is_problematic and not item.is_resolved
+    ]
     return result
 
 @login_required(login_url='login')

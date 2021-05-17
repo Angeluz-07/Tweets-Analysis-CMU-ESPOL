@@ -1,4 +1,6 @@
 from django.db import models
+from itertools import chain
+from collections import Counter
 
 # Create your models here.
 
@@ -27,33 +29,32 @@ class TweetRelation(models.Model):
 
     @property
     def is_skipped(self):
-        if Revision.objects.all() \
-           .filter(tweet_relation__id=self.id)\
-           .exists():
-           revision = Revision.objects.get(tweet_relation__id=self.id)
-           return revision.skipped
-        return None
+        return self.has_revision and self.revision.skipped
 
     @property
     def has_revision(self):
-        return Revision.objects.all().filter(tweet_relation__id=self.id).exists()
+        return hasattr(self, 'revision') and self.revision is not None
 
     @property
-    def annotation_inconsistent_answers(self):
-        answers = Answer.objects\
-        .filter(annotation__tweet_relation__id=self.id,annotation__tweet_relation__relevant=True)\
-        .exclude(question__id__in=[1,9,10,11])\
-        .all()
+    def is_resolved(self):
+        return self.has_revision and self.revision.annotation_id is not None
 
-        answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question.id , 'value' : item.value_json}, answers))
-        question_ids:List[str] = list(set(map(lambda item: item['question_id'],answers)))
+    @property
+    def annotation_inconsistent_answers(self):        
+        answers = list(
+            chain.from_iterable(
+                [
+                    a.answers.all() for a in self.annotation_set.all()
+                ]
+            )
+        )
+
+        answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question_id , 'value' : item.value_json}, answers))
 
         def build_group(question_id, answers):
-            from collections import Counter
-
             _answers:List[dict] = list(filter(lambda item: item['question_id']==question_id, answers))
             _answers:List[str] = list(map(lambda item: item['value'], _answers))
-            answers_relative_freq:dict[str,float] = { k : (v/len(_answers)) for k, v in dict(Counter(_answers)).items()}
+            answers_relative_freq:dict[str,float] = { k : round((v/len(_answers)),2) for k, v in dict(Counter(_answers)).items()}
 
             result = {
                 'question_id' : question_id,
@@ -62,7 +63,7 @@ class TweetRelation(models.Model):
             }
             return result
 
-        grouped:List[dict] = [ build_group(_id, answers)  for _id in question_ids]
+        grouped:List[dict] = [ build_group(_id, answers)  for _id in self.question_ids_of_interest]
 
         def has_inconsistent_answers(answers_relative_freq: dict) -> bool:
             return all(list(map(lambda x: x<=0.5, answers_relative_freq.values())))
@@ -70,9 +71,11 @@ class TweetRelation(models.Model):
         def has_enough_answers(total_answers: int ) -> bool:
             return total_answers == 3
 
-        grouped:List[dict] = [group for group in grouped if has_enough_answers(group['total_answers']) ]        
-        grouped:List[dict] = [group for group in grouped if has_inconsistent_answers(group['answers_relative_freq']) ]
-        
+        grouped:List[dict] = [
+            group for group in grouped 
+            if has_inconsistent_answers(group['answers_relative_freq']) and has_enough_answers(group['total_answers'])
+        ]
+
         return grouped
 
     @property
@@ -83,6 +86,10 @@ class TweetRelation(models.Model):
     def annotation_inconsistent_answers_as_json(self):
         from json import dumps
         return dumps(self.annotation_inconsistent_answers)
+
+    @property
+    def question_ids_of_interest(self):
+        return [2,3,4,5,6,7,9,10]
 
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -142,8 +149,8 @@ class Answer(models.Model):
         return self.annotation.tweet_relation.id
 
 class Revision(models.Model):
-    tweet_relation = models.ForeignKey(TweetRelation,on_delete=models.CASCADE)
-    annotation = models.ForeignKey(Annotation,on_delete=models.CASCADE, null=True)
+    tweet_relation = models.OneToOneField(TweetRelation,on_delete=models.CASCADE)
+    annotation = models.OneToOneField(Annotation,on_delete=models.CASCADE, null=True)
     skipped = models.BooleanField(default=False)
 
     class Meta:
