@@ -1,0 +1,15 @@
+{% extends 'analisis/base_nav.html' %}
+{% block content %}
+	<div class="row mt-3">
+		<p class="mt-2">
+		Ups.. este tweet ha sido tomado por alguien mas, selecciona otra tweet en la sección 
+		</p>
+		<a href="{% url 'problematic_tweet_relations' %}" class="nav-link">Tweets problemáticos</a>
+
+		</br>
+		<p>
+			Por otra parte, si usted estaba resolviendo este tweet y por alguna razón se refrescó la página. 
+			No se preocupe, puede seguir resolviendo otros tweets mientras este se libera.
+		</p>
+	</div>
+{% endblock %}
