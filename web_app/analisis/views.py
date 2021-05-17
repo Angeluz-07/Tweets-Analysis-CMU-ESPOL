@@ -249,20 +249,22 @@ def resolve_tweet_relation(request, tweet_relation_id):
         skipped = 'skipped' in request.POST
         if not tweet_relation.has_revision and skipped:
             create_revision(skipped,tweet_relation_id, annotation=None)            
-            return redirect('problematic_tweet_relations')
         elif not tweet_relation.has_revision and not skipped:
             annotation = create_annotation(request.POST)
             create_revision(skipped, tweet_relation_id, annotation=annotation)            
-            return redirect('problematic_tweet_relations')
         elif tweet_relation.has_revision and not skipped:
             annotation = create_annotation(request.POST)
             revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
             revision.annotation = annotation
             revision.save()
-            return redirect('problematic_tweet_relations')
-        else:            
-            return redirect('problematic_tweet_relations')
 
+        remove_id_from_cache('RESOLVE_TWEET_RELATION', tweet_relation_id)
+        return redirect('problematic_tweet_relations')
+
+    if tweet_relation_id in get_ids_in_cache('RESOLVE_TWEET_RELATION'):
+        return render(request, 'analisis/taken_tweet_relation.html')
+
+    add_id_to_cache('RESOLVE_TWEET_RELATION', tweet_relation_id)
 
     context = {
         'tweet_relation_id' : tweet_relation.id,
@@ -280,8 +282,10 @@ def resolve_tweet_relation(request, tweet_relation_id):
 def get_problematic_tweet_relations():    
     from django.db.models import Count
 
+    IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
     queryset = TweetRelation.objects \
         .filter(relevant=True) \
+        .exclude(id__in=IN_PROGRESS_IDS) \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=3) \
         .prefetch_related(      
@@ -301,8 +305,18 @@ def get_problematic_tweet_relations():
 def problematic_tweet_relations(request):
     trs = get_problematic_tweet_relations()
 
+    resolved_tweet_relations_count = Revision.objects.exclude(annotation=None).count()
+
+    user_id = request.user.id # User logged in
+    resolved_tweet_relations_count_by_user = Revision.objects \
+        .exclude(annotation=None) \
+        .filter(annotation__annotator_id=user_id) \
+        .count()
+
     context = {
-        'trs' : trs
+        'trs' : trs,
+        'resolved_tweet_relations_count' : resolved_tweet_relations_count,
+        'resolved_tweet_relations_count_by_user' : resolved_tweet_relations_count_by_user
     }
     return render(request, 'analisis/problematic_tweet_relations.html', context = context)
 
@@ -315,19 +329,22 @@ def all_annotations_count(request):
     from .models import TweetRelation
     def get_trs_count(count):
         result = TweetRelation.objects \
+        .filter(relevant=True) \
         .annotate(annotation_count=Count('annotation')) \
         .filter(annotation_count__exact=count) \
-        .filter(relevant=True) \
         .count()
         return result
-    
+
+    resolved_tweet_relations_count = Revision.objects.exclude(annotation=None).count()
+
     context = {
         'zero' : get_trs_count(0),
         'one' : get_trs_count(1),
         'two' : get_trs_count(2),
         'three': get_trs_count(3),
         'four': get_trs_count(4), 
-        'five': get_trs_count(5) 
+        'five': get_trs_count(5),
+        'resolved' : resolved_tweet_relations_count
     }
     return render(request, 'analisis/all_annotations_count.html', context = context)
 
