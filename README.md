@@ -27,3 +27,8 @@ DJANGO_SETTINGS_MODULE=analisistweets.settings_dev
 cd web_app
 python manage.py runserver
 ```
+
+## Updated tests
+```
+python manage.py test analisis.tests.ProblematicTweetRelation
+```

@@ -16,4 +16,8 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = ['id','value','value_json','question','annotation', 'tweet_relation']
 
-    
+class AppCustomConfigSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AppCustomConfig
+        fields = '__all__'

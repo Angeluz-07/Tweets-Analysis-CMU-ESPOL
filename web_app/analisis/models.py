@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from itertools import chain
 from collections import Counter
@@ -157,3 +158,8 @@ class Revision(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['tweet_relation'], name='unique revision for tweet_relation')
         ]
+
+class AppCustomConfig(models.Model):
+    related_app = models.CharField(max_length=50, unique=True)
+    offset = models.IntegerField()
+    limit = models.IntegerField()

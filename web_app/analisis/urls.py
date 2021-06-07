@@ -8,6 +8,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'questions', views.QuestionViewSet)
 router.register(r'answers', views.AnswerViewSet)
+router.register(r'custom-config',views.AppCustomConfigViewSet)
 
 urlpatterns = [
     path('', RedirectView.as_view(url='annotate')),

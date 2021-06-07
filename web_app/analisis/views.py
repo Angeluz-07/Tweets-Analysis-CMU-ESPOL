@@ -5,7 +5,7 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -63,6 +63,12 @@ class AnswerViewSet(viewsets.ModelViewSet):
 
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
+
+class AppCustomConfigViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    queryset = AppCustomConfig.objects.all()
+    serializer_class = AppCustomConfigSerializer
+    http_method_names = ['get','post','put']
 
 
 def add_id_to_cache(ids_type, _id):    
@@ -278,10 +284,18 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
     return render(request, 'analisis/resolve_tweet_relation.html', context = context)
 
+def get_offset_and_limit_problematic_tweets():
+    config = AppCustomConfig.objects.filter(related_app='problematic_tweets').first()
+
+    if config:
+        return config.offset, config.limit
+    else:
+        return 0, 100
 
 def get_problematic_tweet_relations():    
     from django.db.models import Count
 
+    OFFSET, LIMIT = get_offset_and_limit_problematic_tweets()
     IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
     queryset = TweetRelation.objects \
         .filter(relevant=True) \
@@ -292,7 +306,7 @@ def get_problematic_tweet_relations():
             'annotation_set__answers',
             'revision',
         ) \
-        .only('id')[:100]
+        .only('id')[OFFSET:LIMIT]
 
     result = [ 
         item for item in queryset
