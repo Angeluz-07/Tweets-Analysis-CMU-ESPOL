@@ -1,30 +1,34 @@
+# used `from django.contrib.auth.hashers import make_password` to make passwords
+- model: auth.User
+  pk: 1
+  fields:
+    username: test
+    password: pbkdf2_sha256$150000$pcPSzSCBwgys$z7Ke1e9CO//9bDkz9xGpEmnnsGTWa9KUbOnEy5zsEzQ= # 'test'
+    is_superuser: True
+    is_staff : True
+    is_active : True
+- model: analisis.Annotator
+  pk: 1
+  fields:
+    id: 1
+    name: roberto
 - model: auth.User
   pk: 2
   fields:
-    username: user1
-    password: pbkdf2_sha256$150000$Q4LmlYEBOd0I$/VHAx34hshytKqWzilU1NT0Gg61A4Gh+ARFg5lJ/7XQ=
+    username: userb
+    password: pbkdf2_sha256$150000$VIJ9ab6HKYbZ$6h3Z7Amk/o/A0/0cB3Ay/ejWeindebze97RvA2clXvI= # 'testb'
 - model: analisis.Annotator
   pk: 2
   fields:
     id: 2
-    name: usser1
+    name: userb
 - model: auth.User
   pk: 3
   fields:
-    username: user2
-    password: pbkdf2_sha256$150000$n8nyubzF5HQH$WOnievFAC5+jdDKe3T+MkUx624Apsye3aj86UdYoN7U=
+    username: userc
+    password: pbkdf2_sha256$150000$mcLORYbSt029$G+JVtp28VosGVh7hp5u3nNYZOSDFUMMbyutnvQcn4bI= # 'testc'
 - model: analisis.Annotator
   pk: 3
   fields:
     id: 3
-    name: user2
-- model: auth.User
-  pk: 4
-  fields:
-    username: user3
-    password: pbkdf2_sha256$150000$0OUyAzIhg9vT$J7dDKlU8Lm1BtrpW4fnPgs59gif322NgcdwvtiujEKM=
-- model: analisis.Annotator
-  pk: 4
-  fields:
-    id: 4
-    name: user3
+    name: userc

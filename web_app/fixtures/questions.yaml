@@ -1,0 +1,94 @@
+- model: analisis.question
+  pk: 1
+  fields:
+    name: ''
+    section: "Identificación del Evento"
+    value: "¿De qué país se habla en el tweet original?"
+    type: Checkbox
+    options: '["Bolivia", "Chile", "Colombia", "Ecuador", "Otros", "No es claro"]'
+- model: analisis.question
+  pk: 2
+  fields:
+    name: ''
+    section: "Identificación del Evento"
+    value: "¿El tweet original está relacionado con las 
+    protestas que ocurrieron en el (los) país(es) 
+    identificado(s) en la pregunta anterior?"
+    type: Choice
+    options: '["Si", "No", "No es claro"]'
+- model: analisis.question
+  pk: 3
+  fields:
+    name: ''
+    section: Postura del original con respecto a las protestas
+    value: "¿Cuál es la postura del original con respecto al gobierno?"
+    type: Choice
+    options: '["A favor", "En contra", "Neutro", "No es claro", "No Aplica"]'
+- model: analisis.question
+  pk: 4
+  fields:
+    name: ''
+    section: Postura del original con respecto a las protestas
+    value: "¿Cuál es la postura del original con respecto a las protestas?"
+    type: Choice
+    options: '["A favor", "En contra", "Neutro", "No es claro", "No Aplica"]'
+- model: analisis.question
+  pk: 5
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto a las protestas
+    value: "¿Cuál es la postura de la respuesta con respecto al gobierno?"
+    type: Choice
+    options: '["A favor", "En contra", "Neutro", "No es claro", "No Aplica"]'
+- model: analisis.question
+  pk: 6
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto a las protestas
+    value: "¿Cuál es la postura de la respuesta con respecto a las protestas?"
+    type: Choice
+    options: '["A favor", "En contra", "Neutro", "No es claro", "No Aplica"]'
+- model: analisis.question
+  pk: 7
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto al original
+    value: "¿Cuál es la postura del tweet respuesta al contenido del tweet original?"
+    type: Choice
+    options: "[\"Soporte Explícito\", \"Soporte Implícito\", \"Comentario\",
+      \"Pregunta por más información\", \"Negación Explícita\", \"Negación
+      Implícita\", \"Respuesta/Original No disponible\"]"
+- model: analisis.question
+  pk: 8
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto al original
+    value: "¿Qué tan seguro está de su respuesta?"
+    type: Choice
+    options: '["Inseguro", "Algo Seguro", "Seguro"]'
+- model: analisis.question
+  pk: 9
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto al original
+    value: "¿La respuesta expresa que el original contiene información verdadera?"
+    type: Choice
+    options: '["Si", "No", "No Aplica"]'
+- model: analisis.question
+  pk: 10
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto al original
+    value: "¿La respuesta expresa que el original contiene información falsa?"
+    type: Choice
+    options: '["Si", "No", "No Aplica"]'
+- model: analisis.question
+  pk: 11
+  fields:
+    name: ''
+    section: Postura de la respuesta con respecto al original
+    value: "¿Qué tipo de evidencia presenta la respuesta para soportar esto?"
+    type: Choice
+    options: '["Experiencia de primera mano", "URL direccionando a la evidencia",
+      "Cita verificable de terceros", "Cita no verificable de terceros", "Aplica razonamiento",
+      "Ninguna"]'

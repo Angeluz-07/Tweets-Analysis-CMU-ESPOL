@@ -28,6 +28,14 @@ cd web_app
 python manage.py runserver
 ```
 
+## Seed DB
+```
+python manage.py loaddata fixtures/annotators.yaml
+python manage.py loaddata fixtures/tweets.yaml
+python manage.py loaddata fixtures/questions.yaml
+python manage.py loaddata fixtures/annotations.yaml
+```
+
 ## Updated tests
 ```
 python manage.py test analisis.tests.ProblematicTweetRelation
