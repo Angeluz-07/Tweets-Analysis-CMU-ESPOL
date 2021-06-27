@@ -25,14 +25,16 @@ The content of the row must be : <names>,<email>,<password>
 This file must be built manually in with some spreadsheet tool. To generate 
 passwords use the function  `random_password`
 
-Example of row:
+Example of rows:
 
-    Aragu Vara Karle Mary,aragu.mery1991@gmail.com,Q+#ySkxo4f
+    > Aragu Vara Karle Mary,aragu.mery1991@gmail.com,Q+#ySkxo4f
+
+    > aragu.mery1991@gmail.com,aragu.mery1991@gmail.com,Q+#ySkxo4f
 
 """
 def add_annotators():
     # Make sure .csv is saved as UTF-8 encoding
-    input_file = 'data/Lista_anotadores_04.csv'
+    input_file = 'data/Lista_anotadores_05.csv'
     with open(input_file, encoding="utf-8") as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
         for i, row in enumerate(rows):
