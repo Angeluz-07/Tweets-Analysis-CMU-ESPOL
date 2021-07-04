@@ -1,7 +1,5 @@
-from enum import unique
 from django.db import models
-from itertools import chain
-from collections import Counter
+from .domain import tweet_relation_is_problematic
 
 # Create your models here.
 
@@ -41,56 +39,8 @@ class TweetRelation(models.Model):
         return self.has_revision and self.revision.annotation_id is not None
 
     @property
-    def annotation_inconsistent_answers(self):        
-        answers = list(
-            chain.from_iterable(
-                [
-                    a.answers.all() for a in self.annotation_set.all()
-                ]
-            )
-        )
-
-        answers:List[dict]  = list(map(lambda item: { 'question_id' : item.question_id , 'value' : item.value_json}, answers))
-
-        def build_group(question_id, answers):
-            _answers:List[dict] = list(filter(lambda item: item['question_id']==question_id, answers))
-            _answers:List[str] = list(map(lambda item: item['value'], _answers))
-            answers_relative_freq:dict[str,float] = { k : round((v/len(_answers)),2) for k, v in dict(Counter(_answers)).items()}
-
-            result = {
-                'question_id' : question_id,
-                'answers_relative_freq': answers_relative_freq,
-                'total_answers' : len(_answers)
-            }
-            return result
-
-        grouped:List[dict] = [ build_group(_id, answers)  for _id in self.question_ids_of_interest]
-
-        def has_inconsistent_answers(answers_relative_freq: dict) -> bool:
-            return all(list(map(lambda x: x<=0.5, answers_relative_freq.values())))
-        
-        def has_enough_answers(total_answers: int ) -> bool:
-            return total_answers == 3
-
-        grouped:List[dict] = [
-            group for group in grouped 
-            if has_inconsistent_answers(group['answers_relative_freq']) and has_enough_answers(group['total_answers'])
-        ]
-
-        return grouped
-
-    @property
     def is_problematic(self):
-        return len(self.annotation_inconsistent_answers)>0
-
-    @property
-    def annotation_inconsistent_answers_as_json(self):
-        from json import dumps
-        return dumps(self.annotation_inconsistent_answers)
-
-    @property
-    def question_ids_of_interest(self):
-        return [2,3,4,5,6,7,9,10]
+        return tweet_relation_is_problematic(self)
 
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)
