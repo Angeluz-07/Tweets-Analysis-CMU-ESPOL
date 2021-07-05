@@ -284,35 +284,23 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
     return render(request, 'analisis/resolve_tweet_relation.html', context = context)
 
-def get_offset_and_limit_problematic_tweets():
-    config = AppCustomConfig.objects.filter(related_app='problematic_tweets').first()
+#def get_offset_and_limit_problematic_tweets():
+#    config = AppCustomConfig.objects.filter(related_app='problematic_tweets').first()
 
-    if config:
-        return config.offset, config.limit
-    else:
-        return 0, 100
+#    if config:
+#        return config.offset, config.limit
+#    else:
+#        return 0, 100
 
-def get_problematic_tweet_relations():    
-    from django.db.models import Count
-
-    OFFSET, LIMIT = get_offset_and_limit_problematic_tweets()
+def get_problematic_tweet_relations():
     IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
     queryset = TweetRelation.objects \
-        .filter(relevant=True) \
+        .filter(relevant=True, problematic=True) \
         .exclude(id__in=IN_PROGRESS_IDS) \
-        .annotate(annotation_count=Count('annotation')) \
-        .filter(annotation_count__exact=3) \
-        .prefetch_related(      
-            'annotation_set__answers',
-            'revision',
-        ) \
-        .only('id')[OFFSET:LIMIT]
+        .prefetch_related('revision') \
+        .only('id')
 
-    result = [ 
-        item for item in queryset
-        if item.is_problematic and not item.is_resolved
-    ]
-    return result
+    return list(queryset)
 
 @login_required(login_url='login')
 @permission_required('analisis.view_tweetrelation',login_url='login')

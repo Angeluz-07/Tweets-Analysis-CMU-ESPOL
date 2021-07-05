@@ -16,7 +16,8 @@ class TweetRelation(models.Model):
     tweet_target=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweet_target')
     tweet_response=models.ForeignKey(Tweet,on_delete=models.SET_NULL,null=True, blank=True, related_name='tweet_response')
     relation_type=models.CharField(max_length=50, choices=TYPE)
-    relevant = models.BooleanField(default=True)
+    relevant = models.BooleanField(default=True) # value is defined by some domain criteria
+    problematic = models.BooleanField(default=False) # value is defined by some domain criteria
 
     def __str__(self):
         return f'TweetRelation {self.id} : TweetTarget={self.tweet_target}, TweetResponse={self.tweet_response}, RelationType={self.relation_type}'
@@ -34,13 +35,13 @@ class TweetRelation(models.Model):
     def has_revision(self):
         return hasattr(self, 'revision') and self.revision is not None
 
-    @property
-    def is_resolved(self):
-        return self.has_revision and self.revision.annotation_id is not None
+    #@property
+    #def is_resolved(self):
+    #    return self.has_revision and self.revision.annotation_id is not None
 
-    @property
-    def is_problematic(self):
-        return tweet_relation_is_problematic(self)
+    #@property
+    #def is_problematic(self):
+    #    return tweet_relation_is_problematic(self)
 
 class Annotator(models.Model):
     id = models.IntegerField(primary_key=True)

@@ -31,3 +31,33 @@ def tweet_relation_is_problematic(tweet_relation):
     aggregated = df.sort_values('question_id').groupby('question_id').agg({'value':[is_problematic]})
 
     return aggregated[('value','is_problematic')].any()
+
+def update_problematics(debug=False):    
+    from django.db.models import Count
+    from .models import TweetRelation
+
+    queryset = TweetRelation.objects \
+        .filter(relevant=True) \
+        .annotate(annotation_count=Count('annotation')) \
+        .filter(annotation_count__exact=3) \
+        .prefetch_related('annotation_set__answers') \
+        .all()
+    
+    total_items = queryset.count()
+
+    STEP = 500
+    for i in range(0, total_items, STEP):
+        _slice = queryset[i:i+STEP]
+
+        tweet_relations_to_update = []
+        for tweet_relation in _slice:
+            if tweet_relation_is_problematic(tweet_relation):
+                tweet_relation.problematic = True
+                tweet_relations_to_update.append(tweet_relation)
+
+                if debug:
+                    print('to update, tweetrelation.id = ', tweet_relation.id)
+
+        TweetRelation.objects.bulk_update(tweet_relations_to_update,['problematic'])
+    
+    return None

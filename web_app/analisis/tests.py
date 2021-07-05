@@ -412,8 +412,29 @@ class ProblematicTweetRelation(TransactionTestCase):
             answer_values=[ "\"Si\"", "\"No\"", "\"No\""]
         )
 
+    def test_problematic_tweets_are_updated(self):
+        from analisis.domain import update_problematics
+        update_problematics()
+        
+        tr_problematic_from_db = TweetRelation.objects.get(id=self.tweet_relation_problematic.id)
+        self.assertTrue(tr_problematic_from_db.problematic)
 
-    def test_retrieve(self):
-        trs = get_problematic_tweet_relations()
-        self.assertIn(self.tweet_relation_problematic,trs)
-        self.assertNotIn(self.tweet_relation_non_problematic, trs)
+        tr_non_problematic_from_db = TweetRelation.objects.get(id=self.tweet_relation_non_problematic.id)
+        self.assertFalse(tr_non_problematic_from_db.problematic)
+
+    def test_problematic_tweets_are_identified(self):
+        from django.db.models import Count
+        trs = TweetRelation.objects \
+        .filter(relevant=True) \
+        .annotate(annotation_count=Count('annotation')) \
+        .filter(annotation_count__exact=3) \
+        .prefetch_related('annotation_set__answers')
+
+        from analisis.domain import tweet_relation_is_problematic
+        problematic_tweet_relations = [
+            tr for tr in trs if tweet_relation_is_problematic(tr)
+        ]
+  
+        self.assertIn(self.tweet_relation_problematic, problematic_tweet_relations)
+        self.assertNotIn(self.tweet_relation_non_problematic, problematic_tweet_relations)
+
