@@ -36,7 +36,9 @@ python manage.py loaddata fixtures/questions.yaml
 python manage.py loaddata fixtures/annotations.yaml
 ```
 
-## Updated tests
+## Run tests
 ```
-python manage.py test analisis.tests.ProblematicTweetRelation
+python manage.py test # All tests
+
+python manage.py test analisis.tests.ProblematicTweetRelation # Specific tests
 ```

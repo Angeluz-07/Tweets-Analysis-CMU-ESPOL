@@ -1,7 +1,7 @@
 from django.test import TestCase, TransactionTestCase
-from analisis.models import Tweet, TweetRelation, Annotator, Annotation, Question, Answer
+from analisis.models import Tweet, TweetRelation, Annotator, Annotation, Question, Answer, Revision
 from analisis.views import get_random_tweet_relation, create_annotation, get_problematic_tweet_relations
-from unittest.mock import patch, Mock
+from unittest.mock import patch, MagicMock
 
 # Create your tests here.
 class TweetAnnotatedByUser(TestCase):
@@ -37,6 +37,7 @@ class TweetAnnotatedByUser(TestCase):
             tweet_relation_id = self.tweet_relation_annotated.id
         )
 
+    @patch('analisis.views.get_ids_in_cache',MagicMock(return_value=[]))
     def test_is_not_retrieved(self):
         tr = get_random_tweet_relation(self.annotator.id)
         self.assertEqual(tr.id, self.tweet_relation_non_annotated.id)
@@ -107,6 +108,7 @@ class TweetAnnotatedTwice(TestCase):
                 tweet_relation_id=self.tweet_relation_annotated_thrice.id
             )
 
+    @patch('analisis.views.get_ids_in_cache',MagicMock(return_value=[]))
     def test_is_retrieved(self):
         annotator_id = 700
         Annotator.objects.create(id=annotator_id)
@@ -167,6 +169,7 @@ class TweetAnnotatedOnce(TestCase):
                 tweet_relation_id=self.tweet_relation_annotated_thrice.id
             )
 
+    @patch('analisis.views.get_ids_in_cache',MagicMock(return_value=[]))
     def test_is_retrieved(self):
         annotator_id = 500
         Annotator.objects.create(id=annotator_id)
@@ -211,6 +214,7 @@ class TweetAnnotatedZero(TestCase):
                 tweet_relation_id=self.tweet_relation_annotated_thrice.id
             )
 
+    @patch('analisis.views.get_ids_in_cache',MagicMock(return_value=[]))
     def test_is_retrieved(self):
         annotator_id = 400
         Annotator.objects.create(id=annotator_id)
@@ -249,6 +253,7 @@ class AllTweetsAnnotated(TestCase):
                 tweet_relation_id=self.tweet_relation_annotated_thrice.id
             )
 
+    @patch('analisis.views.get_ids_in_cache',MagicMock(return_value=[]))
     def test_none_is_retrieved(self):
         annotator_id = 400
         Annotator.objects.create(id=annotator_id)
@@ -275,6 +280,7 @@ class TweetAnnotationRelevant(TestCase):
             relevant=False
         )
 
+    @patch('analisis.views.get_ids_in_cache',MagicMock(return_value=[]))
     def test_is_not_retrieved(self):
         tr = get_random_tweet_relation(annotator_id=100)
         self.assertEqual(tr, None)
@@ -412,6 +418,14 @@ class ProblematicTweetRelation(TransactionTestCase):
             answer_values=[ "\"Si\"", "\"No\"", "\"No\""]
         )
 
+        from django.contrib.auth.models import User
+        self.user = User.objects.create(
+            username='testuser', 
+            email='test@example.com', 
+            password='testpass', 
+            is_superuser=True
+        )
+
     def test_problematic_tweets_are_updated(self):
         from analisis.domain import update_problematics
         update_problematics()
@@ -437,4 +451,116 @@ class ProblematicTweetRelation(TransactionTestCase):
   
         self.assertIn(self.tweet_relation_problematic, problematic_tweet_relations)
         self.assertNotIn(self.tweet_relation_non_problematic, problematic_tweet_relations)
+
+    def test_redirect_tweet_not_problematic(self):  
+        self.client.force_login(self.user)
+        response = self.client.get(f'/resolve-tweet-relation/{self.tweet_relation_non_problematic.id}')
+        self.assertRedirects(response, '/problematic-tweet-relations')
+
+    def test_first_time_skipped_create_revision_without_annotation(self):
+        self.client.force_login(self.user)
+
+        self.tweet_relation_problematic.problematic = True
+        self.tweet_relation_problematic.save()
+
+        response = self.client.post(
+            f'/resolve-tweet-relation/{self.tweet_relation_problematic.id}',
+            data={ 'skipped': True }
+        )
+
+        revision_created = Revision.objects.get(tweet_relation_id=self.tweet_relation_problematic.id)
+
+        assert revision_created.annotation is None
+        assert revision_created.skipped is True
+
+
+    @patch('analisis.views.create_annotation')
+    def test_already_skipped_update_revision_on_annotation(self, create_annotation_mock):
+        # context
+        self.client.force_login(self.user)
+
+        self.tweet_relation_problematic.problematic = True
+        self.tweet_relation_problematic.save()
+
+        revision = Revision.objects.create(
+            tweet_relation_id=self.tweet_relation_problematic.id,
+            annotation=None
+        )
+    
+        create_annotation_mock.return_value = Annotation.objects.create(
+            tweet_relation_id=self.tweet_relation_problematic.id
+        )
+
+        # test
+        response = self.client.post(
+            f'/resolve-tweet-relation/{self.tweet_relation_problematic.id}',
+            data={}
+        )
+
+        revision_updated = Revision.objects.get(
+            tweet_relation_id = self.tweet_relation_problematic.id
+        )
+
+        self.assertIsNotNone(revision_updated.annotation)
+
+
+    @patch('analisis.views.create_annotation')
+    def test_resolve_tweetrelation_on_first_revision(self, create_annotation_mock):
+        # context
+        self.client.force_login(self.user)
+
+        self.tweet_relation_problematic.problematic = True
+        self.tweet_relation_problematic.save()
+
+        revision = Revision.objects.create(
+            tweet_relation_id=self.tweet_relation_problematic.id,
+            annotation=None
+        )
+    
+        create_annotation_mock.return_value = Annotation.objects.create(
+            tweet_relation_id=self.tweet_relation_problematic.id
+        )
+
+        # test
+        response = self.client.post(
+            f'/resolve-tweet-relation/{self.tweet_relation_problematic.id}',
+            data={}
+        )
+
+        revision = Revision.objects.filter(
+            tweet_relation_id = self.tweet_relation_problematic.id
+        ).first()
+        annotation = Annotation.objects.filter(
+            tweet_relation_id = self.tweet_relation_problematic.id,
+            revision__id = revision.id
+        ).first()
+
+        self.assertIsNotNone(revision)
+        self.assertIsNotNone(annotation)
+        self.assertEqual(revision.annotation.id, annotation.id)
+        self.assertEqual(revision.skipped, False)
+
+    
+    #@patch('analisis.views.create_annotation')
+    #def test_problematic_is_not_retrieved_after_resolve(self, create_annotation_mock):
+    #    # context
+    #    self.client.force_login(self.user)
+
+    #    self.tweet_relation_problematic.problematic = True
+    #    self.tweet_relation_problematic.save()
+
+    #    create_annotation_mock.return_value = Annotation.objects.create(
+    #        tweet_relation_id=self.tweet_relation_problematic.id
+    #    )
+        
+    #    response = self.client.post(
+    #        f'/resolve-tweet-relation/{self.tweet_relation_problematic.id}',
+    #        data={}
+    #    )
+
+    #    #test
+
+    #    problematic_tweet_relations = get_problematic_tweet_relations()
+
+    #    self.assertNotIn(self.tweet_relation_problematic, problematic_tweet_relations)
 
