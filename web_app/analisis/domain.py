@@ -45,7 +45,13 @@ def update_problematics(debug=False):
     
     total_items = queryset.count()
 
-    STEP = 500
+    if debug:
+        from datetime import datetime
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        print('Starting <update problematics> job at :', dt_string)
+
+    STEP = 2000
     for i in range(0, total_items, STEP):
         _slice = queryset[i:i+STEP]
 
@@ -55,9 +61,16 @@ def update_problematics(debug=False):
                 tweet_relation.problematic = True
                 tweet_relations_to_update.append(tweet_relation)
 
-                if debug:
-                    print('to update, tweetrelation.id = ', tweet_relation.id)
+        if debug:
+            print('to update, n items = ', len(tweet_relations_to_update))
 
         TweetRelation.objects.bulk_update(tweet_relations_to_update,['problematic'])
     
+
+    if debug:
+        from datetime import datetime
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        print('Finishing <update problematics> job at :', dt_string)
+
     return None
