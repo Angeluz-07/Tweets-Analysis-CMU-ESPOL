@@ -118,7 +118,7 @@ def get_random_tweet_relation(annotator_id: int) -> TweetRelation:
 
     if trs_annotated_twice_count > 0:
         trs = get_trs(2, annotator_id)
-    if trs_annotated_once_count > 0:
+    elif trs_annotated_once_count > 0:
         trs = get_trs(1, annotator_id)
     elif trs_annotated_zero_count > 0:
         trs = get_trs(0, annotator_id)
@@ -248,22 +248,27 @@ def resolve_tweet_relation(request, tweet_relation_id):
     tweet_relation = get_object_or_404(TweetRelation.objects, id=tweet_relation_id)
 
     # Validate if is problematic before return
-    if not tweet_relation.is_problematic:
+    if not tweet_relation.problematic:
         return redirect('problematic_tweet_relations')
 
     if request.method == 'POST':
-        skipped = 'skipped' in request.POST
-        if not tweet_relation.has_revision and skipped:
-            create_revision(skipped,tweet_relation_id, annotation=None)            
-        elif not tweet_relation.has_revision and not skipped:
-            annotation = create_annotation(request.POST)
-            create_revision(skipped, tweet_relation_id, annotation=annotation)            
-        elif tweet_relation.has_revision and not skipped:
+        skipped_is_checked = 'skipped' in request.POST
+        if tweet_relation.has_revision and not skipped_is_checked:
             annotation = create_annotation(request.POST)
             revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
             revision.annotation = annotation
             revision.save()
 
+            tweet_relation.problematic = False
+            tweet_relation.save()
+        elif not skipped_is_checked and not tweet_relation.has_revision:
+            annotation = create_annotation(request.POST)
+            create_revision(skipped_is_checked, tweet_relation_id, annotation=annotation)
+            
+            tweet_relation.problematic = False
+            tweet_relation.save()
+        elif skipped_is_checked and not tweet_relation.has_revision:
+            create_revision(skipped_is_checked, tweet_relation_id, annotation=None)
         remove_id_from_cache('RESOLVE_TWEET_RELATION', tweet_relation_id)
         return redirect('problematic_tweet_relations')
 
@@ -284,35 +289,31 @@ def resolve_tweet_relation(request, tweet_relation_id):
 
     return render(request, 'analisis/resolve_tweet_relation.html', context = context)
 
-def get_offset_and_limit_problematic_tweets():
-    config = AppCustomConfig.objects.filter(related_app='problematic_tweets').first()
+#def get_offset_and_limit_problematic_tweets():
+#    config = AppCustomConfig.objects.filter(related_app='problematic_tweets').first()
 
-    if config:
-        return config.offset, config.limit
-    else:
-        return 0, 100
+#    if config:
+#        return config.offset, config.limit
+#    else:
+#        return 0, 100
 
-def get_problematic_tweet_relations():    
-    from django.db.models import Count
+def get_problematic_tweet_relations():
+    from django.db.models import Case, When, Value,  BooleanField
 
-    OFFSET, LIMIT = get_offset_and_limit_problematic_tweets()
     IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
     queryset = TweetRelation.objects \
-        .filter(relevant=True) \
+        .filter(relevant=True, problematic=True) \
         .exclude(id__in=IN_PROGRESS_IDS) \
-        .annotate(annotation_count=Count('annotation')) \
-        .filter(annotation_count__exact=3) \
-        .prefetch_related(      
-            'annotation_set__answers',
-            'revision',
+        .annotate(
+            is_skipped_ANNOTATED=Case(
+                When(revision__skipped=True, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
         ) \
-        .only('id')[OFFSET:LIMIT]
+        .only('id')
 
-    result = [ 
-        item for item in queryset
-        if item.is_problematic and not item.is_resolved
-    ]
-    return result
+    return list(queryset)
 
 @login_required(login_url='login')
 @permission_required('analisis.view_tweetrelation',login_url='login')

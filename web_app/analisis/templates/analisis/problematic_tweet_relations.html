@@ -19,7 +19,7 @@
 			<tr>
 				<th>Tweets to resolve</th>				
 				<th>Status</th>						
-				<th class="w-50">Inconsistent Info</th>
+				<!--th class="w-50">Inconsistent Info</th-->
 			</tr>
 			</thead>
 			<tbody>
@@ -29,13 +29,12 @@
 					<a href="{% url 'resolve_tweet_relation' item.id %}">Tweet Relation {{ item.id }}</a>
 					</td>
 					<td>
-						{% if item.is_skipped %} 
+						{% if item.is_skipped_ANNOTATED %} 
 							skipped
 						{% endif %}
 					</td>							
-					<td>
-						{{ item.annotation_inconsistent_answers_as_json }}
-					</td>
+					<!--td>
+					</td-->
 				</tr>
 			{% endfor %}
 			</tbody>
