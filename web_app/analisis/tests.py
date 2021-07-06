@@ -472,10 +472,13 @@ class ProblematicTweetRelation(TransactionTestCase):
 
         assert revision_created.annotation is None
         assert revision_created.skipped is True
+        
+        trs = get_problematic_tweet_relations()
+        self.assertIn(self.tweet_relation_problematic, trs)
 
 
     @patch('analisis.views.create_annotation')
-    def test_already_skipped_update_revision_on_annotation(self, create_annotation_mock):
+    def test_resolve_tweetrelation_on_second_revision(self, create_annotation_mock):
         # context
         self.client.force_login(self.user)
 
@@ -503,6 +506,8 @@ class ProblematicTweetRelation(TransactionTestCase):
 
         self.assertIsNotNone(revision_updated.annotation)
 
+        trs = get_problematic_tweet_relations()
+        self.assertNotIn(self.tweet_relation_problematic, trs)
 
     @patch('analisis.views.create_annotation')
     def test_resolve_tweetrelation_on_first_revision(self, create_annotation_mock):
@@ -512,11 +517,6 @@ class ProblematicTweetRelation(TransactionTestCase):
         self.tweet_relation_problematic.problematic = True
         self.tweet_relation_problematic.save()
 
-        revision = Revision.objects.create(
-            tweet_relation_id=self.tweet_relation_problematic.id,
-            annotation=None
-        )
-    
         create_annotation_mock.return_value = Annotation.objects.create(
             tweet_relation_id=self.tweet_relation_problematic.id
         )
@@ -540,27 +540,5 @@ class ProblematicTweetRelation(TransactionTestCase):
         self.assertEqual(revision.annotation.id, annotation.id)
         self.assertEqual(revision.skipped, False)
 
-    
-    #@patch('analisis.views.create_annotation')
-    #def test_problematic_is_not_retrieved_after_resolve(self, create_annotation_mock):
-    #    # context
-    #    self.client.force_login(self.user)
-
-    #    self.tweet_relation_problematic.problematic = True
-    #    self.tweet_relation_problematic.save()
-
-    #    create_annotation_mock.return_value = Annotation.objects.create(
-    #        tweet_relation_id=self.tweet_relation_problematic.id
-    #    )
-        
-    #    response = self.client.post(
-    #        f'/resolve-tweet-relation/{self.tweet_relation_problematic.id}',
-    #        data={}
-    #    )
-
-    #    #test
-
-    #    problematic_tweet_relations = get_problematic_tweet_relations()
-
-    #    self.assertNotIn(self.tweet_relation_problematic, problematic_tweet_relations)
-
+        trs = get_problematic_tweet_relations()
+        self.assertNotIn(self.tweet_relation_problematic, trs)

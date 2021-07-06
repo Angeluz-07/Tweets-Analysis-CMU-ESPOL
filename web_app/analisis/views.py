@@ -259,14 +259,14 @@ def resolve_tweet_relation(request, tweet_relation_id):
             revision.annotation = annotation
             revision.save()
 
-            #tweet_relation.problematic = False
-            #tweet_relation.save()
+            tweet_relation.problematic = False
+            tweet_relation.save()
         elif not skipped_is_checked and not tweet_relation.has_revision:
             annotation = create_annotation(request.POST)
             create_revision(skipped_is_checked, tweet_relation_id, annotation=annotation)
             
-            #tweet_relation.problematic = False
-            #tweet_relation.save()
+            tweet_relation.problematic = False
+            tweet_relation.save()
         elif skipped_is_checked and not tweet_relation.has_revision:
             create_revision(skipped_is_checked, tweet_relation_id, annotation=None)
         remove_id_from_cache('RESOLVE_TWEET_RELATION', tweet_relation_id)
@@ -298,11 +298,19 @@ def resolve_tweet_relation(request, tweet_relation_id):
 #        return 0, 100
 
 def get_problematic_tweet_relations():
+    from django.db.models import Case, When, Value,  BooleanField
+
     IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
     queryset = TweetRelation.objects \
         .filter(relevant=True, problematic=True) \
         .exclude(id__in=IN_PROGRESS_IDS) \
-        .prefetch_related('revision') \
+        .annotate(
+            is_skipped_ANNOTATED=Case(
+                When(revision__skipped=True, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            ),
+        ) \
         .only('id')
 
     return list(queryset)
