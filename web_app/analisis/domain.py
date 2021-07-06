@@ -72,5 +72,6 @@ def update_problematics(debug=False):
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
         print('Finishing <update problematics> job at :', dt_string)
+        print()
 
     return None
