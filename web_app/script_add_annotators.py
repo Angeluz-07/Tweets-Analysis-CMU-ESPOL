@@ -34,7 +34,7 @@ Example of rows:
 """
 def add_annotators():
     # Make sure .csv is saved as UTF-8 encoding
-    input_file = 'data/Lista_anotadores_07.csv'
+    input_file = 'data/Lista_anotadores_08.csv'
     with open(input_file, encoding="utf-8") as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
         for i, row in enumerate(rows):
