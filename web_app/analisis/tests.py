@@ -473,7 +473,7 @@ class ProblematicTweetRelation(TransactionTestCase):
         assert revision_created.annotation is None
         assert revision_created.skipped is True
         
-        trs = get_problematic_tweet_relations()
+        trs = get_problematic_tweet_relations(1)
         self.assertIn(self.tweet_relation_problematic, trs)
 
 
@@ -506,7 +506,7 @@ class ProblematicTweetRelation(TransactionTestCase):
 
         self.assertIsNotNone(revision_updated.annotation)
 
-        trs = get_problematic_tweet_relations()
+        trs = get_problematic_tweet_relations(1)
         self.assertNotIn(self.tweet_relation_problematic, trs)
 
     @patch('analisis.views.create_annotation')
@@ -540,5 +540,5 @@ class ProblematicTweetRelation(TransactionTestCase):
         self.assertEqual(revision.annotation.id, annotation.id)
         self.assertEqual(revision.skipped, False)
 
-        trs = get_problematic_tweet_relations()
+        trs = get_problematic_tweet_relations(1)
         self.assertNotIn(self.tweet_relation_problematic, trs)
