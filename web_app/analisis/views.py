@@ -297,7 +297,7 @@ def resolve_tweet_relation(request, tweet_relation_id):
 #    else:
 #        return 0, 100
 
-def get_problematic_tweet_relations():
+def get_problematic_tweet_relations(annotator_id:int):
     from django.db.models import Case, When, Value,  BooleanField
 
     IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
@@ -310,6 +310,11 @@ def get_problematic_tweet_relations():
                 default=Value(False),
                 output_field=BooleanField()
             ),
+            has_been_annotated_by_user_ANNOTATED=Case(
+                When(annotation__annotator=annotator_id,  then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
         ) \
         .only('id')
 
@@ -318,11 +323,12 @@ def get_problematic_tweet_relations():
 @login_required(login_url='login')
 @permission_required('analisis.view_tweetrelation',login_url='login')
 def problematic_tweet_relations(request):
-    trs = get_problematic_tweet_relations()
+    user_id = request.user.id # User logged in
+
+    trs = get_problematic_tweet_relations(annotator_id=user_id)
 
     resolved_tweet_relations_count = Revision.objects.exclude(annotation=None).count()
 
-    user_id = request.user.id # User logged in
     resolved_tweet_relations_count_by_user = Revision.objects \
         .exclude(annotation=None) \
         .filter(annotation__annotator_id=user_id) \
