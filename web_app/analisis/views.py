@@ -1,3 +1,4 @@
+from django.db.models.expressions import Exists, OuterRef
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.http.request import QueryDict
@@ -301,6 +302,11 @@ def get_problematic_tweet_relations(annotator_id:int):
     from django.db.models import Case, When, Value,  BooleanField
 
     IN_PROGRESS_IDS = get_ids_in_cache('RESOLVE_TWEET_RELATION')
+
+    subquery_ = Annotation.objects.filter(
+        tweet_relation=OuterRef('id'),
+        annotator=annotator_id
+    )
     queryset = TweetRelation.objects \
         .filter(relevant=True, problematic=True) \
         .exclude(id__in=IN_PROGRESS_IDS) \
@@ -310,10 +316,8 @@ def get_problematic_tweet_relations(annotator_id:int):
                 default=Value(False),
                 output_field=BooleanField()
             ),
-            has_been_annotated_by_user_ANNOTATED=Case(
-                When(annotation__annotator=annotator_id,  then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField()
+            has_been_annotated_by_user_ANNOTATED=Exists(
+                subquery_
             )
         ) \
         .only('id')
