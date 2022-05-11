@@ -42,3 +42,14 @@ python manage.py test # All tests
 
 python manage.py test analisis.tests.ProblematicTweetRelation # Specific tests
 ```
+
+## Quick setup with docker
+```
+sudo docker-compose build web_app # to build the webapp img
+
+sudo docker-compose up # set up services locally
+
+# with services running apply initial migration
+sudo docker-compose exec web_app python manage.py makemigrations
+sudo docker-compose exec web_app python manage.py migrate
+```

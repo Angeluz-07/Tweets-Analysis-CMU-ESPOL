@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  web_app:
+    build: ./web_app
+    entrypoint: ["./docker-entrypoint.sh"]
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_HOST=db # same as db service name
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+    volumes:
+      - ./web_app:/usr/src/app/
+    depends_on:
+      - db
+  db:
+    image: mysql:8
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=tweets_analysis
+      - MYSQL_USER=tweet
+      - MYSQL_PASSWORD=twitter
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
