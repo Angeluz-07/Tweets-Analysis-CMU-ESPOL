@@ -11,14 +11,14 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import environ
+#import environ
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, True)
-)
+# env = environ.Env(
+#     # set casting, default value
+#     DEBUG=(bool, True)
+# )
 # reading .env file
-environ.Env.read_env()
+#environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,13 +28,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS =[ip for ip in os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")]
+#print(f'ALLOWED_HOSTS = {ALLOWED_HOSTS}')
 
 # Application definition
 
@@ -94,12 +94,12 @@ WSGI_APPLICATION = 'analisistweets.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tweets_analysis',
-        'USER': 'tweet',  # cambiar 
-        'PASSWORD': 'twitter',  # cambiar
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': os.environ.get('DATABASE_ENGINE'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'), 
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
     }
 }
 
@@ -178,3 +178,4 @@ INTERNAL_IPS = [
     '127.0.0.1',
     # ...
 ]
+INTERNAL_IPS += ALLOWED_HOSTS

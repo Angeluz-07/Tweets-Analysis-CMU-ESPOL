@@ -42,3 +42,28 @@ python manage.py test # All tests
 
 python manage.py test analisis.tests.ProblematicTweetRelation # Specific tests
 ```
+
+## Quick setup with docker
+```
+sudo docker-compose build web_app # to build the webapp img
+
+sudo docker-compose up # set up services locally
+
+# with services running apply initial migration
+sudo docker-compose exec web_app python manage.py makemigrations
+sudo docker-compose exec web_app python manage.py migrate
+```
+
+Now we need a dump of db, from the server :
+```
+python manage.py dumpdata --exclude contenttypes -o <date>_backup.json
+```
+
+And place the file in the web_app/data folder locally
+
+Now, with the service running, load the data:
+```
+sudo docker-compose exec web_app python manage.py loaddata ./data/<date>_backup.json
+```
+Now reload page to see changes.
+
