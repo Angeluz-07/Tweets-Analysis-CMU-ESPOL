@@ -53,3 +53,17 @@ sudo docker-compose up # set up services locally
 sudo docker-compose exec web_app python manage.py makemigrations
 sudo docker-compose exec web_app python manage.py migrate
 ```
+
+Now we need a dump of db, from the server :
+```
+python manage.py dumpdata --exclude contenttypes -o <date>_backup.json
+```
+
+And place the file in the web_app/data folder locally
+
+Now, with the service running, load the data:
+```
+sudo docker-compose exec web_app python manage.py loaddata ./data/<date>_backup.json
+```
+Now reload page to see changes.
+
