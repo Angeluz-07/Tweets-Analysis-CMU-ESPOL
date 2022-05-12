@@ -1,0 +1,69 @@
+version: "3.8"
+services: 
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  web_app:
+    build: ./web_app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_ENGINE=${DATABASE_ENGINE}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=db # same as db service name
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+    volumes:
+      - django_static:/usr/src/app/static
+      - ./web_app:/usr/src/app/
+    depends_on:
+      - db
+      - mysql_db
+  reverse_proxy:
+    build: ./reverse_proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - web_app
+    volumes:
+      - django_static:/static
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5051:5051"
+      - "5052:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    links:
+      - "db:db_server" # use db_server as host name when access with pgadmin
+    depends_on:
+      - db
+  # mysql_db:
+  #   image: mysql:8
+  #   ports:
+  #     - 3306:3306
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=rootpw
+  #     - MYSQL_DATABASE=tweets_analysis
+  #     - MYSQL_USER=tweet
+  #     - MYSQL_PASSWORD=twitter
+  #   volumes:
+  #     - mysqldb_data:/var/lib/mysql
+volumes:
+  db_data:
+  pgadmin_data:
+  django_static:
+  mysqldb_data:

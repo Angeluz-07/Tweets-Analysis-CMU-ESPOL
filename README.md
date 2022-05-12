@@ -42,3 +42,18 @@ python manage.py test # All tests
 
 python manage.py test analisis.tests.ProblematicTweetRelation # Specific tests
 ```
+
+## Run app
+```
+# Start app
+sudo docker-compose up
+
+# To run bash in web_app
+sudo docker-compose run web_app bash
+
+sudo docker-compose run web_app python manage.py makemigrations
+sudo docker-compose run web_app python manage.py migrate
+
+# To re-build web app after modify /web_app
+sudo docker-compose build web_app
+```
