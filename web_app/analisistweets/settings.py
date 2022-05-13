@@ -19,6 +19,23 @@ import os
 # )
 # reading .env file
 #environ.Env.read_env()
+def check_env_variables_are_defined():
+    env_variables = [
+        'DATABASE_ENGINE',
+        'DATABASE_NAME',
+        'DATABASE_USER',
+        'DATABASE_PASSWORD',
+        'DATABASE_HOST',
+        'DJANGO_SECRET_KEY',
+        'DJANGO_ALLOWED_HOSTS',
+    ]
+    for var in env_variables:
+        if var not in os.environ:
+            raise EnvironmentError(
+                "{} is not defined in the environment".format(var)
+            )
+
+check_env_variables_are_defined()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
