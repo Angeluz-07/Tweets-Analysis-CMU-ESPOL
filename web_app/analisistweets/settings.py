@@ -178,7 +178,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-LOGIN_REDIRECT_URL = 'annotate'
+LOGIN_REDIRECT_URL = 'home'
 
 def show_toolbar_for_admin(request):
     if request.user.is_authenticated:

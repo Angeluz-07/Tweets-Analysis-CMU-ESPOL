@@ -75,3 +75,51 @@ def update_problematics(debug=False):
         print()
 
     return None
+
+def get_preselected_tweet_relations_ids():
+    import os
+    BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
+    path = os.path.join(BASE_DIR, 'data', 'annotations_to_revise.csv')
+
+    import csv
+    if os.path.exists(path):
+        with open(path, 'r') as file:
+            reader = csv.DictReader(file)
+            result = list(set([int(row["tweet_relation_id"]) for row in reader]))
+            result.sort()
+    else:
+        result = []
+    return result
+
+def update_preselected_problematics(debug=False):    
+    from .models import TweetRelation
+
+    ids = get_preselected_tweet_relations_ids()
+    queryset = TweetRelation.objects \
+        .filter(relevant=True, id__in=ids) \
+        .all()
+
+    if debug:
+        from datetime import datetime
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        print('Starting <update problematics> script at :', dt_string)
+
+    tweet_relations_to_update = []
+    for tweet_relation in queryset:
+        tweet_relation.problematic = True
+        tweet_relations_to_update.append(tweet_relation)
+    
+    if debug:
+        print('to update, n items = ', len(tweet_relations_to_update))
+
+    TweetRelation.objects.bulk_update(tweet_relations_to_update,['problematic'])
+
+    if debug:
+        from datetime import datetime
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        print('Finishing <update problematics> script at :', dt_string)
+        print()
+
+    return None

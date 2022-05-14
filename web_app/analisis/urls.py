@@ -9,9 +9,10 @@ router = routers.DefaultRouter()
 router.register(r'questions', views.QuestionViewSet)
 router.register(r'answers', views.AnswerViewSet)
 router.register(r'custom-config',views.AppCustomConfigViewSet)
+router.register(r'revisions',views.RevisionViewSet)
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='annotate')),
+    path('', views.home, name='home'),
     path('annotate', views.annotate, name='annotate'),
     path('problematic-tweet-relations', views.problematic_tweet_relations, name='problematic_tweet_relations'),
     path('all-annotations-count', views.all_annotations_count, name='all_annotations_count'),
