@@ -273,21 +273,24 @@ def resolve_tweet_relation(request, tweet_relation_id):
         return redirect('problematic_tweet_relations')
 
     if request.method == 'POST':
-        skipped_is_checked = 'skipped' in request.POST
+        skipped_is_checked = 'skipped' in request.POST   
+        revision = Revision.objects.filter(tweet_relation_id=tweet_relation_id).first()
+
         if tweet_relation.has_revision and not skipped_is_checked:
-            annotation = create_annotation(request.POST)
-            if annotation is not None:
-                revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
-                revision.annotation = annotation
-                revision.save()
+            if revision.annotation is None:
+                annotation = create_annotation(request.POST)
+                if annotation is not None:
+                    revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
+                    revision.annotation = annotation
+                    revision.save()
 
-                tweet_relation.problematic = False
-                tweet_relation.save()
-
-            if annotation is None:
-                messages.warning(request, 'La anotacion no se guardó. Ya existía una anotación de este usuario para el par tweet. (warning_code=1)')
+                    tweet_relation.problematic = False
+                    tweet_relation.save()
+                    messages.success(request, 'La anotacion se guardó correctamente. (success_code=1)')
+                else:
+                    messages.warning(request, 'La anotacion no se guardó. Ya existía una anotación de este usuario para el par tweet. (warning_code=1)')
             else:
-                messages.success(request, 'La anotacion se guardó correctamente. (success_code=1)')
+                messages.warning(request, 'La anotacion no se guardó. Ya existía una anotación con revision de otro usuario. (warning_code=1)')
 
         elif not skipped_is_checked and not tweet_relation.has_revision:
             annotation = create_annotation(request.POST)
@@ -303,8 +306,15 @@ def resolve_tweet_relation(request, tweet_relation_id):
                 messages.success(request, 'La anotacion se guardó correctamente. (success_code=2)')
 
         elif skipped_is_checked and not tweet_relation.has_revision:
-            create_revision(skipped_is_checked, tweet_relation_id, annotation=None)
-            messages.success(request, 'La anotacion se guardó correctamente. (success_code=3)')
+            a = Annotator.objects.get(id=request.POST['annotator_id'])
+            tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
+            anotation_on_tweet_by_user_exists =  Annotation.objects.filter(tweet_relation=tr, annotator=a).exists()
+            if not anotation_on_tweet_by_user_exists:
+                create_revision(skipped_is_checked, tweet_relation_id, annotation=None)
+                messages.success(request, 'La anotacion se guardó correctamente. (success_code=3)')
+            else:
+                messages.warning(request, 'La anotacion no se guardó. Ya existia una anotación de este usuario para el par tweet. (warning_code=3)')
+
         else:
             messages.warning(request, 'No se realizó ninguna acción')
         remove_id_from_cache('RESOLVE_TWEET_RELATION', tweet_relation_id)
