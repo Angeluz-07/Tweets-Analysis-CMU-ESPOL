@@ -41,8 +41,9 @@ env = environ.Env(
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if os.path.exists(os.path.join(BASE_DIR, 'env')):
-    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+if os.path.exists(os.path.join(os.path.dirname(BASE_DIR), '.env')):
+    # this is only used for deployment, current uwsgi config make us to retrieve env vars from a file
+    environ.Env.read_env(os.path.join(os.path.dirname(BASE_DIR), '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
