@@ -10,6 +10,10 @@
 {% block content %}
 
 	<div class="row mt-4 py-1">
+		{% include "analisis/sub/django_messages.html" %}
+	</div>
+
+	<div class="row mt-4 py-1">
 		{% include "analisis/sub/resolved_tweet_relations_count.html" %}
 	</div>
 
@@ -29,8 +33,15 @@
 					<a href="{% url 'resolve_tweet_relation' item.id %}">Tweet Relation {{ item.id }}</a>
 					</td>
 					<td>
+						{% if item.has_revision_ANNOTATED %} 
+							{% if item.has_revision_without_annotation_ANNOTATED %}
+								tiene revision sin anotacion |
+							{% else %}
+								tiene revision con anotacion | 
+							{% endif %}
+						{% endif %}
 						{% if item.is_skipped_ANNOTATED %} 
-							skipped
+							skipped |
 						{% endif %}
 						{% if item.has_been_annotated_by_user_ANNOTATED %} 
 							contiene anotacion del usuario actual
