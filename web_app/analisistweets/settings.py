@@ -11,35 +11,38 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-#import environ
+import environ
 
-# env = environ.Env(
-#     # set casting, default value
-#     DEBUG=(bool, True)
-# )
+env = environ.Env(
+    # set casting, default value
+    DJANGO_DEBUG=(bool, False)
+)
 # reading .env file
-#environ.Env.read_env()
-def check_env_variables_are_defined():
-    env_variables = [
-        'DATABASE_ENGINE',
-        'DATABASE_NAME',
-        'DATABASE_USER',
-        'DATABASE_PASSWORD',
-        'DATABASE_HOST',
-        'DJANGO_SECRET_KEY',
-        'DJANGO_ALLOWED_HOSTS',
-    ]
-    for var in env_variables:
-        if var not in os.environ:
-            raise EnvironmentError(
-                "{} is not defined in the environment".format(var)
-            )
 
-check_env_variables_are_defined()
+#environ.Env.read_env()
+
+# def check_env_variables_are_defined():
+#     env_variables = [
+#         'DATABASE_ENGINE',
+#         'DATABASE_NAME',
+#         'DATABASE_USER',
+#         'DATABASE_PASSWORD',
+#         'DATABASE_HOST',
+#         'DJANGO_SECRET_KEY',
+#         'DJANGO_ALLOWED_HOSTS',
+#     ]
+#     for var in env_variables:
+#         if var not in os.environ:
+#             raise EnvironmentError(
+#                 "{} is not defined in the environment".format(var)
+#             )
+
+# check_env_variables_are_defined()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+if os.path.exists(os.path.join(BASE_DIR, 'env')):
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
