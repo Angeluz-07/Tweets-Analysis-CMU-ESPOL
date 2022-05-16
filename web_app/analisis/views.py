@@ -314,6 +314,17 @@ def resolve_tweet_relation(request, tweet_relation_id):
                 messages.success(request, 'La anotacion se guardó correctamente. (success_code=3)')
             else:
                 messages.warning(request, 'La anotacion no se guardó. Ya existia una anotación de este usuario para el par tweet. (warning_code=3)')
+        elif skipped_is_checked and tweet_relation.has_revision:
+            a = Annotator.objects.get(id=request.POST['annotator_id'])
+            tr = TweetRelation.objects.get(id=request.POST['tweet_relation_id'])
+            anotation_on_tweet_by_user_exists =  Annotation.objects.filter(tweet_relation=tr, annotator=a).exists()
+            if not anotation_on_tweet_by_user_exists:
+                revision = Revision.objects.get(tweet_relation_id=tweet_relation_id)
+                revision.skipped = True
+                revision.save()
+                messages.success(request, 'La anotacion se guardó correctamente. (success_code=4)')
+            else:
+                messages.warning(request, 'La anotacion no se guardó. Ya existia una anotación de este usuario para el par tweet. (warning_code=4)')
 
         else:
             messages.warning(request, 'No se realizó ninguna acción')
