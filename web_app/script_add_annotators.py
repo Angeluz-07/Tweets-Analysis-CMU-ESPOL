@@ -34,7 +34,7 @@ Example of rows:
 """
 def add_annotators():
     # Make sure .csv is saved as UTF-8 encoding
-    input_file = 'data/Lista_anotadores_09.csv'
+    input_file = 'data/Lista_anotadores_10.csv'
     with open(input_file, encoding="utf-8") as csv_file:            
         rows = list(csv.reader(csv_file, delimiter=','))
         for i, row in enumerate(rows):
@@ -43,7 +43,7 @@ def add_annotators():
             password = row[2]
             
             #print(i, username, password, name)
-            #if i == 0 : break
+            #if i == 1 : break
 
             u, _ = User.objects.get_or_create(username=username)
             u.set_password(password)
