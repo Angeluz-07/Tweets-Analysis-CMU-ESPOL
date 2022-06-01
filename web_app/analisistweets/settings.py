@@ -160,7 +160,7 @@ CACHES = {
     }
 }
 
-CACHE_TIMEOUT = 36000
+CACHE_TIMEOUT = 45 * 60 # seconds
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
