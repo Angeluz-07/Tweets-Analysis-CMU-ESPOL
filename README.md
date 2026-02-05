@@ -6,16 +6,23 @@ Aplicación web para realizar anotaciones y análisis de tweets en las revueltas
 
 ```
 # to build the webapp img
-sudo docker compose build web_app
+docker compose build web_app
  
 # set up services locally
-sudo docker compose up
+docker compose up
 
 # with services running, apply initial migration
-sudo docker compose exec web_app python manage.py makemigrations
-sudo docker compose exec web_app python manage.py migrate
+docker compose exec web_app python manage.py makemigrations
+docker compose exec web_app python manage.py migrate
+
+# create superuser to work with app locally
+docker-compose exec web_app python manage.py createsuperuser
+
+# seed db
+docker-compose exec web_app python script_populate.py
 ```
 
+## Outdated(to fix)
 Now we need a dump of db, from the server :
 ```
 python manage.py dumpdata --exclude contenttypes -o <date>_backup.json

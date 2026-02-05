@@ -11,7 +11,7 @@ import json
 def add_tweet_and_tweet_relations():
     # Load tweet_texts in memory
     data = []
-    with open('data/main_pair_database.json') as f:
+    with open('data/second_run_database.json') as f:
         for line in f:
             data.append(json.loads(line))
 

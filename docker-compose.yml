@@ -2,7 +2,7 @@ version: "3.8"
 services:
   web_app:
     build: ./web_app
-    entrypoint: ["./docker-entrypoint.sh"]
+    entrypoint: ["/usr/src/app/docker-entrypoint.sh"]
     ports:
       - "8000:8000"
     environment:
@@ -19,17 +19,21 @@ services:
     depends_on:
       - db
   db:
-    image: mysql:8
+    image: postgres:18
+    restart: always
     ports:
-      - 3306:3306
+    - "5432:5432" # Standard PostgreSQL port
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=${DATABASE_NAME}
-      - MYSQL_USER=${DATABASE_USER}
-      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      # PostgreSQL initializes authentication and database setup
+      POSTGRES_DB: ${DJANGO_DATABASE_NAME}
+      POSTGRES_USER: ${DJANGO_DATABASE_USER}
+      POSTGRES_PASSWORD: ${DJANGO_DATABASE_PASSWORD}
+      # FIX: Explicitly specify the internal data directory to prevent version conflicts
+      PGDATA: /var/lib/postgresql/data/pgdata 
+      # fix: for retrocompatibility
+      TZ: UTC
     volumes:
-      - mysql_data:/var/lib/mysql
-    cap_add:
-      - SYS_NICE  # CAP_SYS_NICE # just to prevent mbind error
+      # Volume for data persistence
+      - postgres_data:/var/lib/postgresql/data
 volumes:
-  mysql_data:
+  postgres_data:
