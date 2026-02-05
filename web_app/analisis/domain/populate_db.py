@@ -1,6 +1,8 @@
 from analisis.models import *
 import json
- 
+from django.contrib.auth.models import User
+import csv
+
 
 def add_tweet_and_tweet_relations(path_to_db_json):
     # Load tweet_texts in memory
@@ -145,3 +147,25 @@ def add_questions():
                 options=json.dumps(question['options'], ensure_ascii=False)
             )
             print(q)
+
+def add_annotators(path_to_csv):
+    # Make sure .csv is saved as UTF-8 encoding
+    input_file = path_to_csv
+    with open(input_file, encoding="utf-8") as csv_file:            
+        rows = list(csv.reader(csv_file, delimiter=','))
+        for i, row in enumerate(rows):
+            name = row[0]
+            username = row[1] #same as email
+            password = row[2]
+            
+            #print(i, username, password, name)
+            #if i == 1 : break
+
+            u, _ = User.objects.get_or_create(username=username)
+            u.set_password(password)
+            u.save()
+
+            #Mirror an annotator with same id as user
+            a, _ = Annotator.objects.get_or_create(id=u.id, name=name)
+            
+            print(i, username, password, name, 'id=' + str(u.id))
