@@ -1,6 +1,4 @@
 from django.db import models
-from .domain import tweet_relation_is_problematic
-
 # Create your models here.
 
 class Tweet(models.Model):

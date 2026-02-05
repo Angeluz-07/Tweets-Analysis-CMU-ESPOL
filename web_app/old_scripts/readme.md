@@ -1,0 +1,1 @@
+If need to reuse some of this, refactor them using a command approach as I did with script_populate logic.
