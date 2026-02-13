@@ -5,7 +5,7 @@ djangorestframework==3.16.1
 django-debug-toolbar==6.2.0
 
 pandas==3.0
-sqlparse==0.5.0
+sqlparse==0.5.4
 requests
 
 #postgres driver
